@@ -1,86 +1,86 @@
-import { createContext, useState, useEffect, useContext } from "react";
-import { useHistory } from "react-router-dom";
-import Axios from "axios";
-import { message } from "antd";
-import HttpStatus from "http-status-codes";
-import { Routes } from "./config";
+import { createContext, useState, useEffect, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Axios from 'axios'
+import { message } from 'antd'
+import HttpStatus from 'http-status-codes'
+import { Routes } from './config'
 
 const emptyUser = () => {
   const user = {
-    id: "",
-    email: "",
+    id: '',
+    email: '',
     roles: [],
-  };
-  return user;
-};
+  }
+  return user
+}
 
-const UserContext = createContext([emptyUser(), () => {}]);
+const UserContext = createContext([emptyUser(), () => {}])
 
 export const useSession = () => {
-  const [session, setSession] = useContext(UserContext);
-  const history = useHistory();
+  const [session, setSession] = useContext(UserContext)
+  const navigate = useNavigate()
   const login = (userTmp) => {
-    setSession(userTmp);
-    history.push("/");
-  };
+    setSession(userTmp)
+    navigate('/')
+  }
   const getUserInfo = () => {
     return new Promise((resolve, reject) => {
-      Axios.get("/api/admin/auth/user-info")
+      Axios.get('/api/admin/auth/user-info')
         .then((res) => {
           if (res && res.status === HttpStatus.OK) {
-            console.log("xss", res);
-            resolve(res.data);
+            console.log('xss', res)
+            resolve(res.data)
           }
         })
-        .catch((err) => reject(err));
-    });
-  };
+        .catch((err) => reject(err))
+    })
+  }
 
   const logout = () => {
-    Axios.post("/api/admin/auth/logout")
+    Axios.post('/api/admin/auth/logout')
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          setSession(emptyUser());
-          localStorage.removeItem("sat_current");
-          history.push(Routes.signIn.path);
+          setSession(emptyUser())
+          localStorage.removeItem('sat_current')
+          history.push(Routes.signIn.path)
         } else {
-          message.error("logout failed.");
+          message.error('logout failed.')
         }
       })
       .catch((err) => {
-        message.error("logout failed, error: ", err.message);
-      });
-  };
-  return { login, logout, getUserInfo, session };
-};
+        message.error('logout failed, error: ', err.message)
+      })
+  }
+  return { login, logout, getUserInfo, session }
+}
 
 // eslint-disable-next-line react/prop-types
 const UserContextProvider = ({ children }) => {
-  const history = useHistory();
-  let theUser = emptyUser();
-  const current = localStorage.getItem("sat_current");
+  const navigate = useNavigate()
+  let theUser = emptyUser()
+  const current = localStorage.getItem('sat_current')
   if (current) {
     try {
-      theUser = JSON.parse(decodeURIComponent(escape(atob(current))));
+      theUser = JSON.parse(decodeURIComponent(escape(atob(current))))
     } catch (err) {
-      history.push(Routes.signIn.path);
+      navigate(Routes.signIn.path)
     }
   }
-  const [currentUser, setCurrentUser] = useState(theUser);
+  const [currentUser, setCurrentUser] = useState(theUser)
   useEffect(() => {
     if (currentUser.email) {
       localStorage.setItem(
-        "sat_current",
+        'sat_current',
         btoa(unescape(encodeURIComponent(JSON.stringify(currentUser))))
-      );
+      )
     }
-  }, [currentUser]);
+  }, [currentUser])
 
   return (
     <UserContext.Provider value={[currentUser, setCurrentUser]}>
       {children}
     </UserContext.Provider>
-  );
-};
+  )
+}
 
-export default UserContextProvider;
+export default UserContextProvider
