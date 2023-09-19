@@ -1,17 +1,20 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { ConfigProvider } from "antd";
-import zhCN from "antd/locale/zh_CN";
-import { RouterProvider } from "react-router-dom";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { ConfigProvider } from 'antd'
+import zhCN from 'antd/locale/zh_CN'
+import { RouterProvider } from 'react-router-dom'
 // import AdminLayout from './admin-layout'
-import router from "./router";
+import router from './router'
+import GlobalProvider from './common/global-store'
 
 // const router = createBrowserRouter([{ path: '/', element: <AdminLayout /> }])
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ConfigProvider locale={zhCN}>
-      <RouterProvider router={router} />
+      <GlobalProvider>
+        <RouterProvider router={router} />
+      </GlobalProvider>
     </ConfigProvider>
   </React.StrictMode>
-);
+)
