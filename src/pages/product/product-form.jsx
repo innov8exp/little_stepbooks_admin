@@ -2,10 +2,11 @@ import { Form, Input, message, Modal, Select } from "antd";
 import Axios from "../../common/network";
 import HttpStatus from "http-status-codes";
 import { useEffect } from "react";
+import PropTypes from "prop-types";
 
 const { Option } = Select;
 
-const ProductForm = (id, visible, onSave, onCancel) => {
+const ProductForm = ({ id, visible, onSave, onCancel }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -60,7 +61,7 @@ const ProductForm = (id, visible, onSave, onCancel) => {
   };
   return (
     <Modal
-      visible={visible}
+      open={visible}
       width={500}
       style={{ maxHeight: 500 }}
       title="产品套餐表单"
@@ -133,6 +134,13 @@ const ProductForm = (id, visible, onSave, onCancel) => {
       </Form>
     </Modal>
   );
+};
+
+ProductForm.propTypes = {
+  id: PropTypes.string,
+  visible: PropTypes.bool,
+  onSave: PropTypes.func,
+  onCancel: PropTypes.func,
 };
 
 export default ProductForm;

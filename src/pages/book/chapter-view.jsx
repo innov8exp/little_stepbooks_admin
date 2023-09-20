@@ -23,7 +23,7 @@ const ChapterViewPage = (id, visible, onClose) => {
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       title="预览"
       onCancel={() => {
         setContent("");

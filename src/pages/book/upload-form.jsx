@@ -87,7 +87,7 @@ const UploadForm = (bookId, visible, onCancel) => {
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       title="上传文件"
       onCancel={() => {
         clear();

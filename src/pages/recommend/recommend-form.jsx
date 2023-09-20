@@ -1,13 +1,14 @@
-import { Form, Input, message, Modal, Select } from 'antd'
-import TextArea from 'antd/lib/input/TextArea'
-import axios from 'src/common/network'
-import DebounceSelect from 'src/components/debounce-select'
-import HttpStatus from 'http-status-codes'
-import { useEffect } from 'react'
+import { Form, Input, message, Modal, Select } from "antd";
+import TextArea from "antd/lib/input/TextArea";
+import axios from "src/common/network";
+import DebounceSelect from "src/components/debounce-select";
+import HttpStatus from "http-status-codes";
+import { useEffect } from "react";
+import PropTypes from "prop-types";
 
-const { Option } = Select
-const RecommendForm = (id, visible, onSave, onCancel) => {
-  const [form] = Form.useForm()
+const { Option } = Select;
+const RecommendForm = ({ id, visible, onSave, onCancel }) => {
+  const [form] = Form.useForm();
 
   useEffect(() => {
     if (id) {
@@ -21,12 +22,12 @@ const RecommendForm = (id, visible, onSave, onCancel) => {
                 label: res.data.bookName,
                 value: res.data.bookId,
               },
-            })
+            });
           }
         })
-        .catch((err) => message.error(`load error:${err.message}`))
+        .catch((err) => message.error(`load error:${err.message}`));
     }
-  }, [id, form])
+  }, [id, form]);
 
   const fetchBook = async (value) => {
     return new Promise((resolve, reject) => {
@@ -34,20 +35,20 @@ const RecommendForm = (id, visible, onSave, onCancel) => {
         .get(`/api/admin/v1/books?bookName=${value}&currentPage=1&pageSize=10`)
         .then((res) => {
           if (res.status === HttpStatus.OK) {
-            const results = res.data
-            const books = results.records
+            const results = res.data;
+            const books = results.records;
             const options = books.map((item) => ({
               label: item.bookName,
               value: item.id,
-            }))
-            resolve(options)
+            }));
+            resolve(options);
           }
         })
         .catch((e) => {
-          reject(e)
-        })
-    })
-  }
+          reject(e);
+        });
+    });
+  };
 
   const createData = (values) => {
     axios
@@ -57,14 +58,14 @@ const RecommendForm = (id, visible, onSave, onCancel) => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success('操作成功!')
-          onSave()
+          message.success("操作成功!");
+          onSave();
         }
       })
       .catch((err) => {
-        message.error(`save data failed, reason:${err.message}`)
-      })
-  }
+        message.error(`save data failed, reason:${err.message}`);
+      });
+  };
 
   const updateData = (values) => {
     axios
@@ -74,81 +75,91 @@ const RecommendForm = (id, visible, onSave, onCancel) => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success('操作成功!')
-          onSave()
+          message.success("操作成功!");
+          onSave();
         }
       })
       .catch((err) => {
-        message.error(`save data failed, reason:${err.message}`)
-      })
-  }
+        message.error(`save data failed, reason:${err.message}`);
+      });
+  };
 
   const okHandler = () => {
     form
       .validateFields()
       .then((values) => {
         if (id) {
-          updateData(values)
+          updateData(values);
         } else {
-          createData(values)
+          createData(values);
         }
       })
-      .catch()
-  }
+      .catch();
+  };
 
   const handleSelectChangeAction = (optionValue) => {
     form.setFieldsValue({
       bookId: optionValue,
-    })
-  }
+    });
+  };
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       width={640}
       style={{ maxHeight: 500 }}
-      title='标签表单'
-      okText='保存'
-      cancelText='取消'
+      title="标签表单"
+      okText="保存"
+      cancelText="取消"
       onCancel={onCancel}
-      onOk={okHandler}>
+      onOk={okHandler}
+    >
       <Form
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 14 }}
-        layout='horizontal'
+        layout="horizontal"
         form={form}
-        name='form_in_modal'>
-        <Form.Item name='bookId' hidden>
+        name="form_in_modal"
+      >
+        <Form.Item name="bookId" hidden>
           <Input />
         </Form.Item>
         <Form.Item
-          name='bookName'
-          label='书籍'
+          name="bookName"
+          label="书籍"
           rules={[
             {
               required: true,
-              message: '请选择书籍',
+              message: "请选择书籍",
             },
-          ]}>
+          ]}
+        >
           <DebounceSelect
             showSearch
             fetchOptions={fetchBook}
-            placeholder='请输入书籍名称搜索'
+            placeholder="请输入书籍名称搜索"
             onChange={({ value }) => handleSelectChangeAction(value)}
           />
         </Form.Item>
-        <Form.Item name='recommendType' label='推荐类型'>
+        <Form.Item name="recommendType" label="推荐类型">
           <Select>
-            <Option value='TODAY'>今日推荐</Option>
-            <Option value='TOP_SEARCH'>热搜推荐</Option>
+            <Option value="TODAY">今日推荐</Option>
+            <Option value="TOP_SEARCH">热搜推荐</Option>
           </Select>
         </Form.Item>
-        <Form.Item name='introduction' label='简介'>
-          <TextArea rows={3} style={{ resize: 'none' }} />
+        <Form.Item name="introduction" label="简介">
+          <TextArea rows={3} style={{ resize: "none" }} />
         </Form.Item>
       </Form>
     </Modal>
-  )
-}
+  );
+};
 
-export default RecommendForm
+RecommendForm.propTypes = {
+  id: PropTypes.string,
+  visible: PropTypes.bool,
+  onSave: PropTypes.func,
+  onCancel: PropTypes.func,
+};
+
+export default RecommendForm;

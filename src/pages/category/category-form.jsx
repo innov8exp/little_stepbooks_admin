@@ -2,8 +2,9 @@ import { Form, Input, message, Modal } from "antd";
 import Axios from "../../common/network";
 import HttpStatus from "http-status-codes";
 import { useEffect } from "react";
+import PropTypes from "prop-types";
 
-const CategoryForm = (id, visible, onSave, onCancel) => {
+const CategoryForm = ({ id, visible, onSave, onCancel }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -58,7 +59,7 @@ const CategoryForm = (id, visible, onSave, onCancel) => {
   };
   return (
     <Modal
-      visible={visible}
+      open={visible}
       width={500}
       style={{ maxHeight: 500 }}
       title="分类表单"
@@ -92,6 +93,13 @@ const CategoryForm = (id, visible, onSave, onCancel) => {
       </Form>
     </Modal>
   );
+};
+
+CategoryForm.propTypes = {
+  id: PropTypes.string,
+  visible: PropTypes.bool,
+  onSave: PropTypes.func,
+  onCancel: PropTypes.func,
 };
 
 export default CategoryForm;

@@ -147,7 +147,9 @@ const UserPage = () => {
       />
       <UserForm
         visible={formVisible}
-        onCancel={() => setFormVisible(false)}
+        onCancel={() => {
+          setFormVisible(false);
+        }}
         onSave={() => {
           setFormVisible(false);
           setChangeTime(Date.now());

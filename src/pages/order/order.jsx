@@ -122,7 +122,7 @@ const OrderPage = () => {
   }, [fetchOrders, pageNumber, changeTimestamp]);
 
   return (
-    <Card title="订单管理">
+    <Card title="订单管理">
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}

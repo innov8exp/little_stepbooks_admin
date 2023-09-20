@@ -1,27 +1,27 @@
-import { Breadcrumb, Layout } from 'antd'
-import { Config } from './libs/config'
-import { useGlobalStore } from './common/global-store'
+import { Breadcrumb, Layout, Menu } from "antd";
+import { Config } from "./libs/config";
+// import { useGlobalStore } from "./common/global-store";
 // import { MainRoutes } from './libs/router'
-import EnvFlag from './components/env-flag'
-import MainHeader from './components/main-header'
+import EnvFlag from "./components/env-flag";
+import MainHeader from "./components/main-header";
 // import MainMenu from 'components/main-menu'
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import styled from 'styled-components'
-
-const { Sider, Content } = Layout
+import { useState } from "react";
+import { Link, Outlet } from "react-router-dom";
+import styled from "styled-components";
+import { items } from "./router/menu";
+const { Sider, Content } = Layout;
 
 const ContentHeader = styled.div`
   padding: 16px 24px;
   background: #fff;
   border-bottom: 1px solid #e8e8e8;
-`
+`;
 
 const ContentWrapper = styled(Content)`
   padding: 24px;
   background: #f0f2f5;
   overflow-y: auto;
-`
+`;
 
 const Logo = styled.div`
   height: 64px;
@@ -33,44 +33,51 @@ const Logo = styled.div`
   white-space: nowrap;
   font-family: Arial, Helvetica, sans-serif;
   background-color: #0bafff;
-`
+`;
 
 const AdminLayout = () => {
-  const [collapsed, setCollapsed] = useState(false)
-  const globalStore = useGlobalStore()
+  const [collapsed, setCollapsed] = useState(false);
+  // const globalStore = useGlobalStore();
   return (
-    <Layout style={{ height: '100vh' }}>
-      <Sider breakpoint='sm' trigger={null} collapsible collapsed={collapsed}>
+    <Layout style={{ height: "100vh" }}>
+      <Sider breakpoint="sm" trigger={null} collapsible collapsed={collapsed}>
         <Logo>
           {collapsed ? Config.PROJECT_NAME_SORT : Config.PROJECT_NAME}
         </Logo>
-        {/* <MainMenu menuData={GenerateMenu()} /> */}
+        <Menu
+          theme="dark"
+          defaultSelectedKeys={["1"]}
+          mode="inline"
+          items={items}
+        />
       </Sider>
       <Layout>
         <MainHeader
           onToggleClick={(collapsedParam) => setCollapsed(collapsedParam)}
-        />
+        ></MainHeader>
         <ContentHeader>
           <Breadcrumb>
             <Breadcrumb.Item>
-              <Link to='/main/dashboard'>首页</Link>
+              <Link to="/">首页</Link>
             </Breadcrumb.Item>
             <Breadcrumb.Item>
-              {globalStore.activeRoute ? (
+              {/* {globalStore.activeRoute ? (
                 <Link to={globalStore.activeRoute.path}>
                   {globalStore.activeMenu?.text}
                 </Link>
               ) : (
                 globalStore.activeMenu?.text
-              )}
+              )} */}
             </Breadcrumb.Item>
           </Breadcrumb>
         </ContentHeader>
-        <ContentWrapper>{/* <MainRoutes /> */}</ContentWrapper>
+        <ContentWrapper>
+          <Outlet></Outlet>
+        </ContentWrapper>
       </Layout>
       <EnvFlag />
     </Layout>
-  )
-}
+  );
+};
 
-export default AdminLayout
+export default AdminLayout;
