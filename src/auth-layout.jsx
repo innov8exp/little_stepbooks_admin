@@ -1,9 +1,9 @@
 import {} from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { Config } from "src/common/config";
-import bgImg from "src/assets/images/cover-login.jpg";
-import EnvFlag from "src/components/env-flag";
+import { Config } from "./common/config";
+import bgImg from "./assets/images/cover-login.jpg";
+import EnvFlag from "./components/env-flag";
 
 const Container = styled.div`
   width: 100%;

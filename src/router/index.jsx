@@ -12,6 +12,7 @@ import Product from "../pages/product/product";
 import Promotion from "../pages/promotion/promotion";
 import Recommend from "../pages/recommend/recommend";
 import Advertisement from "../pages/advertisement/advertisement";
+import SignIn from "../pages/auth/sign-in";
 import ComingSoon from "../pages/coming-soon/coming-soon";
 
 const router = createBrowserRouter([
@@ -96,11 +97,15 @@ const router = createBrowserRouter([
         path: "/advertisement",
         element: <Advertisement />,
       },
-      {
-        path: "*",
-        element: <ComingSoon />,
-      },
     ],
+  },
+  {
+    path: "/sign-in",
+    element: <SignIn />,
+  },
+  {
+    path: "*",
+    element: <ComingSoon />,
   },
 ]);
 

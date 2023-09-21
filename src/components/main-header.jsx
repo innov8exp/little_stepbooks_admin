@@ -8,7 +8,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Dropdown, Layout, Menu } from "antd";
-// import { useSession } from '../libs/session-context'
+// import { useSession } from "../libs/session-context";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -58,7 +58,7 @@ const Trigger = styled.span`
 const MainHeader = ({ onToggleClick }) => {
   const [collapsed, setCollapsed] = useState(true);
 
-  // const { logout, getUserInfo, session } = useSession()
+  // const { logout, getUserInfo, session } = useSession();
 
   const clickHandler = () => {
     setCollapsed(!collapsed);
@@ -66,12 +66,12 @@ const MainHeader = ({ onToggleClick }) => {
   };
 
   const handleLogout = () => {
-    // logout()
+    // logout();
   };
 
   // useEffect(() => {
-  //   getUserInfo()
-  // }, [getUserInfo])
+  //   getUserInfo();
+  // }, [getUserInfo]);
 
   return (
     <HeaderContainer>
@@ -102,7 +102,7 @@ const MainHeader = ({ onToggleClick }) => {
               <Menu.Divider />
               <Menu.Item key="3" onClick={handleLogout}>
                 <LogoutOutlined />
-                <HeaderMenuItem>登出</HeaderMenuItem>
+                <HeaderMenuItem></HeaderMenuItem>
               </Menu.Item>
             </Menu>
           }
