@@ -34,7 +34,7 @@ import { useNavigate } from 'react-router-dom'
 
 const { confirm } = Modal
 
-const ProductPage = () => {
+const BookPage = () => {
   const [queryForm] = Form.useForm()
   const navigate = useNavigate()
   const [changeTimestamp, setChangeTimestamp] = useState()
@@ -336,4 +336,4 @@ const ProductPage = () => {
   )
 }
 
-export default ProductPage
+export default BookPage

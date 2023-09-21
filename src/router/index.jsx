@@ -1,23 +1,23 @@
-import { createBrowserRouter } from "react-router-dom";
-import AdminLayout from "../admin-layout";
-import Dashboard from "../pages/dashboard/dashboard";
-import User from "../pages/user/user";
-import Tag from "../pages/tag/tag";
-import Category from "../pages/category/category";
-import Book from "../pages/book/book";
-import Comment from "../pages/comment/comment";
-import Order from "../pages/order/order";
-import Consumption from "../pages/consumption/consumption";
-import Product from "../pages/product/product";
-import Promotion from "../pages/promotion/promotion";
-import Recommend from "../pages/recommend/recommend";
-import Advertisement from "../pages/advertisement/advertisement";
-import SignIn from "../pages/auth/sign-in";
-import ComingSoon from "../pages/coming-soon/coming-soon";
+import { createBrowserRouter } from 'react-router-dom'
+import AdminLayout from 'src/admin-layout'
+import Dashboard from 'src/pages/dashboard/dashboard'
+import User from 'src/pages/user/user'
+import Tag from 'src/pages/tag/tag'
+import Category from 'src/pages/category/category'
+import Book from 'src/pages/book/book'
+import Comment from 'src/pages/comment/comment'
+import Order from 'src/pages/order/order'
+import Consumption from 'src/pages/consumption/consumption'
+import Product from 'src/pages/product/product'
+import Promotion from 'src/pages/promotion/promotion'
+import Recommend from 'src/pages/recommend/recommend'
+import Advertisement from 'src/pages/advertisement/advertisement'
+import SignIn from 'src/pages/auth/sign-in'
+import ComingSoon from 'src/pages/coming-soon/coming-soon'
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <AdminLayout />,
     children: [
       {
@@ -26,87 +26,87 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "/userReport",
+        path: '/user-report',
         element: <Dashboard />,
       },
       {
-        path: "/orderReport",
+        path: '/order-report',
         element: <Dashboard />,
       },
       {
-        path: "/novelReport",
+        path: '/novel-report',
         element: <Dashboard />,
       },
       //用户列表
       {
-        path: "/userList",
+        path: '/user-list',
         element: <User />,
       },
       //标签管理
       {
-        path: "/labelManage",
+        path: '/label-manage',
         element: <Tag />,
       },
       //分类管理
       {
-        path: "/Category",
+        path: '/category',
         element: <Category />,
       },
       //小说列表
       {
-        path: "/book",
+        path: '/book',
         element: <Book />,
       },
       //评论管理
       {
-        path: "/comment",
+        path: '/comment',
         element: <Comment />,
       },
       //订单明细
       {
-        path: "/order",
+        path: '/order',
         element: <Order />,
       },
       //消费明细
       {
-        path: "/consumption",
+        path: '/consumption',
         element: <Consumption />,
       },
       //产品套餐
       {
-        path: "/product",
+        path: '/product',
         element: <Product />,
       },
       //促销管理
       {
-        path: "/promotion",
+        path: '/promotion',
         element: <Promotion />,
       },
       //推荐设置
       {
-        path: "/recommend",
+        path: '/recommend',
         element: <Recommend />,
       },
       //广告设置
       {
-        path: "/advertisement",
+        path: '/advertisement',
         element: <Advertisement />,
       },
       // 基础配置
       {
-        path: "/advertisement",
+        path: '/advertisement',
         element: <Advertisement />,
       },
     ],
   },
   {
-    path: "/sign-in",
+    path: '/sign-in',
     element: <SignIn />,
   },
   {
-    path: "*",
+    path: '*',
     element: <ComingSoon />,
   },
-]);
+])
 
-export default router;
+export default router

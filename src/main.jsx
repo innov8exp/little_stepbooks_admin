@@ -6,7 +6,7 @@ import { RouterProvider } from 'react-router-dom'
 // import AdminLayout from './admin-layout'
 import router from './router'
 import GlobalProvider from './common/global-store'
-import "./index.css";
+import './index.css'
 
 // const router = createBrowserRouter([{ path: '/', element: <AdminLayout /> }])
 
