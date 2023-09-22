@@ -1,10 +1,20 @@
 import { useState } from "react";
-import { Button, Card, Form, Input } from "antd";
+import { Button, Form, Input } from "antd";
 // import HttpStatus from "http-status-codes";
 // import Axios from "../../common/network";
 // import { useSession } from "../../common/session-context";
 import AuthLayout from "../../auth-layout";
 import { useStore } from "../../common/zustand";
+import {
+  AuthCard,
+  CardHeader,
+  LabelText,
+  CustomFormItem,
+  LabelWrapper,
+  MainTitle,
+  SubTitle,
+} from "src/components/auth-styled";
+import { Link } from "react-router-dom";
 
 const SignInLayout = () => {
   const [loading, setLoading] = useState(false);
@@ -48,14 +58,17 @@ const SignInLayout = () => {
 
   return (
     <AuthLayout>
-      <Card
-        title="登陆"
+      <AuthCard
+        bodyStyle={{ padding: "48px", margin: "0 auto" }}
         bordered={false}
-        headStyle={{ width: 350, textAlign: "center" }}
       >
+        <CardHeader>
+          <MainTitle>步印童书</MainTitle>
+          <SubTitle>Little Step Books Admin System</SubTitle>
+        </CardHeader>
         <Form
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 18 }}
+          layout="vertical"
+          requiredMark={false}
           form={form}
           name="login"
           initialValues={{ remember: true }}
@@ -63,30 +76,46 @@ const SignInLayout = () => {
         >
           <Form.Item
             name="email"
-            label="邮箱"
-            rules={[{ required: true, message: "请输入邮箱地址" }]}
+            label={<LabelText>{"邮箱"}</LabelText>}
+            rules={[
+              {
+                required: true,
+                message: "请输入邮箱",
+              },
+            ]}
           >
-            <Input />
+            <Input size="large" />
           </Form.Item>
-          <Form.Item
+          <CustomFormItem
             name="password"
-            label="密码"
-            rules={[{ required: true, message: "请输入密码" }]}
+            label={
+              <LabelWrapper>
+                <LabelText>{"密码"}</LabelText>
+                <Link to={"/sign-up"}>{"忘记密码？"}</Link>
+              </LabelWrapper>
+            }
+            rules={[
+              {
+                required: true,
+                message: "请输入密码",
+              },
+            ]}
           >
-            <Input.Password />
-          </Form.Item>
-          <Form.Item wrapperCol={{ span: 24 }} style={{ textAlign: "center" }}>
+            <Input.Password size="large" />
+          </CustomFormItem>
+          <Form.Item wrapperCol={{ span: 24 }}>
             <Button
-              style={{ paddingLeft: 50, paddingRight: 50 }}
               type="primary"
               loading={loading}
               htmlType="submit"
+              block
+              style={{ borderRadius: "4px", height: "40px" }}
             >
-              登陆
+              {"登录"}
             </Button>
           </Form.Item>
         </Form>
-      </Card>
+      </AuthCard>
     </AuthLayout>
   );
 };

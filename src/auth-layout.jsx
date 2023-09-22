@@ -1,7 +1,7 @@
 import {} from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { Config } from "./common/config";
+// import { Config } from "./common/config";
 import bgImg from "./assets/images/cover-login.jpg";
 import EnvFlag from "./components/env-flag";
 
@@ -16,7 +16,7 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  padding-top: 5rem;
+  padding-top: 25rem;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -24,23 +24,13 @@ const Content = styled.div`
   justify-content: center;
 `;
 
-const Title = styled.h1`
-  color: #ffffff;
-  font-size: 3rem;
-`;
-
-const SubTitle = styled.p`
-  color: #ffffff;
-  font-size: 1.2rem;
-  margin-bottom: 5rem;
-`;
 
 const AuthLayout = ({ children }) => {
   return (
     <Container>
       <Content>
-        <Title>{Config.PROJECT_NAME}</Title>
-        <SubTitle>{Config.PROJECT_DESCRIPTION}</SubTitle>
+        {/* <Title>{Config.PROJECT_NAME}</Title> */}
+        {/* <SubTitle>{Config.PROJECT_DESCRIPTION}</SubTitle> */}
         <div>{children}</div>
       </Content>
       <EnvFlag />
