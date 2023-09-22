@@ -17,7 +17,7 @@ import ComingSoon from 'src/pages/coming-soon/coming-soon'
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <AdminLayout />,
     children: [
       {
@@ -26,87 +26,91 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: '/user-report',
+        path: "/user-report",
         element: <Dashboard />,
       },
       {
-        path: '/order-report',
+        path: "/order-report",
         element: <Dashboard />,
       },
       {
-        path: '/novel-report',
+        path: "/novel-report",
         element: <Dashboard />,
       },
       //用户列表
       {
-        path: '/user-list',
+        path: "/user-list",
         element: <User />,
       },
       //标签管理
       {
-        path: '/label-manage',
+        path: "/label-manage",
         element: <Tag />,
       },
       //分类管理
       {
-        path: '/category',
+        path: "/category",
         element: <Category />,
       },
       //小说列表
       {
-        path: '/book',
+        path: "/book",
         element: <Book />,
       },
       //评论管理
       {
-        path: '/comment',
+        path: "/comment",
         element: <Comment />,
       },
       //订单明细
       {
-        path: '/order',
+        path: "/order",
         element: <Order />,
       },
       //消费明细
       {
-        path: '/consumption',
+        path: "/consumption",
         element: <Consumption />,
       },
       //产品套餐
       {
-        path: '/product',
+        path: "/product",
         element: <Product />,
       },
       //促销管理
       {
-        path: '/promotion',
+        path: "/promotion",
         element: <Promotion />,
       },
       //推荐设置
       {
-        path: '/recommend',
+        path: "/recommend",
         element: <Recommend />,
       },
       //广告设置
       {
-        path: '/advertisement',
+        path: "/advertisement",
         element: <Advertisement />,
       },
       // 基础配置
       {
-        path: '/advertisement',
+        path: "/advertisement",
         element: <Advertisement />,
+      },
+      {
+        path: "*",
+        element: <ComingSoon />,
       },
     ],
   },
   {
-    path: '/sign-in',
+    path: "/sign-in",
     element: <SignIn />,
   },
   {
-    path: '*',
+    path: "*",
     element: <ComingSoon />,
   },
-])
+]);
 
 export default router

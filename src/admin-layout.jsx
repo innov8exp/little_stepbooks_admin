@@ -1,27 +1,27 @@
-import { Breadcrumb, Layout, Menu } from 'antd'
-import { useGlobalStore } from './common/global-store'
-import { Config } from 'src/common/config'
+import { Breadcrumb, Layout, Menu } from "antd";
+import { useGlobalStore } from "./common/global-store";
+import { Config } from "src/common/config";
 // import { MainRoutes } from './libs/router'
-import EnvFlag from './components/env-flag'
-import MainHeader from './components/main-header'
+import EnvFlag from "./components/env-flag";
+import MainHeader from "./components/main-header";
 // import MainMenu from 'components/main-menu'
-import { useEffect, useState } from 'react'
-import { Link, Outlet } from 'react-router-dom'
-import styled from 'styled-components'
-import { items } from './router/menu'
-const { Sider, Content } = Layout
+import { useEffect, useState } from "react";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import styled from "styled-components";
+import { items, conf } from "src/router/menu";
+const { Sider, Content } = Layout;
 
 const ContentHeader = styled.div`
   padding: 16px 24px;
   background: #fff;
   border-bottom: 1px solid #e8e8e8;
-`
+`;
 
 const ContentWrapper = styled(Content)`
   padding: 24px;
   background: #f0f2f5;
   overflow-y: auto;
-`
+`;
 
 const Logo = styled.div`
   height: 64px;
@@ -33,53 +33,69 @@ const Logo = styled.div`
   white-space: nowrap;
   font-family: Arial, Helvetica, sans-serif;
   background-color: #0bafff;
-`
-
+`;
 const AdminLayout = () => {
-  const [collapsed, setCollapsed] = useState(false)
-  const { projectName, projectNameSort } = useGlobalStore()
-  useEffect(() => {
-    console.log('projectName:', projectName)
-    console.log('projectNameSort:', projectNameSort)
-  }, [projectName, projectNameSort])
+  // console.log("===items===", items);
+  const [collapsed, setCollapsed] = useState(false);
+  const { projectName, projectNameSort } = useGlobalStore();
+  const location = useLocation();
+  const pathSnippets = location.pathname.split("/").filter((i) => i);
+  const lastUrl = pathSnippets.map((_, index) => {
+    const url = `/${pathSnippets.slice(0, index + 1).join("/")}`;
+    const lastUrl = conf.filter((item) => item.router == url);
+    return lastUrl;
+  });
+
+  // let count = 0;
+  const breadcrumbItems = [
+    {
+      title: <Link to="/">首页</Link>,
+      key: "home",
+    },
+  ];
+
+  if (lastUrl.length > 0) {
+    lastUrl[0].map((item) => {
+      if (item.parentLabel && item.parentLabel !== "首页") {
+        breadcrumbItems.push({
+          title: item.parentLabel,
+          key: item.parentLabel,
+        });
+      }
+      breadcrumbItems.push({
+        title: <Link to={item.router}>{item.label}</Link>,
+        key: item.label,
+      });
+    });
+  }
+
+  useEffect(() => {}, [projectName, projectNameSort]);
+
   return (
-    <Layout style={{ height: '100vh' }}>
+    <Layout style={{ height: "100vh" }}>
       <Sider
-        theme='light'
-        breakpoint='sm'
+        theme="light"
+        breakpoint="sm"
         trigger={null}
         collapsible
-        collapsed={collapsed}>
+        collapsed={collapsed}
+      >
         <Logo>
           {collapsed ? Config.PROJECT_NAME_SORT : Config.PROJECT_NAME}
         </Logo>
         <Menu
-          theme='light'
-          defaultSelectedKeys={['1']}
-          mode='inline'
+          theme="light"
+          defaultSelectedKeys={["1"]}
+          mode="inline"
           items={items}
         />
       </Sider>
       <Layout>
         <MainHeader
-          onToggleClick={(collapsedParam) =>
-            setCollapsed(collapsedParam)
-          }></MainHeader>
+          onToggleClick={(collapsedParam) => setCollapsed(collapsedParam)}
+        ></MainHeader>
         <ContentHeader>
-          <Breadcrumb>
-            <Breadcrumb.Item>
-              <Link to='/'>首页</Link>
-            </Breadcrumb.Item>
-            <Breadcrumb.Item>
-              {/* {globalStore.activeRoute ? (
-                <Link to={globalStore.activeRoute.path}>
-                  {globalStore.activeMenu?.text}
-                </Link>
-              ) : (
-                globalStore.activeMenu?.text
-              )} */}
-            </Breadcrumb.Item>
-          </Breadcrumb>
+          <Breadcrumb items={breadcrumbItems} />
         </ContentHeader>
         <ContentWrapper>
           <Outlet></Outlet>
@@ -87,7 +103,7 @@ const AdminLayout = () => {
       </Layout>
       <EnvFlag />
     </Layout>
-  )
-}
+  );
+};
 
-export default AdminLayout
+export default AdminLayout;
