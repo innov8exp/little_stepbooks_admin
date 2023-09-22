@@ -8,7 +8,10 @@ export const useProjectNameStore = create()((set) => ({
   setProjectNameSort: (projectNameSort) => set({ projectNameSort }),
 }))
 
-export const useSessionStore = create()((set) => ({
-  session: { id: '', email: '', roles: [] },
-  setSession: (session) => set({ session }),
+export const useUserInfoStore = create()((set) => ({
+  userInfo: JSON.parse(localStorage.getItem('user_info')),
+  setUserInfo: (userInfo) => {
+    set({ userInfo })
+    localStorage.setItem('user_info', JSON.stringify(userInfo))
+  },
 }))
