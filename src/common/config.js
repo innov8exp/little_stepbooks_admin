@@ -1,10 +1,10 @@
 /**
  */
 export const Config = {
-  PROJECT_NAME: "步印童书",
-  PROJECT_NAME_SORT: "步印",
-  PROJECT_DESCRIPTION: "Little Step Books Admin System",
-};
+  PROJECT_NAME: '步印童书',
+  PROJECT_NAME_SORT: '步印',
+  PROJECT_DESCRIPTION: '步印童书后台管理系统',
+}
 
 /**
  * 路由表配置

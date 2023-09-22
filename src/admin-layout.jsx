@@ -1,11 +1,10 @@
 import { Breadcrumb, Layout, Menu } from 'antd'
-import { useGlobalStore } from './common/global-store'
-import { Config } from 'src/common/config'
+import { useProjectNameStore } from './common/store'
 // import { MainRoutes } from './libs/router'
 import EnvFlag from './components/env-flag'
 import MainHeader from './components/main-header'
 // import MainMenu from 'components/main-menu'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { items, conf } from 'src/router/menu'
@@ -37,7 +36,7 @@ const Logo = styled.div`
 const AdminLayout = () => {
   // console.log("===items===", items);
   const [collapsed, setCollapsed] = useState(false)
-  const { projectName, projectNameSort } = useGlobalStore()
+  const { projectName, projectNameSort } = useProjectNameStore()
   const location = useLocation()
   const pathSnippets = location.pathname.split('/').filter((i) => i)
   const lastUrl = pathSnippets.map((_, index) => {
@@ -69,8 +68,6 @@ const AdminLayout = () => {
     })
   }
 
-  useEffect(() => {}, [projectName, projectNameSort])
-
   return (
     <Layout style={{ height: '100vh' }}>
       <Sider
@@ -79,9 +76,7 @@ const AdminLayout = () => {
         trigger={null}
         collapsible
         collapsed={collapsed}>
-        <Logo>
-          {collapsed ? Config.PROJECT_NAME_SORT : Config.PROJECT_NAME}
-        </Logo>
+        <Logo>{collapsed ? projectNameSort : projectName}</Logo>
         <Menu
           theme='light'
           defaultSelectedKeys={['1']}
