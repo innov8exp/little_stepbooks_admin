@@ -65,7 +65,7 @@ const BookPage = () => {
         }
       })
       .catch((err) =>
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(`操作失败，原因：${err.response?.data?.message}`),
       )
   }
 
@@ -87,13 +87,13 @@ const BookPage = () => {
           setTotal(responseObject.total)
           if (responseObject.records) {
             loadChapterCountByBook(
-              responseObject.records.flatMap((book) => book.id)
+              responseObject.records.flatMap((book) => book.id),
             )
           }
         }
       })
       .catch((err) =>
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(`操作失败，原因：${err.response?.data?.message}`),
       )
       .finally(() => setLoading(false))
   }, [pageNumber, pageSize, queryCriteria?.author, queryCriteria?.bookName])
@@ -169,21 +169,22 @@ const BookPage = () => {
   }, [fetchBooks, pageNumber, changeTimestamp])
 
   return (
-    <Card title='小说管理'>
+    <Card title="书籍管理">
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}
         form={queryForm}
-        initialValues={{ category: '', status: '' }}>
+        initialValues={{ category: '', status: '' }}
+      >
         <Row>
           <Col span={6}>
-            <Form.Item label='名称' name='bookName'>
-              <Input placeholder='请输入小说名称' />
+            <Form.Item label="名称" name="bookName">
+              <Input placeholder="请输入小说名称" />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label='作者' name='author'>
-              <Input placeholder='请输入小说作者' />
+            <Form.Item label="作者" name="author">
+              <Input placeholder="请输入小说作者" />
             </Form.Item>
           </Col>
         </Row>
@@ -195,8 +196,9 @@ const BookPage = () => {
             <ConditionItem>
               <Button
                 icon={<PlusOutlined />}
-                type='primary'
-                onClick={() => handleCreateAction()}>
+                type="primary"
+                onClick={() => handleCreateAction()}
+              >
                 新建
               </Button>
             </ConditionItem>
@@ -205,16 +207,18 @@ const BookPage = () => {
             <ConditionLeftItem>
               <Button
                 icon={<UndoOutlined />}
-                type='default'
-                onClick={handleReset}>
+                type="default"
+                onClick={handleReset}
+              >
                 重置
               </Button>
             </ConditionLeftItem>
             <ConditionLeftItem>
               <Button
                 icon={<SearchOutlined />}
-                type='primary'
-                onClick={handleQuery}>
+                type="primary"
+                onClick={handleQuery}
+              >
                 查询
               </Button>
             </ConditionLeftItem>
@@ -234,8 +238,8 @@ const BookPage = () => {
               dataIndex: 'bookName',
               width: 150,
               render: (text, record) => (
-                <Button onClick={() => handleViewAction(record.id)} type='link'>
-                  <Tooltip title={record.introduction} color='#2db7f5'>
+                <Button onClick={() => handleViewAction(record.id)} type="link">
+                  <Tooltip title={record.introduction} color="#2db7f5">
                     {text}
                   </Tooltip>
                 </Button>
@@ -270,9 +274,9 @@ const BookPage = () => {
               dataIndex: 'status',
               render: (text) => {
                 return text === 'ONLINE' ? (
-                  <Tag color='green'>已上架</Tag>
+                  <Tag color="green">已上架</Tag>
                 ) : (
-                  <Tag color='red'>未上架</Tag>
+                  <Tag color="red">未上架</Tag>
                 )
               },
             },
@@ -285,40 +289,45 @@ const BookPage = () => {
                     {record.status === 'ONLINE' ? (
                       <Button
                         onClick={() => handleStatusChange(record.id, 'OFFLINE')}
-                        type='link'>
+                        type="link"
+                      >
                         下架
                       </Button>
                     ) : (
                       <Button
                         onClick={() => handleStatusChange(record.id, 'ONLINE')}
-                        type='link'>
+                        type="link"
+                      >
                         上架
                       </Button>
                     )}
 
-                    <Divider type='vertical' />
+                    <Divider type="vertical" />
                     <Button
                       onClick={() =>
                         handleLinkToChapterAction(record.id, record.bookName)
                       }
-                      type='link'>
+                      type="link"
+                    >
                       章节管理(
                       {chapterCount?.find((cc) => cc.bookId === record.id)
                         ?.chapterCount || 0}
                       )
                     </Button>
-                    <Divider type='vertical' />
+                    <Divider type="vertical" />
                     <Button
-                      type='link'
-                      onClick={() => handleEditAction(record.id)}>
+                      type="link"
+                      onClick={() => handleEditAction(record.id)}
+                    >
                       编辑
                     </Button>
 
-                    <Divider type='vertical' />
+                    <Divider type="vertical" />
                     <Button
-                      type='link'
+                      type="link"
                       danger
-                      onClick={() => handleDeleteAction(record.id)}>
+                      onClick={() => handleDeleteAction(record.id)}
+                    >
                       删除
                     </Button>
                   </div>
