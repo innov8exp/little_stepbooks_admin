@@ -1,5 +1,5 @@
 import { Breadcrumb, Layout, Menu } from 'antd'
-import { useProjectNameStore } from './common/store'
+import { useProjectNameStore } from './libs/store'
 // import { MainRoutes } from './libs/router'
 import EnvFlag from './components/env-flag'
 import MainHeader from './components/main-header'
@@ -7,7 +7,7 @@ import MainHeader from './components/main-header'
 import { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { items, conf } from 'src/router/menu'
+import { items, conf } from '@/libs/menu'
 const { Sider, Content } = Layout
 
 const ContentHeader = styled.div`

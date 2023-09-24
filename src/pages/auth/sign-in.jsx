@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { Button, Form, Input, message } from 'antd'
 import HttpStatus from 'http-status-codes'
-import axios from '../../common/network'
-import { Config } from 'src/common/config'
-import AuthLayout from '../../auth-layout'
+import { Config } from '@/libs/config'
+import AuthLayout from '@/auth-layout'
 import {
   AuthCard,
   CardHeader,
@@ -12,42 +11,47 @@ import {
   LabelWrapper,
   MainTitle,
   SubTitle,
-} from 'src/components/auth-styled'
+} from '@/components/auth-styled'
 import { Link, useNavigate } from 'react-router-dom'
-import { useUserInfoStore } from '../../common/store'
+import { useUserInfoStore } from '@/libs/store'
+import { asyncLogin, asyncUserInfo } from '@/libs/http'
 
 const SignInLayout = () => {
   const [loading, setLoading] = useState(false)
   const { setUserInfo } = useUserInfoStore()
   const navigate = useNavigate()
   const [form] = Form.useForm()
-  const storeUserInfo = () => {
-    axios.get('/api/admin/auth/user-info')
-      .then((resp) => {
-        setUserInfo(resp.data)
-        navigate('/')
-      })
-      .catch((err) => {
-        if (err.response.status === HttpStatus.UNAUTHORIZED) {
-          message.error('获取授权失败，请重新登录！')
-        } else {
-          message.error('服务器连接异常！')
-        }
-      })
-      .finally(() => setLoading(false))
+  const storeUserInfo = async () => {
+    try {
+      const resp = await asyncUserInfo
+      setUserInfo(resp.data)
+      navigate('/')
+    } catch (err) {
+      if (err.response.status === HttpStatus.UNAUTHORIZED) {
+        message.error('获取授权失败，请重新登录！')
+      } else {
+        message.error('服务器连接异常！')
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const login = (values) => {
-    axios.post('/api/admin/auth/login', { ...values })
-      .then(() => storeUserInfo())
-      .catch((err) => {
-        if (err.response.status === HttpStatus.UNAUTHORIZED) {
-          message.error('邮箱地址或密码错误，请重新输入！')
-        } else {
-          message.error('服务器连接异常！')
-        }
-      })
-      .finally(() => setLoading(false))
+  const login = async (values) => {
+    try {
+      const resp = await asyncLogin(values)
+      if (resp.status === HttpStatus.OK) {
+        await storeUserInfo()
+      }
+    } catch (error) {
+      if (error.response.status === HttpStatus.UNAUTHORIZED) {
+        message.error('邮箱地址或密码错误，请重新输入！')
+      } else {
+        message.error('服务器连接异常！')
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
   const onFinish = () => {
