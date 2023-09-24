@@ -11,9 +11,9 @@ import {
   Row,
   Skeleton,
 } from 'antd'
-import { Routes } from '../../../libs/config'
-import axios from '../../../libs/network'
-import { useQuery } from '../../../hooks/useQuery'
+import { Routes } from '@/libs/router'
+import axios from 'axios'
+import useQuery from '@/hooks/useQuery'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -77,7 +77,7 @@ const ChapterForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success('保存成功!')
-          navigate(Routes.main.routes.bookList.path)
+          navigate(Routes.BOOK_LIST.path)
         }
       })
       .catch((err) => {

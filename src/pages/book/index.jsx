@@ -19,7 +19,7 @@ import {
   Tag,
   Tooltip,
 } from 'antd'
-import { Routes } from '@/libs/config'
+import { Routes } from '@/libs/router'
 import axios from 'axios'
 import {
   ConditionItem,
@@ -134,19 +134,19 @@ const BookPage = () => {
   }
 
   const handleCreateAction = () => {
-    navigate(Routes.main.routes.bookForm.path)
+    navigate(Routes.BOOK_FORM.path)
   }
 
   const handleEditAction = (id) => {
-    navigate(`${Routes.main.routes.bookForm.path}?id=${id}`)
+    navigate(`${Routes.BOOK_FORM.path}?id=${id}`)
   }
 
   const handleViewAction = (id) => {
-    navigate(`${Routes.main.routes.bookView.path}?id=${id}`)
+    navigate(`${Routes.BOOK_VIEW.path}?id=${id}`)
   }
 
   const handleLinkToChapterAction = (id, bookName) => {
-    navigate(`${Routes.main.routes.chapter.path}?id=${id}&name=${bookName}`)
+    navigate(`${Routes.CHAPTER_LIST.path}?id=${id}&name=${bookName}`)
   }
 
   const handleStatusChange = (id, status) => {

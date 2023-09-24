@@ -4,9 +4,9 @@ import {
   UpCircleOutlined,
 } from '@ant-design/icons'
 import { Button, Card, message, Modal, Table } from 'antd'
-import useFetch from '../../hooks/useFetch'
-import Axios from '../../libs/network'
-import { ButtonWrapper } from '../../components/styled'
+import useFetch from '@/hooks/useFetch'
+import axios from 'axios'
+import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import CategoryForm from './form'
@@ -34,7 +34,8 @@ const CategoryPage = () => {
       okType: 'primary',
       cancelText: 'No',
       onOk() {
-        Axios.delete(`/api/admin/v1/categories/${id}`)
+        axios
+          .delete(`/api/admin/v1/categories/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success('操作成功!')
@@ -50,7 +51,8 @@ const CategoryPage = () => {
   }
 
   const handleSortAction = (id, direction) => {
-    Axios.put(`/api/admin/v1/categories/${id}/sort`, { direction })
+    axios
+      .put(`/api/admin/v1/categories/${id}/sort`, { direction })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success('change succeed!')

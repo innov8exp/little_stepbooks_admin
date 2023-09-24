@@ -1,8 +1,8 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, Card, Image, message, Modal, Table, Tag } from 'antd'
-import useFetch from '../../hooks/useFetch'
-import Axios from '../../libs/network'
-import { ButtonWrapper } from '../../components/styled'
+import useFetch from '@/hooks/useFetch'
+import { ButtonWrapper } from '@/components/styled'
+import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import RecommendForm from './form'
@@ -30,7 +30,8 @@ const RecommendPage = () => {
       okType: 'primary',
       cancelText: 'No',
       onOk() {
-        Axios.delete(`/api/admin/v1/recommends/${id}`)
+        axios
+          .delete(`/api/admin/v1/recommends/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success('操作成功!')

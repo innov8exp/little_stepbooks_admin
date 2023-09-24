@@ -1,5 +1,5 @@
 import { DatePicker, Form, Input, message, Modal, Select } from 'antd'
-import axios from '@/libs/network'
+import axios from 'axios'
 import DebounceSelect from '@/components/debounce-select'
 import HttpStatus from 'http-status-codes'
 import moment from 'moment'

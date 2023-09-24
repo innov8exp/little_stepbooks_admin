@@ -1,8 +1,8 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, Card, message, Modal, Table } from 'antd'
-import useFetch from '../../hooks/useFetch'
-import Axios from '../../libs/network'
-import { ButtonWrapper } from '../../components/styled'
+import useFetch from '@/hooks/useFetch'
+import axios from 'axios'
+import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import UserForm from './form'
@@ -28,7 +28,8 @@ const UserPage = () => {
       okType: 'primary',
       cancelText: 'No',
       onOk() {
-        Axios.delete(`/api/admin/v1/users/${id}`)
+        axios
+          .delete(`/api/admin/v1/users/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success('操作成功!')

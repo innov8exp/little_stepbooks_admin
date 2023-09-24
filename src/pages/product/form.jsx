@@ -1,5 +1,5 @@
 import { Form, Input, message, Modal, Select } from 'antd'
-import Axios from '../../libs/network'
+import Axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useEffect } from 'react'
 import PropTypes from 'prop-types'

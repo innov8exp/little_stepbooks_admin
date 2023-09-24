@@ -17,7 +17,7 @@ import {
   Tag,
 } from 'antd'
 // import { Routes } from '../../common/config';
-import axios from '../../libs/network'
+import axios from 'axios'
 import {
   ConditionLeftItem,
   ContentContainer,

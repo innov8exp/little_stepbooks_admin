@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-globals */
 import { InboxOutlined } from '@ant-design/icons'
 import { Alert, message, Modal, Progress, Space, Switch, Upload } from 'antd'
-import axios from '../../libs/network'
+import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button, Form, Input, message } from 'antd'
 import HttpStatus from 'http-status-codes'
-import { Config } from '@/libs/config'
+import Config from '@/libs/config'
 import AuthLayout from '@/auth-layout'
 import {
   AuthCard,
@@ -13,7 +13,7 @@ import {
   SubTitle,
 } from '@/components/auth-styled'
 import { Link, useNavigate } from 'react-router-dom'
-import { useUserInfoStore } from '@/libs/store'
+import useUserInfoStore from '@/stores/useUserInfoStore'
 import { asyncLogin, asyncUserInfo } from '@/libs/http'
 
 const SignInLayout = () => {

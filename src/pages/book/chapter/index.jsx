@@ -6,22 +6,22 @@ import {
   UploadOutlined,
 } from '@ant-design/icons'
 import { Button, Card, Divider, message, Modal, Switch, Table } from 'antd'
-import { Routes } from '../../common/config'
-import axios from '../../common/network'
-import { useQuery } from '../../common/uitls'
+import { Routes } from '@/libs/router'
+import axios from 'axios'
+import useQuery from '@/hooks/useQuery'
 import {
   ConditionItem,
   ConditionLeftItem,
   ContentContainer,
   QueryBtnWrapper,
   StyledCondition,
-} from '../../components/styled'
+} from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import ChapterView from './view'
-import UploadForm from './upload-form'
+import UploadForm from './form'
 
 const { confirm } = Modal
 
@@ -108,13 +108,11 @@ const ChapterPage = () => {
   }
 
   const handleCreateAction = () => {
-    navigate(`${Routes.main.routes.chapterForm.path}?bookId=${queryId}`)
+    navigate(`${Routes.CHAPTER_FORM.path}?bookId=${queryId}`)
   }
 
   const handleEditAction = (id) => {
-    navigate(
-      `${Routes.main.routes.chapterForm.path}?bookId=${queryId}&id=${id}`
-    )
+    navigate(`${Routes.CHAPTER_FORM.path}?bookId=${queryId}&id=${id}`)
   }
 
   const handleViewAction = (id) => {

@@ -1,6 +1,6 @@
 import { Form, Input, message, Modal, Select } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
-import axios from '@/libs/network'
+import axios from 'axios'
 import DebounceSelect from '@/components/debounce-select'
 import HttpStatus from 'http-status-codes'
 import { useEffect } from 'react'

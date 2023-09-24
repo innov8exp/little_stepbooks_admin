@@ -19,10 +19,10 @@ import {
   Skeleton,
   Upload,
 } from 'antd'
-import { Routes } from '../../libs/config'
-import useFetch from '../../hooks/useFetch'
-import axios from '../../libs/network'
-import { useQuery } from '../../hooks/useQuery'
+import { Routes } from '@/libs/router'
+import useFetch from '@/hooks/useFetch'
+import axios from 'axios'
+import { useQuery } from '@/hooks/useQuery'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -124,7 +124,7 @@ const BookForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success('保存成功!')
-          navigate(Routes.main.routes.bookList.path)
+          navigate(Routes.BOOK_LIST.path)
         }
       })
       .catch((err) => {
@@ -143,7 +143,7 @@ const BookForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success('保存成功!')
-          navigate(Routes.main.routes.bookList.path)
+          navigate(Routes.BOOK_LIST.path)
         }
       })
       .catch((err) => {
@@ -230,7 +230,7 @@ const BookForm = () => {
             type='link'
             size='large'
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.main.routes.bookList.path)}
+            onClick={() => navigate(Routes.BOOK_LIST.path)}
           />
           小说编辑
         </>

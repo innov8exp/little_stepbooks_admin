@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { Config } from '@/libs/config'
+import Config from '@/libs/config'
 
 export const useProjectNameStore = create()((set) => ({
   projectName: Config.PROJECT_NAME,

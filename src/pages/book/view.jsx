@@ -1,8 +1,8 @@
 import { LeftCircleOutlined } from '@ant-design/icons'
 import { Button, Card, Divider, Empty, Form, message, Skeleton } from 'antd'
-import { Routes } from '@/libs/config'
+import { Routes } from '@/libs/router'
 import useFetch from '@/hooks/useFetch'
-import axios from '@/libs/network'
+import axios from 'axios'
 import { useQuery } from '@/hooks/useQuery'
 import ViewItem from '@/components/view-item'
 import HttpStatus from 'http-status-codes'
@@ -83,7 +83,7 @@ const BookView = () => {
             type='link'
             size='large'
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.main.routes.bookList.path)}
+            onClick={() => navigate(Routes.BOOK_LIST.path)}
           />
           小说查看
         </>

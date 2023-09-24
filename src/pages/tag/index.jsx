@@ -1,7 +1,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, Card, message, Modal, Table } from 'antd'
 import useFetch from '../../hooks/useFetch'
-import Axios from '../../libs/network'
+import Axios from 'axios'
 import { ButtonWrapper } from '../../components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
