@@ -8,6 +8,7 @@ import { BreadcrumbConfig, MenuItems } from '@/libs/router'
 import { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 const { Sider, Content } = Layout
 
 const ContentHeader = styled.div`
@@ -34,6 +35,7 @@ const Logo = styled.div`
   background-color: #1677ff;
 `
 const AdminLayout = () => {
+  const { t } = useTranslation()
   const [collapsed, setCollapsed] = useState(false)
   const location = useLocation()
   const pathSnippets = location.pathname.split('/').filter((i) => i)
@@ -46,14 +48,14 @@ const AdminLayout = () => {
   // let count = 0;
   const breadcrumbItems = [
     {
-      title: <Link to="/">首页</Link>,
+      title: <Link to="/">{t('page.index')}</Link>,
       key: 'home',
     },
   ]
 
   if (lastUrl.length > 0) {
     lastUrl[0].map((item) => {
-      if (item.parentLabel && item.parentLabel !== '首页') {
+      if (item.parentLabel && item.parentLabel !== t('page.index')) {
         breadcrumbItems.push({
           title: item.parentLabel,
           key: item.parentLabel,

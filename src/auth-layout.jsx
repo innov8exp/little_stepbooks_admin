@@ -1,9 +1,8 @@
-import {} from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
+import PropTypes from 'prop-types'
+import {} from 'react'
+import styled from 'styled-components'
 // import { Config } from "./common/config";
-import bgImg from "./assets/images/cover-login.jpg";
-import EnvFlag from "./components/env-flag";
+import bgImg from './assets/images/cover-login.jpg'
 
 const Container = styled.div`
   width: 100%;
@@ -13,7 +12,7 @@ const Container = styled.div`
   background-position: left;
   background-repeat: no-repeat;
   background-color: #000000;
-`;
+`
 
 const Content = styled.div`
   padding-top: 25rem;
@@ -22,24 +21,18 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-`;
-
+`
 
 const AuthLayout = ({ children }) => {
   return (
     <Container>
-      <Content>
-        {/* <Title>{Config.PROJECT_NAME}</Title> */}
-        {/* <SubTitle>{Config.PROJECT_DESCRIPTION}</SubTitle> */}
-        <div>{children}</div>
-      </Content>
-      <EnvFlag />
+      <Content>{children}</Content>
     </Container>
-  );
-};
+  )
+}
 
 AuthLayout.propTypes = {
   children: PropTypes.node.isRequired,
-};
+}
 
-export default AuthLayout;
+export default AuthLayout

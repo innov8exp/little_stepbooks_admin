@@ -1,41 +1,44 @@
-import { createBrowserRouter } from 'react-router-dom'
 import AdminLayout from '@/admin-layout'
-import Dashboard from '@/pages/dashboard'
-import User from '@/pages/user'
-import Tag from '@/pages/tag'
-import Category from '@/pages/category'
+import Advertisement from '@/pages/advertisement'
+import ForgetPassword from '@/pages/auth/forget-password'
+import SignIn from '@/pages/auth/sign-in'
 import Book from '@/pages/book'
-import BookForm from '@/pages/book/form'
-import BookView from '@/pages/book/view'
 import Chapter from '@/pages/book/chapter'
 import ChapterForm from '@/pages/book/chapter/form'
 import ChapterView from '@/pages/book/chapter/view'
+import BookForm from '@/pages/book/form'
+import BookView from '@/pages/book/view'
+import Category from '@/pages/category'
+import ComingSoon from '@/pages/coming-soon'
 import Comment from '@/pages/comment'
-import Order from '@/pages/order'
 import Consumption from '@/pages/consumption'
+import Dashboard from '@/pages/dashboard'
+import Error from '@/pages/error'
+import Order from '@/pages/order'
 import Product from '@/pages/product'
+import Profile from '@/pages/profile'
 import Promotion from '@/pages/promotion'
 import Recommend from '@/pages/recommend'
-import Advertisement from '@/pages/advertisement'
-import SignIn from '@/pages/auth/sign-in'
-import ComingSoon from '@/pages/coming-soon'
-import Error from '@/pages/error'
+import Tag from '@/pages/tag'
+import User from '@/pages/user'
 import {
-  DashboardOutlined,
-  UserOutlined,
+  AccountBookOutlined,
   BookOutlined,
   CommentOutlined,
-  ShoppingOutlined,
+  DashboardOutlined,
   FundProjectionScreenOutlined,
-  AccountBookOutlined,
   MailOutlined,
-  SmileOutlined,
   SettingOutlined,
+  ShoppingOutlined,
+  SmileOutlined,
+  UserOutlined,
 } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, createBrowserRouter } from 'react-router-dom'
+import i18n from '@/locales/i18n'
 
 export const Routes = {
   DASHBOARD: { path: '/', element: <Dashboard /> },
+  PROFILE: { path: '/profile', element: <Profile /> },
   USER_REPORT: { path: '/user-report', element: <Dashboard /> },
   ORDER_REPORT: { path: '/order-report', element: <Dashboard /> },
   USER_LIST: { path: '/user-list', element: <User /> },
@@ -58,6 +61,7 @@ export const Routes = {
     element: <Advertisement />,
   },
   SIGN_IN: { path: '/sign-in', element: <SignIn /> },
+  FORGET_PASSWORD: { path: '/forget-password', element: <ForgetPassword /> },
   COMING_SOON: { path: '/coming-soon', element: <ComingSoon /> },
 }
 
@@ -149,6 +153,10 @@ export const Router = createBrowserRouter([
         element: Routes.ADVERTISEMENT_LIST.element,
       },
       {
+        path: Routes.PROFILE.path,
+        element: Routes.PROFILE.element,
+      },
+      {
         path: '*',
         element: <ComingSoon />,
       },
@@ -157,6 +165,10 @@ export const Router = createBrowserRouter([
   {
     path: Routes.SIGN_IN.path,
     element: Routes.SIGN_IN.element,
+  },
+  {
+    path: Routes.FORGET_PASSWORD.path,
+    element: Routes.FORGET_PASSWORD.element,
   },
   {
     path: '*',
@@ -174,9 +186,9 @@ function getItem(label, key, icon, children) {
 }
 
 export const MenuItems = [
-  getItem('数据报表', '1', <DashboardOutlined />, [
+  getItem(i18n.t('menu.dashboard'), '1', <DashboardOutlined />, [
     getItem(
-      <Link to={Routes.USER_REPORT.path}>用户报表</Link>,
+      <Link to={Routes.USER_REPORT.path}>{i18n.t('menu.userReport')}</Link>,
       '11',
       <DashboardOutlined />,
     ),

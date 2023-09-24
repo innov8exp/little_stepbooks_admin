@@ -8,21 +8,26 @@ import {
   MainTitle,
   SubTitle,
 } from '@/components/auth-styled'
-import useSession from '@/hooks/useSession'
 import Config from '@/libs/config'
-import { Routes } from '@/libs/router'
 import { Button, Form, Input, message } from 'antd'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Routes } from '@/libs/router'
 
-const SignInPage = () => {
+const ForgetPasswordPage = () => {
   const [form] = Form.useForm()
-  const { loading, setLoading, login } = useSession()
+  const [loading, setLoading] = useState(false)
+
+  const forgetPassword = () => {
+    message.success('请查看邮件！')
+    setLoading(false)
+  }
 
   const onFinish = () => {
     setLoading(true)
     form
       .validateFields()
-      .then((values) => login(values))
+      .then((values) => forgetPassword(values))
       .catch(() => message.error('请检查输入项！'))
   }
   return (
@@ -39,34 +44,22 @@ const SignInPage = () => {
           layout="vertical"
           requiredMark={false}
           form={form}
-          name="login"
+          name="forget password"
           initialValues={{ remember: true }}
           onFinish={onFinish}
         >
-          <Form.Item
-            name="email"
-            label={<LabelText>{'邮箱'}</LabelText>}
-            rules={[
-              {
-                required: true,
-                message: '请输入邮箱',
-              },
-            ]}
-          >
-            <Input size="large" />
-          </Form.Item>
           <CustomFormItem
-            name="password"
+            name="email"
             label={
               <LabelWrapper>
-                <LabelText>{'密码'}</LabelText>
-                <Link to={Routes.FORGET_PASSWORD.path}>{'忘记密码？'}</Link>
+                <LabelText>{'邮箱'}</LabelText>
+                <Link to={Routes.SIGN_IN.path}>{'返回登录'}</Link>
               </LabelWrapper>
             }
             rules={[
               {
                 required: true,
-                message: '请输入密码',
+                message: '请输入邮箱',
               },
             ]}
           >
@@ -80,7 +73,7 @@ const SignInPage = () => {
               block
               style={{ borderRadius: '4px', height: '40px' }}
             >
-              {'登录'}
+              {'找回密码'}
             </Button>
           </Form.Item>
         </Form>
@@ -89,4 +82,4 @@ const SignInPage = () => {
   )
 }
 
-export default SignInPage
+export default ForgetPasswordPage

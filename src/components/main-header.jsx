@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import EnvFlag from '@/components/env-flag'
+import { Routes } from '@/libs/router'
 
 const { Header } = Layout
 
@@ -65,7 +66,7 @@ const MainHeader = ({ onToggleClick }) => {
       key: '1',
       icon: <UserOutlined />,
       label: (
-        <Link to="/main/user">
+        <Link to={Routes.PROFILE.path}>
           <HeaderMenuItem>个人信息</HeaderMenuItem>
         </Link>
       ),
