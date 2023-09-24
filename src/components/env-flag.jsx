@@ -1,20 +1,4 @@
-import {} from 'react'
-import styled from 'styled-components'
-
-const Container = styled.div`
-  position: fixed;
-  top: 50px;
-  right: -70px;
-  width: 300px;
-  height: 30px;
-  line-height: 30px;
-  text-align: center;
-  background-color: red;
-  color: #fff;
-  z-index: 100;
-  transform: rotate(45deg);
-  opacity: 50%;
-`
+import { Space, Tag } from 'antd'
 
 const EnvFlag = () => {
   let developMode = 'LOCAL'
@@ -40,7 +24,11 @@ const EnvFlag = () => {
   if (developMode === 'PROD') {
     return null
   }
-  return <Container>{developMode}</Container>
+  return (
+    <Space>
+      <Tag color="#f50">{developMode}</Tag>
+    </Space>
+  )
 }
 
 export default EnvFlag

@@ -1,13 +1,13 @@
 import { Breadcrumb, Layout, Menu } from 'antd'
 // import { MainRoutes } from './libs/router'
-import EnvFlag from './components/env-flag'
-import MainHeader from './components/main-header'
+
+import Header from './components/main-header'
 // import MainMenu from 'components/main-menu'
+import Config from '@/libs/config'
+import { BreadcrumbConfig, MenuItems } from '@/libs/router'
 import { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { MenuItems, BreadcrumbConfig } from '@/libs/router'
-import Config from '@/libs/config'
 const { Sider, Content } = Layout
 
 const ContentHeader = styled.div`
@@ -34,7 +34,6 @@ const Logo = styled.div`
   background-color: #1677ff;
 `
 const AdminLayout = () => {
-  // console.log("===items===", items);
   const [collapsed, setCollapsed] = useState(false)
   const location = useLocation()
   const pathSnippets = location.pathname.split('/').filter((i) => i)
@@ -47,7 +46,7 @@ const AdminLayout = () => {
   // let count = 0;
   const breadcrumbItems = [
     {
-      title: <Link to='/'>首页</Link>,
+      title: <Link to="/">首页</Link>,
       key: 'home',
     },
   ]
@@ -70,26 +69,26 @@ const AdminLayout = () => {
   return (
     <Layout style={{ height: '100vh' }}>
       <Sider
-        theme='light'
-        breakpoint='sm'
+        theme="light"
+        breakpoint="sm"
         trigger={null}
         collapsible
-        collapsed={collapsed}>
+        collapsed={collapsed}
+      >
         <Logo>
           {collapsed ? Config.PROJECT_NAME_SORT : Config.PROJECT_NAME}
         </Logo>
         <Menu
-          theme='light'
+          theme="light"
           defaultSelectedKeys={['1']}
-          mode='inline'
+          mode="inline"
           items={MenuItems}
         />
       </Sider>
       <Layout>
-        <MainHeader
-          onToggleClick={(collapsedParam) =>
-            setCollapsed(collapsedParam)
-          }></MainHeader>
+        <Header
+          onToggleClick={(collapsedParam) => setCollapsed(collapsedParam)}
+        />
         <ContentHeader>
           <Breadcrumb items={breadcrumbItems} />
         </ContentHeader>
@@ -97,7 +96,6 @@ const AdminLayout = () => {
           <Outlet></Outlet>
         </ContentWrapper>
       </Layout>
-      <EnvFlag />
     </Layout>
   )
 }

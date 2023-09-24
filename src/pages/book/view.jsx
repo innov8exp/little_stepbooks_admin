@@ -3,7 +3,7 @@ import { Button, Card, Divider, Empty, Form, message, Skeleton } from 'antd'
 import { Routes } from '@/libs/router'
 import useFetch from '@/hooks/useFetch'
 import axios from 'axios'
-import { useQuery } from '@/hooks/useQuery'
+import useQuery from '@/hooks/useQuery'
 import ViewItem from '@/components/view-item'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
@@ -66,7 +66,7 @@ const BookView = () => {
       .finally(() => setLoading(false))
     selectedCategoryList(queryId).then((selected) => {
       setSelectCategories(
-        Array.from(new Set(selected.flatMap((mData) => mData.id)))
+        Array.from(new Set(selected.flatMap((mData) => mData.id))),
       )
     })
   }, [queryId])
@@ -80,14 +80,15 @@ const BookView = () => {
       title={
         <>
           <Button
-            type='link'
-            size='large'
+            type="link"
+            size="large"
             icon={<LeftCircleOutlined />}
             onClick={() => navigate(Routes.BOOK_LIST.path)}
           />
           小说查看
         </>
-      }>
+      }
+    >
       {isDisplayForm ? (
         <Skeleton loading={loading} active>
           <Form
@@ -96,40 +97,41 @@ const BookView = () => {
             form={form}
             initialValues={{
               ...initFormData,
-            }}>
-            <Divider orientation='left'>基本信息</Divider>
-            <ViewItem label='书名' value={initFormData?.bookName} />
-            <ViewItem label='作者' value={initFormData?.author} />
+            }}
+          >
+            <Divider orientation="left">基本信息</Divider>
+            <ViewItem label="书名" value={initFormData?.bookName} />
+            <ViewItem label="作者" value={initFormData?.author} />
             <ViewItem
-              label='分类'
+              label="分类"
               value={categoryDict.fetchedData
                 ?.filter((cate) => selectCategories?.includes(cate.id))
                 .map((cate) => cate.categoryName)
                 .join(', ')}
             />
             <ViewItem
-              label='关键词'
+              label="关键词"
               value={initFormData?.keywords?.join(', ')}
             />
-            <ViewItem label='书籍介绍' value={initFormData?.introduction} />
+            <ViewItem label="书籍介绍" value={initFormData?.introduction} />
             <ViewItem
-              label='封面'
+              label="封面"
               value={
-                <img src={imageUrl} alt='avatar' style={{ height: 200 }} />
+                <img src={imageUrl} alt="avatar" style={{ height: 200 }} />
               }
             />
-            <Divider orientation='left'>小说属性</Divider>
+            <Divider orientation="left">小说属性</Divider>
             <ViewItem
-              label='连载'
+              label="连载"
               value={initFormData?.isSerialized ? '是' : '否'}
             />
             <ViewItem
-              label='完结'
+              label="完结"
               value={initFormData?.hasEnding ? '是' : '否'}
             />
-            <Divider orientation='left'>小说状态</Divider>
+            <Divider orientation="left">小说状态</Divider>
             <ViewItem
-              label='状态'
+              label="状态"
               value={initFormData?.status === 'ONLINE' ? '已上架' : '未上架'}
             />
           </Form>

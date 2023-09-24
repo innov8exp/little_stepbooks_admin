@@ -9,7 +9,7 @@ const useFetch = (url, deps) => {
   const [error, setError] = useState()
   useEffect(() => {
     console.log(
-      `sending a http request to URL: ${axios.defaults.baseURL}${url}`
+      `sending a http request to URL: ${axios.defaults.baseURL}${url}`,
     )
     setLoading(true)
     axios
@@ -23,7 +23,7 @@ const useFetch = (url, deps) => {
       .catch((err) => {
         console.error('error message: ', err)
         setError(err)
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(`请求后台服务失败，原因：${err.message}`)
       })
       .then(() => {
         setLoading(false)

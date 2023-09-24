@@ -22,7 +22,7 @@ import {
 import { Routes } from '@/libs/router'
 import useFetch from '@/hooks/useFetch'
 import axios from 'axios'
-import { useQuery } from '@/hooks/useQuery'
+import useQuery from '@/hooks/useQuery'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -227,14 +227,15 @@ const BookForm = () => {
       title={
         <>
           <Button
-            type='link'
-            size='large'
+            type="link"
+            size="large"
             icon={<LeftCircleOutlined />}
             onClick={() => navigate(Routes.BOOK_LIST.path)}
           />
           小说编辑
         </>
-      }>
+      }
+    >
       {isDisplayForm ? (
         <Skeleton loading={loading} active>
           <Form
@@ -243,39 +244,43 @@ const BookForm = () => {
             form={form}
             initialValues={{
               ...initFormData,
-            }}>
-            <Divider orientation='left'>基本信息</Divider>
+            }}
+          >
+            <Divider orientation="left">基本信息</Divider>
             <Form.Item
-              name='bookName'
-              label='书名'
+              name="bookName"
+              label="书名"
               rules={[
                 {
                   required: true,
                   message: '请输入书名',
                 },
-              ]}>
+              ]}
+            >
               <Input />
             </Form.Item>
             <Form.Item
-              name='author'
-              label='作者'
+              name="author"
+              label="作者"
               rules={[
                 {
                   required: true,
                   message: '请输入作者',
                 },
-              ]}>
+              ]}
+            >
               <Input />
             </Form.Item>
             <Form.Item
-              name='categories'
-              label='分类'
+              name="categories"
+              label="分类"
               rules={[
                 {
                   required: true,
                   message: '请选择分类',
                 },
-              ]}>
+              ]}
+            >
               <Checkbox.Group>
                 {categoryDict.fetchedData?.map((cate) => {
                   return (
@@ -286,83 +291,88 @@ const BookForm = () => {
                 })}
               </Checkbox.Group>
             </Form.Item>
-            <Form.Item name='keywords' label='关键词'>
+            <Form.Item name="keywords" label="关键词">
               <Select
-                mode='tags'
+                mode="tags"
                 style={{ width: '100%' }}
-                placeholder='请输入可搜索关键词'
+                placeholder="请输入可搜索关键词"
               />
             </Form.Item>
             <Form.Item
-              name='introduction'
-              label='书籍介绍'
+              name="introduction"
+              label="书籍介绍"
               rules={[
                 {
                   required: true,
                   message: '请输入书籍介绍',
                 },
-              ]}>
+              ]}
+            >
               <TextArea rows={2} style={{ resize: 'none' }} />
             </Form.Item>
             <Form.Item
-              name='coverImg'
-              label='封面'
+              name="coverImg"
+              label="封面"
               rules={[
                 {
                   required: true,
                   message: '请上传封面图片',
                 },
-              ]}>
+              ]}
+            >
               <Input hidden />
               <Upload
-                name='file'
-                listType='picture-card'
+                name="file"
+                listType="picture-card"
                 style={{ width: 240, height: 320 }}
                 showUploadList={false}
                 customRequest={handleUpload}
                 beforeUpload={beforeUpload}
-                onChange={handleUploadChange}>
+                onChange={handleUploadChange}
+              >
                 {imageUrl ? (
-                  <img src={imageUrl} alt='avatar' style={{ width: '100%' }} />
+                  <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
                 ) : (
                   uploadButton
                 )}
               </Upload>
             </Form.Item>
-            <Divider orientation='left'>小说属性</Divider>
+            <Divider orientation="left">小说属性</Divider>
             <Form.Item
-              name='chargeType'
-              label='付费类型'
+              name="chargeType"
+              label="付费类型"
               rules={[
                 {
                   required: true,
                   message: '请选择付费类型',
                 },
-              ]}>
+              ]}
+            >
               <Select>
-                <Option value='FREE'>全部章节免费</Option>
-                <Option value='FULL_CHARGE'>全部章节付费</Option>
-                <Option value='PART_CHARGE'>部分章节付费</Option>
+                <Option value="FREE">全部章节免费</Option>
+                <Option value="FULL_CHARGE">全部章节付费</Option>
+                <Option value="PART_CHARGE">部分章节付费</Option>
               </Select>
             </Form.Item>
             <Form.Item
-              name='price'
-              label='章节单价(书币)'
+              name="price"
+              label="章节单价(书币)"
               rules={[
                 {
                   required: true,
                   message: '请输入单价',
                 },
-              ]}>
-              <Input type='number' />
+              ]}
+            >
+              <Input type="number" />
             </Form.Item>
-            <Form.Item name='isSerialized' label='连载'>
+            <Form.Item name="isSerialized" label="连载">
               <Radio.Group>
                 <Radio value>是</Radio>
                 <Radio value={false}>否</Radio>
               </Radio.Group>
             </Form.Item>
-            <Form.Item name='hasEnding' label='完结'>
+            <Form.Item name="hasEnding" label="完结">
               <Radio.Group>
                 <Radio value>是</Radio>
                 <Radio value={false}>否</Radio>
@@ -370,16 +380,17 @@ const BookForm = () => {
             </Form.Item>
 
             <div style={{ marginTop: 10 }} />
-            <Row justify='end'>
+            <Row justify="end">
               <Col>
-                <Button type='default' onClick={() => form.resetFields()}>
+                <Button type="default" onClick={() => form.resetFields()}>
                   重置
                 </Button>
                 <span style={{ marginRight: 20 }} />
                 <Button
                   loading={saveLoading}
-                  type='primary'
-                  onClick={() => handleSaveAction()}>
+                  type="primary"
+                  onClick={() => handleSaveAction()}
+                >
                   保存数据
                 </Button>
               </Col>

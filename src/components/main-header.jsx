@@ -1,3 +1,4 @@
+import useSession from '@/hooks/useSession'
 import {
   DownOutlined,
   HomeOutlined,
@@ -7,11 +8,11 @@ import {
   SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Dropdown, Layout, Menu } from 'antd'
-// import { useSession } from "../libs/session-context";
-import { useState } from 'react'
+import { Dropdown, Layout, Space } from 'antd'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import EnvFlag from '@/components/env-flag'
 
 const { Header } = Layout
 
@@ -37,12 +38,12 @@ const HeaderMenuItem = styled.span`
   padding: 0 24px 0 6px;
 `
 
-const DropdownLink = styled.span`
-  cursor: pointer;
-  &:hover {
-    color: #3f51b5;
-  }
-`
+// const DropdownLink = styled.span`
+//   cursor: pointer;
+//   &:hover {
+//     color: #3f51b5;
+//   }
+// `
 
 const Trigger = styled.span`
   font-size: 18px;
@@ -57,60 +58,68 @@ const Trigger = styled.span`
 
 const MainHeader = ({ onToggleClick }) => {
   const [collapsed, setCollapsed] = useState(true)
+  const { logout, refreshUserInfo, userInfo } = useSession()
 
-  // const { logout, getUserInfo, session } = useSession();
+  const items = [
+    {
+      key: '1',
+      icon: <UserOutlined />,
+      label: (
+        <Link to="/main/user">
+          <HeaderMenuItem>个人信息</HeaderMenuItem>
+        </Link>
+      ),
+    },
+    {
+      key: '2',
+      icon: <SettingOutlined />,
+      label: (
+        <Link to="/main/setting">
+          <HeaderMenuItem>设置</HeaderMenuItem>
+        </Link>
+      ),
+    },
+    {
+      key: '3',
+      danger: true,
+      icon: <LogoutOutlined />,
+      label: <HeaderMenuItem>登出</HeaderMenuItem>,
+      onClick: logout,
+    },
+  ]
 
   const clickHandler = () => {
     setCollapsed(!collapsed)
     onToggleClick(collapsed)
   }
 
-  const handleLogout = () => {
-    // logout();
-  }
-
-  // useEffect(() => {
-  //   getUserInfo();
-  // }, [getUserInfo]);
+  useEffect(() => {
+    async function fetchData() {
+      await refreshUserInfo()
+    }
+    fetchData()
+  }, [refreshUserInfo])
 
   return (
     <HeaderContainer>
       <Trigger onClick={clickHandler}>
         {collapsed ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
       </Trigger>
+
       <HeaderFuncWrapper>
+        <EnvFlag />
         <Trigger>
-          <Link style={{ color: 'rgba(0, 0, 0, 0.65)' }} to='/'>
+          <Link style={{ color: 'rgba(0, 0, 0, 0.65)' }} to="/">
             <HomeOutlined />
           </Link>
         </Trigger>
-        <Dropdown
-          menu={
-            <Menu>
-              <Menu.Item key='0'>
-                <Link to='/main/user'>
-                  <UserOutlined />
-                  <HeaderMenuItem>个人信息</HeaderMenuItem>
-                </Link>
-              </Menu.Item>
-              <Menu.Item key='1'>
-                <Link to='/main/setting'>
-                  <SettingOutlined />
-                  <HeaderMenuItem>设置</HeaderMenuItem>
-                </Link>
-              </Menu.Item>
-              <Menu.Divider />
-              <Menu.Item key='3' onClick={handleLogout}>
-                <LogoutOutlined />
-                <HeaderMenuItem></HeaderMenuItem>
-              </Menu.Item>
-            </Menu>
-          }
-          placement='bottomRight'>
-          <DropdownLink>
-            {/* {session.username} */}
-            <DownOutlined />
-          </DropdownLink>
+        <Dropdown menu={{ items }}>
+          <a onClick={(e) => e.preventDefault()}>
+            <Space>
+              {userInfo ? userInfo.username : '未登录'}
+              <DownOutlined />
+            </Space>
+          </a>
         </Dropdown>
       </HeaderFuncWrapper>
     </HeaderContainer>

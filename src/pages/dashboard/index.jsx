@@ -1,4 +1,4 @@
-import { Card, Col, Row } from "antd";
+import { Card, Col, Row } from 'antd'
 import {
   BarChart,
   Bar,
@@ -9,15 +9,15 @@ import {
   YAxis,
   Legend,
   Tooltip,
-} from "recharts";
+} from 'recharts'
 
 const data = [
-  { name: "Page A", uv: 400, pv: 2400, amt: 2400 },
-  { name: "Page B", uv: 500, pv: 2500, amt: 2300 },
-  { name: "Page C", uv: 300, pv: 2500, amt: 2300 },
-  { name: "Page D", uv: 800, pv: 4000, amt: 2300 },
-  { name: "Page E", uv: 500, pv: 2500, amt: 2300 },
-];
+  { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
+  { name: 'Page B', uv: 500, pv: 2500, amt: 2300 },
+  { name: 'Page C', uv: 300, pv: 2500, amt: 2300 },
+  { name: 'Page D', uv: 800, pv: 4000, amt: 2300 },
+  { name: 'Page E', uv: 500, pv: 2500, amt: 2300 },
+]
 
 const DashboardPage = () => {
   return (
@@ -42,7 +42,7 @@ const DashboardPage = () => {
               <Tooltip
                 wrapperStyle={{
                   width: 100,
-                  backgroundColor: "#ccc",
+                  backgroundColor: '#ccc',
                 }}
               />
               <Legend
@@ -50,10 +50,10 @@ const DashboardPage = () => {
                 wrapperStyle={{
                   top: 40,
                   right: 20,
-                  backgroundColor: "#f5f5f5",
-                  border: "1px solid #d5d5d5",
+                  backgroundColor: '#f5f5f5',
+                  border: '1px solid #d5d5d5',
                   borderRadius: 3,
-                  lineHeight: "40px",
+                  lineHeight: '40px',
                 }}
               />
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
@@ -63,7 +63,7 @@ const DashboardPage = () => {
         </Col>
       </Row>
     </div>
-  );
-};
+  )
+}
 
-export default DashboardPage;
+export default DashboardPage

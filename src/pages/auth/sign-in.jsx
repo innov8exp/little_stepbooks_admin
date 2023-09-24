@@ -1,58 +1,21 @@
-import { useState } from 'react'
-import { Button, Form, Input, message } from 'antd'
-import HttpStatus from 'http-status-codes'
-import Config from '@/libs/config'
 import AuthLayout from '@/auth-layout'
 import {
   AuthCard,
   CardHeader,
-  LabelText,
   CustomFormItem,
+  LabelText,
   LabelWrapper,
   MainTitle,
   SubTitle,
 } from '@/components/auth-styled'
-import { Link, useNavigate } from 'react-router-dom'
-import useUserInfoStore from '@/stores/useUserInfoStore'
-import { asyncLogin, asyncUserInfo } from '@/libs/http'
+import useSession from '@/hooks/useSession'
+import Config from '@/libs/config'
+import { Button, Form, Input, message } from 'antd'
+import { Link } from 'react-router-dom'
 
 const SignInLayout = () => {
-  const [loading, setLoading] = useState(false)
-  const { setUserInfo } = useUserInfoStore()
-  const navigate = useNavigate()
   const [form] = Form.useForm()
-  const storeUserInfo = async () => {
-    try {
-      const resp = await asyncUserInfo
-      setUserInfo(resp.data)
-      navigate('/')
-    } catch (err) {
-      if (err.response.status === HttpStatus.UNAUTHORIZED) {
-        message.error('获取授权失败，请重新登录！')
-      } else {
-        message.error('服务器连接异常！')
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const login = async (values) => {
-    try {
-      const resp = await asyncLogin(values)
-      if (resp.status === HttpStatus.OK) {
-        await storeUserInfo()
-      }
-    } catch (error) {
-      if (error.response.status === HttpStatus.UNAUTHORIZED) {
-        message.error('邮箱地址或密码错误，请重新输入！')
-      } else {
-        message.error('服务器连接异常！')
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { loading, setLoading, login } = useSession()
 
   const onFinish = () => {
     setLoading(true)
@@ -66,31 +29,34 @@ const SignInLayout = () => {
     <AuthLayout>
       <AuthCard
         bodyStyle={{ padding: '48px', margin: '0 auto' }}
-        bordered={false}>
+        bordered={false}
+      >
         <CardHeader>
           <MainTitle>{Config.PROJECT_NAME}</MainTitle>
           <SubTitle>{Config.PROJECT_DESCRIPTION}</SubTitle>
         </CardHeader>
         <Form
-          layout='vertical'
+          layout="vertical"
           requiredMark={false}
           form={form}
-          name='login'
+          name="login"
           initialValues={{ remember: true }}
-          onFinish={onFinish}>
+          onFinish={onFinish}
+        >
           <Form.Item
-            name='email'
+            name="email"
             label={<LabelText>{'邮箱'}</LabelText>}
             rules={[
               {
                 required: true,
                 message: '请输入邮箱',
               },
-            ]}>
-            <Input size='large' />
+            ]}
+          >
+            <Input size="large" />
           </Form.Item>
           <CustomFormItem
-            name='password'
+            name="password"
             label={
               <LabelWrapper>
                 <LabelText>{'密码'}</LabelText>
@@ -102,16 +68,18 @@ const SignInLayout = () => {
                 required: true,
                 message: '请输入密码',
               },
-            ]}>
-            <Input.Password size='large' />
+            ]}
+          >
+            <Input.Password size="large" />
           </CustomFormItem>
           <Form.Item wrapperCol={{ span: 24 }}>
             <Button
-              type='primary'
+              type="primary"
               loading={loading}
-              htmlType='submit'
+              htmlType="submit"
               block
-              style={{ borderRadius: '4px', height: '40px' }}>
+              style={{ borderRadius: '4px', height: '40px' }}
+            >
               {'登录'}
             </Button>
           </Form.Item>
