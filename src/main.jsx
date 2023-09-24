@@ -12,5 +12,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ConfigProvider locale={zhCN}>
       <RouterProvider router={Router} />
     </ConfigProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 )
