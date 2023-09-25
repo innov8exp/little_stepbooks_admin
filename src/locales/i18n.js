@@ -15,7 +15,7 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
-    lng: 'zh_CN',
+    lng: localStorage.getItem('language') || 'zh_CN',
     fallbackLng: 'en_US',
     resources: resources,
   })

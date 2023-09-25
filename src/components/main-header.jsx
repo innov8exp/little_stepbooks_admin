@@ -15,9 +15,8 @@ import styled from 'styled-components'
 import EnvFlag from '@/components/env-flag'
 import { Routes } from '@/libs/router'
 import { Radio } from 'antd'
-import enUS from 'antd/locale/en_US'
-import zhCN from 'antd/locale/zh_CN'
 import i18n from '@/locales/i18n'
+import useLanguage from '@/stores/useLanguage'
 const { Header } = Layout
 
 const HeaderContainer = styled(Header)`
@@ -61,16 +60,15 @@ const Trigger = styled.span`
 `
 
 const MainHeader = ({ onToggleClick }) => {
+  const { language, setLanguage } = useLanguage()
   const [collapsed, setCollapsed] = useState(true)
   const { logout, refreshUserInfo, userInfo } = useSession()
-
-  const [locale, setLocal] = useState(zhCN)
 
   // const { locales, inc } = useStore()
 
   const changeLocale = (e) => {
     const localeValue = e.target.value
-    setLocal(localeValue)
+    setLanguage(localeValue)
     i18n.changeLanguage(localeValue)
   }
 
@@ -135,11 +133,11 @@ const MainHeader = ({ onToggleClick }) => {
             </Space>
           </a>
         </Dropdown>
-        <Radio.Group value={locale} onChange={changeLocale}>
-          <Radio.Button key="en" value={enUS}>
+        <Radio.Group value={language} onChange={changeLocale}>
+          <Radio.Button key="en" value="en_US">
             English
           </Radio.Button>
-          <Radio.Button key="cn" value={zhCN}>
+          <Radio.Button key="cn" value="zh_CN">
             中文
           </Radio.Button>
         </Radio.Group>

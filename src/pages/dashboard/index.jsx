@@ -10,7 +10,7 @@ import {
   Legend,
   Tooltip,
 } from 'recharts'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -21,11 +21,12 @@ const data = [
 ]
 
 const DashboardPage = () => {
+  const { t } = useTranslation()
   return (
     <div>
       <Row>
         <Col span={12} style={{ padding: 5 }}>
-          <Card title={i18n.t('title.userStatistics')}>
+          <Card title={t('title.userStatistics')}>
             <LineChart width={600} height={300} data={data}>
               <Line type="monotone" dataKey="uv" stroke="#8884d8" />
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
@@ -36,7 +37,7 @@ const DashboardPage = () => {
           </Card>
         </Col>
         <Col span={12} style={{ padding: 5 }}>
-          <Card title={i18n.t('title.orderStatistics')}>
+          <Card title={t('title.orderStatistics')}>
             <BarChart width={600} height={300} data={data}>
               <XAxis dataKey="name" stroke="#8884d8" />
               <YAxis />

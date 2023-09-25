@@ -6,11 +6,12 @@ import { ButtonWrapper } from '../../components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import TagForm from './form'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
 const TagPage = () => {
+  const { t } = useTranslation()
   const [changeTime, setChangeTime] = useState(Date.now())
   const { loading, fetchedData } = useFetch(`/api/admin/v1/tags`, [changeTime])
   const [formVisible, setFormVisible] = useState(false)
@@ -32,7 +33,7 @@ const TagPage = () => {
         Axios.delete(`/api/admin/v1/tags/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success(i18n.t('message.successInfo'))
+              message.success(t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -45,7 +46,7 @@ const TagPage = () => {
   }
 
   return (
-    <Card title={i18n.t('title.LabelManagement')}>
+    <Card title={t('title.LabelManagement')}>
       <ButtonWrapper>
         <Button
           type="primary"
@@ -54,7 +55,7 @@ const TagPage = () => {
             setFormVisible(true)
           }}
         >
-          {i18n.t('button.create')}
+          {t('button.create')}
         </Button>
       </ButtonWrapper>
       <Table
@@ -85,13 +86,13 @@ const TagPage = () => {
                     onClick={() => handleEditAction(record.id)}
                     type="link"
                   >
-                    {i18n.t('button.edit')}
+                    {t('button.edit')}
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
                     type="link"
                   >
-                    {i18n.t('button.delete')}
+                    {t('button.delete')}
                   </Button>
                 </div>
               )

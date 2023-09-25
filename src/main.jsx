@@ -1,17 +1,12 @@
+import '@/libs/network'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ConfigProvider } from 'antd'
-import zhCN from 'antd/locale/zh_CN'
-import { RouterProvider } from 'react-router-dom'
-import { Router } from '@/libs/router'
-import '@/libs/network'
-import './locales/i18n'
+import App from './app'
 import './index.css'
+import './locales/i18n'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ConfigProvider locale={zhCN}>
-      <RouterProvider router={Router} />
-    </ConfigProvider>
+    <App />
   </React.StrictMode>,
 )
