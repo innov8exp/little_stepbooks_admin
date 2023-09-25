@@ -5,6 +5,7 @@ import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import i18n from '@/locales/i18n'
 
 const { Dragger } = Upload
 
@@ -38,19 +39,23 @@ const UploadForm = (bookId, visible, onCancel) => {
             setUploadStatus('active')
           },
           headers: { 'content-type': 'multipart/form-data' },
-        }
+        },
       )
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           onSuccess()
           setUploadStatus('success')
-          message.success('解析成功!')
+          message.success(`${i18n.t('message.successInfo.parsedSuccessfully')}`)
         }
       })
       .catch((err) => {
         onError(err)
         setUploadStatus('exception')
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        )
       })
       .finally(() => {
         setLoading(false)
@@ -61,11 +66,11 @@ const UploadForm = (bookId, visible, onCancel) => {
     setLoading(true)
     const isJpgOrPng = file.type === 'text/plain'
     if (!isJpgOrPng) {
-      message.error('请上传TXT格式的文件!')
+      message.error(`${i18n.t('message.error.uploadType')}`)
     }
     const isLt50M = file.size / 1024 / 1024 < 50
     if (!isLt50M) {
-      message.error('文件必须小于 50MB!')
+      message.error(`${i18n.t('message.error.fileSize')}`)
     }
     setLoading(isJpgOrPng && isLt50M)
     return isJpgOrPng && isLt50M
@@ -88,14 +93,15 @@ const UploadForm = (bookId, visible, onCancel) => {
   return (
     <Modal
       open={visible}
-      title='上传文件'
+      title="上传文件"
       onCancel={() => {
         clear()
         onCancel()
       }}
       footer={false}
       width={640}
-      style={{ position: 'relative' }}>
+      style={{ position: 'relative' }}
+    >
       {loading ? (
         <CenterWrapper>
           <Progress
@@ -111,14 +117,14 @@ const UploadForm = (bookId, visible, onCancel) => {
       ) : (
         ''
       )}
-      <Space direction='vertical' style={{ width: '100%' }}>
+      <Space direction="vertical" style={{ width: '100%' }}>
         <Alert
-          message='全新上传：删除所有已存在章节，并上传。续传已有：保留现有章节，并上传'
-          type='info'
+          message="全新上传：删除所有已存在章节，并上传。续传已有：保留现有章节，并上传"
+          type="info"
         />
         <Switch
-          checkedChildren='续传已有'
-          unCheckedChildren='全新上传'
+          checkedChildren="续传已有"
+          unCheckedChildren="全新上传"
           defaultChecked
           onChange={(value) =>
             value ? setUploadType('CONTINUE') : setUploadType('NEW')
@@ -127,11 +133,12 @@ const UploadForm = (bookId, visible, onCancel) => {
         <Dragger
           customRequest={handleUpload}
           showUploadList={false}
-          beforeUpload={beforeUpload}>
-          <p className='ant-upload-drag-icon'>
+          beforeUpload={beforeUpload}
+        >
+          <p className="ant-upload-drag-icon">
             <InboxOutlined />
           </p>
-          <p className='ant-upload-text'>点击或拖拽文件到此区域上传</p>
+          <p className="ant-upload-text">点击或拖拽文件到此区域上传</p>
         </Dragger>
       </Space>
     </Modal>

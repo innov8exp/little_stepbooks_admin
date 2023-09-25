@@ -2,6 +2,7 @@ import { Empty, message, Select, Space, Spin } from 'antd'
 import debounce from 'lodash/debounce'
 import PropTypes from 'prop-types'
 import React from 'react'
+import i18n from '@/locales/i18n'
 
 const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
   const [fetching, setFetching] = React.useState(false)
@@ -26,7 +27,11 @@ const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
           setFetching(false)
         })
         .catch((err) =>
-          message.error(`操作失败，原因：${err.response?.data?.message}`)
+          message.error(
+            `${i18n.t('message.error.failureReason')}${
+              err.response?.data?.message
+            }`,
+          ),
         )
     }
 
@@ -41,7 +46,7 @@ const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
       notFoundContent={
         fetching ? (
           <Space>
-            <Spin size='small' />
+            <Spin size="small" />
             <span>搜索中...</span>
           </Space>
         ) : (

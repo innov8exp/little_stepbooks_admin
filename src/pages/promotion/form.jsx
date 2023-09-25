@@ -5,6 +5,7 @@ import HttpStatus from 'http-status-codes'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import i18n from '@/locales/i18n'
 
 const { Option } = Select
 
@@ -19,7 +20,7 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
     return new Promise((resolve, reject) => {
       axios
         .get(
-          `/api/admin/v1/books/search?bookName=${value}&currentPage=1&pageSize=10`
+          `/api/admin/v1/books/search?bookName=${value}&currentPage=1&pageSize=10`,
         )
         .then((res) => {
           if (res.status === HttpStatus.OK) {
@@ -82,7 +83,7 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success('操作成功!')
+          message.success(i18n.t('message.successInfo'))
           onSave()
         }
       })
@@ -101,7 +102,7 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success('操作成功!')
+          message.success(i18n.t('message.successInfo'))
           onSave()
         }
       })
@@ -127,45 +128,49 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={640}
       style={{ maxHeight: 500 }}
-      title='促销表单'
-      okText='保存'
-      cancelText='取消'
+      title="促销表单"
+      okText="保存"
+      cancelText="取消"
       onCancel={onCancel}
-      onOk={okHandler}>
+      onOk={okHandler}
+    >
       <Form
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 14 }}
-        layout='horizontal'
+        layout="horizontal"
         form={form}
-        name='form_in_modal'>
-        <Form.Item name='bookId' hidden>
+        name="form_in_modal"
+      >
+        <Form.Item name="bookId" hidden>
           <Input />
         </Form.Item>
         <Form.Item
-          name='bookName'
-          label='书籍'
+          name="bookName"
+          label="书籍"
           rules={[
             {
               required: true,
               message: '请选择书籍',
             },
-          ]}>
+          ]}
+        >
           <DebounceSelect
             showSearch
             fetchOptions={fetchBook}
-            placeholder='请输入书籍名称搜索'
+            placeholder="请输入书籍名称搜索"
             onChange={(option) => handleSelectChangeAction(option)}
           />
         </Form.Item>
         <Form.Item
-          name='promotionType'
-          label='促销类型'
+          name="promotionType"
+          label="促销类型"
           rules={[
             {
               required: true,
               message: '请选择促销类型',
             },
-          ]}>
+          ]}
+        >
           <Select
             onChange={(value) => {
               setPromotionType(value)
@@ -177,25 +182,27 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
               } else {
                 form.setFieldsValue({ discountPercent: '' })
               }
-            }}>
-            <Option value='LIMIT_FREE'>限时免费</Option>
-            <Option value='LIMIT_DISCOUNT'>限时折扣</Option>
+            }}
+          >
+            <Option value="LIMIT_FREE">限时免费</Option>
+            <Option value="LIMIT_DISCOUNT">限时折扣</Option>
           </Select>
         </Form.Item>
-        <Form.Item name='originalCoinAmount' label='章节原价（书币）'>
-          <Input type='number' readOnly />
+        <Form.Item name="originalCoinAmount" label="章节原价（书币）">
+          <Input type="number" readOnly />
         </Form.Item>
         <Form.Item
-          name='discountPercent'
-          label='折扣%'
+          name="discountPercent"
+          label="折扣%"
           rules={[
             {
               required: true,
               message: '请输入折扣%',
             },
-          ]}>
+          ]}
+        >
           <Input
-            type='number'
+            type="number"
             readOnly={promotionType === 'LIMIT_FREE'}
             onChange={() => {
               const value = form.getFieldValue('discountPercent')
@@ -207,18 +214,19 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
             }}
           />
         </Form.Item>
-        <Form.Item name='coinAmount' label='折扣后章节单价（书币）'>
-          <Input type='number' readOnly />
+        <Form.Item name="coinAmount" label="折扣后章节单价（书币）">
+          <Input type="number" readOnly />
         </Form.Item>
         <Form.Item
-          name='timeRange'
-          label='促销时间'
+          name="timeRange"
+          label="促销时间"
           rules={[
             {
               required: true,
               message: '请选择促销时间',
             },
-          ]}>
+          ]}
+        >
           <DatePicker.RangePicker
             disabledDate={disabledDate}
             showTime={{
@@ -228,7 +236,7 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
                 moment('11:59:59', 'HH:mm:ss'),
               ],
             }}
-            format='YYYY-MM-DD HH:mm:ss'
+            format="YYYY-MM-DD HH:mm:ss"
           />
         </Form.Item>
       </Form>

@@ -71,7 +71,11 @@ const ConsumptionPage = () => {
         }
       })
       .catch((err) =>
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        ),
       )
       .finally(() => setLoading(false))
   }, [
@@ -100,7 +104,11 @@ const ConsumptionPage = () => {
             }
           })
           .catch((err) => {
-            message.error(`操作失败，原因：${err.response?.data?.message}`)
+            message.error(
+              `${i18n.t('message.error.failureReason')}${
+                err.response?.data?.message
+              }`,
+            )
           })
       },
     })
@@ -130,26 +138,27 @@ const ConsumptionPage = () => {
   }, [fetchConsumptions, pageNumber, changeTimestamp])
 
   return (
-    <Card title='消费明细'>
+    <Card title="消费明细">
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}
         form={queryForm}
-        initialValues={{ category: '', status: '' }}>
+        initialValues={{ category: '', status: '' }}
+      >
         <Row>
           <Col span={6}>
-            <Form.Item label='订单编号' name='consumeOrderNo'>
-              <Input placeholder='请输入订单编号' />
+            <Form.Item label="订单编号" name="consumeOrderNo">
+              <Input placeholder="请输入订单编号" />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label='书籍名称' name='bookName'>
-              <Input placeholder='请输入书籍名称' />
+            <Form.Item label="书籍名称" name="bookName">
+              <Input placeholder="请输入书籍名称" />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label='用户名' name='username'>
-              <Input placeholder='请输入用户名' />
+            <Form.Item label="用户名" name="username">
+              <Input placeholder="请输入用户名" />
             </Form.Item>
           </Col>
         </Row>
@@ -161,16 +170,18 @@ const ConsumptionPage = () => {
             <ConditionLeftItem>
               <Button
                 icon={<UndoOutlined />}
-                type='default'
-                onClick={handleReset}>
+                type="default"
+                onClick={handleReset}
+              >
                 重置
               </Button>
             </ConditionLeftItem>
             <ConditionLeftItem>
               <Button
                 icon={<SearchOutlined />}
-                type='primary'
-                onClick={handleQuery}>
+                type="primary"
+                onClick={handleQuery}
+              >
                 查询
               </Button>
             </ConditionLeftItem>
@@ -256,11 +267,12 @@ const ConsumptionPage = () => {
                                             编辑
                                         </Button> */}
 
-                    <Divider type='vertical' />
+                    <Divider type="vertical" />
                     <Button
-                      type='link'
+                      type="link"
                       danger
-                      onClick={() => handleDeleteAction(record.id)}>
+                      onClick={() => handleDeleteAction(record.id)}
+                    >
                       删除
                     </Button>
                   </div>

@@ -6,6 +6,7 @@ import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import RecommendForm from './form'
+import i18n from '@/locales/i18n'
 
 const { confirm } = Modal
 
@@ -34,7 +35,7 @@ const RecommendPage = () => {
           .delete(`/api/admin/v1/recommends/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success('操作成功!')
+              message.success(i18n.t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -47,14 +48,15 @@ const RecommendPage = () => {
   }
 
   return (
-    <Card title='首页推荐设置'>
+    <Card title="首页推荐设置">
       <ButtonWrapper>
         <Button
-          type='primary'
+          type="primary"
           onClick={() => {
             setSelectedId(undefined)
             setFormVisible(true)
-          }}>
+          }}
+        >
           新建
         </Button>
       </ButtonWrapper>
@@ -101,10 +103,10 @@ const RecommendPage = () => {
             render: (text) => {
               console.log(text)
               if (text === 'TODAY') {
-                return <Tag color='green'>今日推荐</Tag>
+                return <Tag color="green">今日推荐</Tag>
               }
               if (text === 'TOP_SEARCH') {
-                return <Tag color='green'>热搜推荐</Tag>
+                return <Tag color="green">热搜推荐</Tag>
               }
               return <span />
             },
@@ -126,7 +128,8 @@ const RecommendPage = () => {
                                     </Button> */}
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
-                    type='link'>
+                    type="link"
+                  >
                     删除
                   </Button>
                 </div>

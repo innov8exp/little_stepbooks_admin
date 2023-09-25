@@ -6,6 +6,7 @@ import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import ProductForm from './form'
+import i18n from '@/locales/i18n'
 
 const { confirm } = Modal
 
@@ -34,7 +35,7 @@ const ProductPage = () => {
           .delete(`/api/admin/v1/products/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success('操作成功!')
+              message.success(i18n.t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -47,14 +48,15 @@ const ProductPage = () => {
   }
 
   return (
-    <Card title='产品套餐管理'>
+    <Card title="产品套餐管理">
       <ButtonWrapper>
         <Button
-          type='primary'
+          type="primary"
           onClick={() => {
             setSelectedId(undefined)
             setFormVisible(true)
-          }}>
+          }}
+        >
           新建
         </Button>
       </ButtonWrapper>
@@ -100,12 +102,14 @@ const ProductPage = () => {
                 <div>
                   <Button
                     onClick={() => handleEditAction(record.id)}
-                    type='link'>
+                    type="link"
+                  >
                     编辑
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
-                    type='link'>
+                    type="link"
+                  >
                     删除
                   </Button>
                 </div>

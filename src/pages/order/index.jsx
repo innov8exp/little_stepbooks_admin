@@ -26,6 +26,7 @@ import {
 } from '../../components/styled'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
+import i18n from '@/locales/i18n'
 // import { useHistory } from 'react-router-dom';
 
 const { confirm } = Modal
@@ -69,7 +70,11 @@ const OrderPage = () => {
         }
       })
       .catch((err) =>
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        ),
       )
       .finally(() => setLoading(false))
   }, [pageNumber, pageSize, queryCriteria?.orderNo, queryCriteria?.username])
@@ -88,11 +93,15 @@ const OrderPage = () => {
             if (res.status === HttpStatus.OK) {
               const timestamp = new Date().getTime()
               setChangeTimestamp(timestamp)
-              message.success('操作成功!')
+              message.success(i18n.t('message.successInfo'))
             }
           })
           .catch((err) => {
-            message.error(`操作失败，原因：${err.response?.data?.message}`)
+            message.error(
+              `${i18n.t('message.error.failureReason')}${
+                err.response?.data?.message
+              }`,
+            )
           })
       },
     })
@@ -122,21 +131,22 @@ const OrderPage = () => {
   }, [fetchOrders, pageNumber, changeTimestamp])
 
   return (
-    <Card title='订单管理'>
+    <Card title="订单管理">
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}
         form={queryForm}
-        initialValues={{ category: '', status: '' }}>
+        initialValues={{ category: '', status: '' }}
+      >
         <Row>
           <Col span={6}>
-            <Form.Item label='订单编号' name='orderNo'>
-              <Input placeholder='请输入订单编号' />
+            <Form.Item label="订单编号" name="orderNo">
+              <Input placeholder="请输入订单编号" />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label='用户' name='username'>
-              <Input placeholder='请输入用户名' />
+            <Form.Item label="用户" name="username">
+              <Input placeholder="请输入用户名" />
             </Form.Item>
           </Col>
         </Row>
@@ -148,16 +158,18 @@ const OrderPage = () => {
             <ConditionLeftItem>
               <Button
                 icon={<UndoOutlined />}
-                type='default'
-                onClick={handleReset}>
+                type="default"
+                onClick={handleReset}
+              >
                 重置
               </Button>
             </ConditionLeftItem>
             <ConditionLeftItem>
               <Button
                 icon={<SearchOutlined />}
-                type='primary'
-                onClick={handleQuery}>
+                type="primary"
+                onClick={handleQuery}
+              >
                 查询
               </Button>
             </ConditionLeftItem>
@@ -213,9 +225,9 @@ const OrderPage = () => {
               dataIndex: 'status',
               render: (text) => {
                 return text === 'PAID' ? (
-                  <Tag color='green'>已支付</Tag>
+                  <Tag color="green">已支付</Tag>
                 ) : (
-                  <Tag color='red'>未支付</Tag>
+                  <Tag color="red">未支付</Tag>
                 )
               },
             },
@@ -234,11 +246,12 @@ const OrderPage = () => {
                                             编辑
                                         </Button> */}
 
-                    <Divider type='vertical' />
+                    <Divider type="vertical" />
                     <Button
-                      type='link'
+                      type="link"
                       danger
-                      onClick={() => handleDeleteAction(record.id)}>
+                      onClick={() => handleDeleteAction(record.id)}
+                    >
                       删除
                     </Button>
                   </div>

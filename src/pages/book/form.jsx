@@ -26,6 +26,7 @@ import useQuery from '@/hooks/useQuery'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import i18n from '@/locales/i18n'
 
 const { Option } = Select
 const { TextArea } = Input
@@ -79,7 +80,11 @@ const BookForm = () => {
           }
         })
         .catch((err) => {
-          message.error(`操作失败，原因：${err.response?.data?.message}`)
+          message.error(
+            `${i18n.t('message.error.failureReason')}${
+              err.response?.data?.message
+            }`,
+          )
           reject(err)
         })
     })
@@ -104,7 +109,11 @@ const BookForm = () => {
         }
       })
       .catch((err) => {
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        )
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
@@ -128,7 +137,11 @@ const BookForm = () => {
         }
       })
       .catch((err) => {
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        )
       })
       .finally(() => setSaveLoading(false))
   }
@@ -147,7 +160,11 @@ const BookForm = () => {
         }
       })
       .catch((err) => {
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        )
       })
       .finally(() => setSaveLoading(false))
   }
@@ -211,7 +228,11 @@ const BookForm = () => {
       })
       .catch((err) => {
         onError(err)
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        )
       })
       .finally(() => {
         setLoading(false)
@@ -232,7 +253,7 @@ const BookForm = () => {
             icon={<LeftCircleOutlined />}
             onClick={() => navigate(Routes.BOOK_LIST.path)}
           />
-          小说编辑
+          {i18n.t('button.bookEditing')}
         </>
       }
     >
@@ -249,11 +270,11 @@ const BookForm = () => {
             <Divider orientation="left">基本信息</Divider>
             <Form.Item
               name="bookName"
-              label="书名"
+              label={i18n.t('bookName')}
               rules={[
                 {
                   required: true,
-                  message: '请输入书名',
+                  message: `${i18n.t('message.check.bookName')}`,
                 },
               ]}
             >
@@ -261,11 +282,11 @@ const BookForm = () => {
             </Form.Item>
             <Form.Item
               name="author"
-              label="作者"
+              label={i18n.t('title.author')}
               rules={[
                 {
                   required: true,
-                  message: '请输入作者',
+                  message: `${i18n.t('message.check.enterAuthor')}`,
                 },
               ]}
             >
@@ -273,11 +294,11 @@ const BookForm = () => {
             </Form.Item>
             <Form.Item
               name="categories"
-              label="分类"
+              label={i18n.t('title.classification')}
               rules={[
                 {
                   required: true,
-                  message: '请选择分类',
+                  message: `${i18n.t('message.check.selectClassification')}`,
                 },
               ]}
             >
@@ -291,20 +312,20 @@ const BookForm = () => {
                 })}
               </Checkbox.Group>
             </Form.Item>
-            <Form.Item name="keywords" label="关键词">
+            <Form.Item name="keywords" label={i18n.t('title.keyword')}>
               <Select
                 mode="tags"
                 style={{ width: '100%' }}
-                placeholder="请输入可搜索关键词"
+                placeholder={i18n.t('message.check.searchKeywords')}
               />
             </Form.Item>
             <Form.Item
               name="introduction"
-              label="书籍介绍"
+              label={i18n.t('title.bookIntroduction')}
               rules={[
                 {
                   required: true,
-                  message: '请输入书籍介绍',
+                  message: `${i18n.t('message.check.bookIntroduction')}`,
                 },
               ]}
             >
@@ -312,11 +333,11 @@ const BookForm = () => {
             </Form.Item>
             <Form.Item
               name="coverImg"
-              label="封面"
+              label={i18n.t('title.cover')}
               rules={[
                 {
                   required: true,
-                  message: '请上传封面图片',
+                  message: `${i18n.t('message.check.uploadCoverImage')}`,
                 },
               ]}
             >
@@ -337,45 +358,57 @@ const BookForm = () => {
                 )}
               </Upload>
             </Form.Item>
-            <Divider orientation="left">小说属性</Divider>
+            <Divider orientation="left">
+              {i18n.t('title.bookProperties')}
+            </Divider>
             <Form.Item
               name="chargeType"
-              label="付费类型"
+              label={i18n.t('title.paymentType')}
               rules={[
                 {
                   required: true,
-                  message: '请选择付费类型',
+                  message: `${i18n.t('message.check.selectPaymentType')} `,
                 },
               ]}
             >
               <Select>
-                <Option value="FREE">全部章节免费</Option>
-                <Option value="FULL_CHARGE">全部章节付费</Option>
-                <Option value="PART_CHARGE">部分章节付费</Option>
+                <Option value="FREE">
+                  {i18n.t('select.option.allChapterFree')}
+                </Option>
+                <Option value="FULL_CHARGE">
+                  {i18n.t('select.option.allChapterPay')}
+                </Option>
+                <Option value="PART_CHARGE">
+                  {' '}
+                  {i18n.t('select.option.PartialChapterPay')}
+                </Option>
               </Select>
             </Form.Item>
             <Form.Item
               name="price"
-              label="章节单价(书币)"
+              label={i18n.t('title.chapterUnitPrice')}
               rules={[
                 {
                   required: true,
-                  message: '请输入单价',
+                  message: `${i18n.t('message.check.unitPrice')}`,
                 },
               ]}
             >
               <Input type="number" />
             </Form.Item>
-            <Form.Item name="isSerialized" label="连载">
+            <Form.Item
+              name="isSerialized"
+              label={i18n.t('title.publishInInstalments')}
+            >
               <Radio.Group>
-                <Radio value>是</Radio>
-                <Radio value={false}>否</Radio>
+                <Radio value>{i18n.t('radio.label.yes')}</Radio>
+                <Radio value={false}>{i18n.t('radio.label.deny')}</Radio>
               </Radio.Group>
             </Form.Item>
-            <Form.Item name="hasEnding" label="完结">
+            <Form.Item name="hasEnding" label={i18n.t('title.end')}>
               <Radio.Group>
-                <Radio value>是</Radio>
-                <Radio value={false}>否</Radio>
+                <Radio value>{i18n.t('radio.label.yes')}</Radio>
+                <Radio value={false}>{i18n.t('radio.label.deny')}</Radio>
               </Radio.Group>
             </Form.Item>
 
@@ -383,7 +416,7 @@ const BookForm = () => {
             <Row justify="end">
               <Col>
                 <Button type="default" onClick={() => form.resetFields()}>
-                  重置
+                  {i18n.t('button.reset')}
                 </Button>
                 <span style={{ marginRight: 20 }} />
                 <Button
@@ -391,14 +424,14 @@ const BookForm = () => {
                   type="primary"
                   onClick={() => handleSaveAction()}
                 >
-                  保存数据
+                  {i18n.t('button.saveData')}
                 </Button>
               </Col>
             </Row>
           </Form>
         </Skeleton>
       ) : (
-        <Empty description={<span>获取信息失败</span>} />
+        <Empty description={<span>{i18n.t('message.error.failure')}</span>} />
       )}
     </Card>
   )

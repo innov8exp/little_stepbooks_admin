@@ -6,6 +6,7 @@ import DebounceSelect from '@/components/debounce-select'
 import HttpStatus from 'http-status-codes'
 import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import i18n from '@/locales/i18n'
 
 const { Option } = Select
 
@@ -60,7 +61,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success('操作成功!')
+          message.success(i18n.t('message.successInfo'))
           onSave()
         }
       })
@@ -77,7 +78,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success('操作成功!')
+          message.success(i18n.t('message.successInfo'))
           onSave()
         }
       })
@@ -165,7 +166,11 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       })
       .catch((err) => {
         onError(err)
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        )
       })
   }
   return (
@@ -173,72 +178,77 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={640}
       style={{ maxHeight: 500 }}
-      title='广告表单'
-      okText='保存'
-      cancelText='取消'
+      title="广告表单"
+      okText="保存"
+      cancelText="取消"
       onCancel={onCancel}
-      onOk={okHandler}>
+      onOk={okHandler}
+    >
       <Form
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 14 }}
-        layout='horizontal'
+        layout="horizontal"
         form={form}
-        name='form_in_modal'>
-        <Form.Item name='bookId' hidden>
+        name="form_in_modal"
+      >
+        <Form.Item name="bookId" hidden>
           <Input />
         </Form.Item>
         <Form.Item
-          name='bookName'
-          label='书籍'
+          name="bookName"
+          label="书籍"
           rules={[
             {
               required: true,
               message: '请选择书籍',
             },
-          ]}>
+          ]}
+        >
           <DebounceSelect
             showSearch
             fetchOptions={fetchBook}
-            placeholder='请输入书籍名称搜索'
+            placeholder="请输入书籍名称搜索"
             onChange={({ value }) => handleSelectChangeAction(value)}
           />
         </Form.Item>
         <Form.Item
-          name='adsType'
-          label='广告类型'
+          name="adsType"
+          label="广告类型"
           rules={[
             {
               required: true,
               message: '请选择广告类型',
             },
-          ]}>
+          ]}
+        >
           <Select>
-            <Option value='RECOMMEND'>推荐</Option>
-            <Option value='CAROUSEL'>轮播</Option>
+            <Option value="RECOMMEND">推荐</Option>
+            <Option value="CAROUSEL">轮播</Option>
           </Select>
         </Form.Item>
-        <Form.Item name='adsImg' label='封面'>
+        <Form.Item name="adsImg" label="封面">
           <Input hidden />
           <Upload
-            name='file'
-            listType='picture-card'
+            name="file"
+            listType="picture-card"
             style={{ width: 240, height: 320 }}
             showUploadList={false}
             customRequest={handleUpload}
             beforeUpload={beforeUpload}
-            onChange={handleUploadChange}>
+            onChange={handleUploadChange}
+          >
             {imageUrl ? (
-              <img src={imageUrl} alt='avatar' style={{ width: '100%' }} />
+              <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
             ) : (
               uploadButton
             )}
           </Upload>
         </Form.Item>
-        <Form.Item name='introduction' label='简介'>
+        <Form.Item name="introduction" label="简介">
           <TextArea rows={3} style={{ resize: 'none' }} />
         </Form.Item>
-        <Form.Item name='sortIndex' label='显示顺序'>
-          <Input type='number' />
+        <Form.Item name="sortIndex" label="显示顺序">
+          <Input type="number" />
         </Form.Item>
       </Form>
     </Modal>

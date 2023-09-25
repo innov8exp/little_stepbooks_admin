@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { Modal, Spin } from 'antd'
+import i18n from '@/locales/i18n'
 
 const ChapterViewPage = (id, visible, onClose) => {
   const [content, setContent] = useState()
@@ -24,7 +25,7 @@ const ChapterViewPage = (id, visible, onClose) => {
   return (
     <Modal
       open={visible}
-      title='预览'
+      title={i18n.t('title.preview')}
       onCancel={() => {
         setContent('')
         onClose()
@@ -32,7 +33,8 @@ const ChapterViewPage = (id, visible, onClose) => {
       footer={false}
       width={800}
       mask
-      style={{ position: 'relative' }}>
+      style={{ position: 'relative' }}
+    >
       <Spin spinning={loading}>
         <div style={{ whiteSpace: 'pre-line', overflowY: 'auto' }}>
           {content}

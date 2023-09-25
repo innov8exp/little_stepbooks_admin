@@ -193,125 +193,213 @@ export const MenuItems = [
       <DashboardOutlined />,
     ),
     getItem(
-      <Link to={Routes.ORDER_REPORT.path}>订单报表</Link>,
+      <Link to={Routes.ORDER_REPORT.path}>{i18n.t('menu.orderReport')}</Link>,
       '12',
       <DashboardOutlined />,
     ),
   ]),
 
-  getItem('用户管理', '2', <UserOutlined />, [
+  getItem(i18n.t('menu.user'), '2', <UserOutlined />, [
     getItem(
-      <Link to={Routes.USER_LIST.path}>用户列表</Link>,
+      <Link to={Routes.USER_LIST.path}>{i18n.t('menu.userList')}</Link>,
       '21',
       <UserOutlined />,
     ),
     getItem(
-      <Link to={Routes.TAG_LIST.path}>标签管理</Link>,
+      <Link to={Routes.TAG_LIST.path}>{i18n.t('menu.tag')}</Link>,
       '22',
       <BookOutlined />,
     ),
   ]),
 
-  getItem('书籍管理', '3', <BookOutlined />, [
+  getItem(i18n.t('menu.bookManage'), '3', <BookOutlined />, [
     getItem(
-      <Link to={Routes.CATEGORY_LIST.path}>分类管理</Link>,
+      <Link to={Routes.CATEGORY_LIST.path}>{i18n.t('menu.category')}</Link>,
       '31',
       <BookOutlined />,
     ),
 
     getItem(
-      <Link to={Routes.BOOK_LIST.path}>书籍列表</Link>,
+      <Link to={Routes.BOOK_LIST.path}>{i18n.t('menu.book')}</Link>,
       '32',
       <BookOutlined />,
     ),
 
     getItem(
-      <Link to={Routes.COMMENT_LIST.path}>评论管理</Link>,
+      <Link to={Routes.COMMENT_LIST.path}>{i18n.t('menu.comment')}</Link>,
       '33',
       <CommentOutlined />,
     ),
   ]),
 
   // 订单中心
-  getItem('订单中心', '4', <ShoppingOutlined />, [
+  getItem(i18n.t('menu.order'), '4', <ShoppingOutlined />, [
     getItem(
-      <Link to={Routes.ORDER_LIST.path}>订单明细</Link>,
+      <Link to={Routes.ORDER_LIST.path}>{i18n.t('menu.orderList')}</Link>,
       '41',
       <ShoppingOutlined />,
     ),
     getItem(
-      <Link to={Routes.CONSUMPTION_LIST.path}>消费明细</Link>,
+      <Link to={Routes.CONSUMPTION_LIST.path}>
+        {i18n.t('menu.consumptionList')}
+      </Link>,
       '42',
       <ShoppingOutlined />,
     ),
   ]),
 
   // 运营管理
-  getItem('运营管理', '5', <FundProjectionScreenOutlined />, [
+  getItem(i18n.t('menu.product'), '5', <FundProjectionScreenOutlined />, [
     getItem(
-      <Link to={Routes.PRODUCT_LIST.path}>产品套餐</Link>,
+      <Link to={Routes.PRODUCT_LIST.path}>{i18n.t('menu.productList')}</Link>,
       '51',
       <AccountBookOutlined />,
     ),
     getItem(
-      <Link to={Routes.PROMOTION_LIST.path}>促销管理</Link>,
+      <Link to={Routes.PROMOTION_LIST.path}>
+        {i18n.t('menu.promotionList')}
+      </Link>,
       '52',
       <FundProjectionScreenOutlined />,
     ),
     getItem(
-      <Link to={Routes.RECOMMEND_LIST.path}>推荐设置</Link>,
+      <Link to={Routes.RECOMMEND_LIST.path}>{i18n.t('menu.recommend')}</Link>,
       '53',
       <FundProjectionScreenOutlined />,
     ),
     getItem(
-      <Link to={Routes.ADVERTISEMENT_LIST.path}>广告设置</Link>,
+      <Link to={Routes.ADVERTISEMENT_LIST.path}>
+        {i18n.t('menu.advertisement')}
+      </Link>,
       '54',
       <FundProjectionScreenOutlined />,
     ),
-    getItem(<Link to="/book2">消息推送</Link>, '55', <MailOutlined />),
-    getItem(<Link to="/comment3">用户反馈</Link>, '56', <SmileOutlined />),
+    getItem(
+      <Link to="/book2">{i18n.t('menu.push')}</Link>,
+      '55',
+      <MailOutlined />,
+    ),
+    getItem(
+      <Link to="/comment3">{i18n.t('menu.feedback')}</Link>,
+      '56',
+      <SmileOutlined />,
+    ),
   ]),
 
-  // 系统管理
-  getItem('系统管理', '6', <SettingOutlined />, [
-    getItem(<Link to="/category1">基础配置</Link>, '61', <SettingOutlined />),
-    getItem(<Link to="/book1">App配置</Link>, '62', <UserOutlined />),
-    getItem(<Link to="/comment1">Admin用户管理</Link>, '63', <UserOutlined />),
+  getItem(i18n.t('menu.system'), '6', <SettingOutlined />, [
+    getItem(
+      <Link to="/category1">{i18n.t('menu.basic')}</Link>,
+      '61',
+      <SettingOutlined />,
+    ),
+    getItem(
+      <Link to="/book1">{i18n.t('menu.configuration')}</Link>,
+      '62',
+      <UserOutlined />,
+    ),
+    getItem(
+      <Link to="/comment1">{i18n.t('menu.adminUser')}</Link>,
+      '63',
+      <UserOutlined />,
+    ),
   ]),
 ]
 
-function getBreadcrumbItem(router, parentLabel, label, key) {
+function getBreadcrumbItem(router, parentLabel, label) {
   return {
     router,
     label,
     parentLabel,
-    key,
   }
 }
 
 export const BreadcrumbConfig = [
-  getBreadcrumbItem(Routes.USER_REPORT.path, '首页', '用户报表', 2),
-  getBreadcrumbItem(Routes.ORDER_REPORT.path, '首页', '订单列表', 3),
-  // getBreadcrumbItem('/novel-report', '首页', '小说报表', 4),
+  getBreadcrumbItem(
+    Routes.USER_REPORT.path,
+    i18n.t('menu.dashboard'),
+    i18n.t('menu.userReport'),
+  ),
+  getBreadcrumbItem(
+    Routes.ORDER_REPORT.path,
+    i18n.t('menu.dashboard'),
+    i18n.t('menu.orderReport'),
+  ),
 
-  getBreadcrumbItem(Routes.USER_LIST.path, '用户管理', '用户列表', 5),
-  getBreadcrumbItem(Routes.TAG_LIST.path, '用户管理', '标签管理', 6),
+  getBreadcrumbItem(
+    Routes.USER_LIST.path,
+    i18n.t('menu.user'),
+    i18n.t('menu.userList'),
+  ),
+  getBreadcrumbItem(
+    Routes.TAG_LIST.path,
+    i18n.t('menu.user'),
+    i18n.t('menu.tag'),
+    6,
+  ),
 
-  getBreadcrumbItem(Routes.CATEGORY_LIST.path, '书籍管理', '分类管理', 5),
-  getBreadcrumbItem(Routes.BOOK_LIST.path, '书籍管理', '书籍列表', 6),
-  getBreadcrumbItem(Routes.COMMENT_LIST.path, '书籍管理', '评论管理', 7),
+  getBreadcrumbItem(
+    Routes.CATEGORY_LIST.path,
+    i18n.t('menu.bookManage'),
+    i18n.t('menu.category'),
+  ),
+  getBreadcrumbItem(
+    Routes.BOOK_LIST.path,
+    i18n.t('menu.bookManage'),
+    i18n.t('menu.book'),
+  ),
+  getBreadcrumbItem(
+    Routes.COMMENT_LIST.path,
+    i18n.t('menu.bookManage'),
+    i18n.t('menu.comment'),
+  ),
 
-  getBreadcrumbItem(Routes.ORDER_LIST.path, '订单中心', '订单明细', 6),
-  getBreadcrumbItem(Routes.CONSUMPTION_LIST.path, '订单中心', '消费明细', 7),
+  getBreadcrumbItem(
+    Routes.ORDER_LIST.path,
+    i18n.t('menu.order'),
+    i18n.t('menu.orderList'),
+  ),
+  getBreadcrumbItem(
+    Routes.CONSUMPTION_LIST.path,
+    i18n.t('menu.order'),
+    i18n.t('menu.consumptionList'),
+  ),
 
-  getBreadcrumbItem(Routes.PRODUCT_LIST.path, '运营管理', '产品套餐', 5),
-  getBreadcrumbItem(Routes.PROMOTION_LIST.path, '运营管理', '促销管理', 6),
-  getBreadcrumbItem(Routes.RECOMMEND_LIST.path, '运营管理', '推荐设置', 7),
-  getBreadcrumbItem(Routes.ADVERTISEMENT_LIST.path, '运营管理', '广告设置', 5),
-  getBreadcrumbItem('/book2', '运营管理', '消息推送', 6),
-  getBreadcrumbItem('/comment3', '运营管理', '用户反馈', 7),
+  getBreadcrumbItem(
+    Routes.PRODUCT_LIST.path,
+    i18n.t('menu.product'),
+    i18n.t('menu.productList'),
+  ),
+  getBreadcrumbItem(
+    Routes.PROMOTION_LIST.path,
+    i18n.t('menu.product'),
+    i18n.t('menu.promotionList'),
+  ),
+  getBreadcrumbItem(
+    Routes.RECOMMEND_LIST.path,
+    i18n.t('menu.product'),
+    i18n.t('menu.recommend'),
+  ),
+  getBreadcrumbItem(
+    Routes.ADVERTISEMENT_LIST.path,
+    i18n.t('menu.product'),
+    i18n.t('menu.advertisement'),
+  ),
+  getBreadcrumbItem('/book2', i18n.t('menu.product'), i18n.t('menu.push')),
+  getBreadcrumbItem(
+    '/comment3',
+    i18n.t('menu.product'),
+    i18n.t('menu.feedback'),
+  ),
 
-  getBreadcrumbItem('/category1', '系统管理', '基础配置', 5),
-  getBreadcrumbItem('/book1', '系统管理', 'App配置', 6),
-  getBreadcrumbItem('/comment1', '系统管理', 'Admin用户管理', 7),
+  getBreadcrumbItem('/category1', i18n.t('menu.system'), i18n.t('menu.basic')),
+  getBreadcrumbItem(
+    '/book1',
+    i18n.t('menu.system'),
+    i18n.t('menu.configuration'),
+  ),
+  getBreadcrumbItem(
+    '/comment1',
+    i18n.t('menu.system'),
+    i18n.t('menu.adminUser'),
+  ),
 ]

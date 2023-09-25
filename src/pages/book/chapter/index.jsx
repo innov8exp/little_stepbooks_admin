@@ -22,6 +22,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import ChapterView from './view'
 import UploadForm from './form'
+import i18n from '@/locales/i18n'
 
 const { confirm } = Modal
 
@@ -73,18 +74,22 @@ const ChapterPage = () => {
         }
       })
       .catch((err) =>
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        ),
       )
       .finally(() => setLoading(false))
   }, [pageNumber, pageSize, queryId])
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: '确定删除当前记录？',
+      title: `${i18n.t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
-      okText: '确定',
+      okText: `${i18n.t('button.determine')}`,
       okType: 'primary',
-      cancelText: '取消',
+      cancelText: `${i18n.t('button.cancel')}`,
       onOk() {
         axios
           .delete(`/api/admin/v1/chapters/${id}`)
@@ -92,11 +97,15 @@ const ChapterPage = () => {
             if (res.status === HttpStatus.OK) {
               const timestamp = new Date().getTime()
               setChangeTimestamp(timestamp)
-              message.success('操作成功!')
+              message.success(i18n.t('message.successInfo'))
             }
           })
           .catch((err) => {
-            message.error(`操作失败，原因：${err.response?.data?.message}`)
+            message.error(
+              `${i18n.t('message.error.failureReason')}${
+                err.response?.data?.message
+              }`,
+            )
           })
       },
     })
@@ -136,7 +145,11 @@ const ChapterPage = () => {
         }
       })
       .catch((err) =>
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        ),
       )
       .finally(() => {
         setLoading(false)
@@ -153,36 +166,39 @@ const ChapterPage = () => {
       title={
         <>
           <Button
-            type='link'
-            size='large'
+            type="link"
+            size="large"
             icon={<LeftCircleOutlined />}
             onClick={() => navigate.goBack()}
           />
-          《{queryName}》- 章节管理
+          《{queryName}》- {i18n.t('button.Chapter')}
         </>
-      }>
+      }
+    >
       <ContentContainer>
         <StyledCondition>
           <QueryBtnWrapper>
             <ConditionItem>
               <Button
                 icon={<PlusOutlined />}
-                type='primary'
-                onClick={() => handleCreateAction()}>
-                新建章节
+                type="primary"
+                onClick={() => handleCreateAction()}
+              >
+                {i18n.t('button.newChapter')}
               </Button>
             </ConditionItem>
             <ConditionItem>
               <Button
                 icon={<UploadOutlined />}
-                type='primary'
-                onClick={() => handleUploadAction()}>
-                上传章节
+                type="primary"
+                onClick={() => handleUploadAction()}
+              >
+                {i18n.t('button.uploadChapter')}
               </Button>
             </ConditionItem>
             <ConditionItem>
-              <CustomLink href='/api/admin/v1/chapters/template/download'>
-                模版下载
+              <CustomLink href="/api/admin/v1/chapters/template/download">
+                {i18n.t('button.templateDownload')}
               </CustomLink>
             </ConditionItem>
           </QueryBtnWrapper>
@@ -190,9 +206,10 @@ const ChapterPage = () => {
             <ConditionLeftItem>
               <Button
                 icon={<SearchOutlined />}
-                type='primary'
-                onClick={handleQuery}>
-                查询
+                type="primary"
+                onClick={handleQuery}
+              >
+                {i18n.t('button.search')}
               </Button>
             </ConditionLeftItem>
           </QueryBtnWrapper>
@@ -227,8 +244,8 @@ const ChapterPage = () => {
               render: (text, record) => (
                 <Switch
                   onChange={(checked) => handleSwitchChange(record.id, checked)}
-                  checkedChildren='付费'
-                  unCheckedChildren='免费'
+                  checkedChildren="付费"
+                  unCheckedChildren="免费"
                   checked={text}
                 />
               ),
@@ -255,22 +272,25 @@ const ChapterPage = () => {
                 <div>
                   <Button
                     onClick={() => handleViewAction(record.id)}
-                    type='link'>
-                    预览
+                    type="link"
+                  >
+                    {i18n.t('button.preview')}
                   </Button>
-                  <Divider type='vertical' />
+                  <Divider type="vertical" />
                   <Button
-                    type='link'
-                    onClick={() => handleEditAction(record.id)}>
-                    编辑
+                    type="link"
+                    onClick={() => handleEditAction(record.id)}
+                  >
+                    {i18n.t('button.edit')}
                   </Button>
 
-                  <Divider type='vertical' />
+                  <Divider type="vertical" />
                   <Button
-                    type='link'
+                    type="link"
                     danger
-                    onClick={() => handleDeleteAction(record.id)}>
-                    删除
+                    onClick={() => handleDeleteAction(record.id)}
+                  >
+                    {i18n.t('button.delete')}
                   </Button>
                 </div>
               ),

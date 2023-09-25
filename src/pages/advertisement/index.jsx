@@ -6,6 +6,7 @@ import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import AdvertisementForm from './form'
+import i18n from '@/locales/i18n'
 
 const { confirm } = Modal
 
@@ -34,7 +35,7 @@ const AdvertisementPage = () => {
           .delete(`/api/admin/v1/advertisements/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success('操作成功!')
+              message.success(i18n.t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -47,14 +48,15 @@ const AdvertisementPage = () => {
   }
 
   return (
-    <Card title='广告设置'>
+    <Card title="广告设置">
       <ButtonWrapper>
         <Button
-          type='primary'
+          type="primary"
           onClick={() => {
             setSelectedId(undefined)
             setFormVisible(true)
-          }}>
+          }}
+        >
           新建
         </Button>
       </ButtonWrapper>
@@ -101,12 +103,14 @@ const AdvertisementPage = () => {
                 <div>
                   <Button
                     onClick={() => handleEditAction(record.id)}
-                    type='link'>
+                    type="link"
+                  >
                     编辑
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
-                    type='link'>
+                    type="link"
+                  >
                     删除
                   </Button>
                 </div>

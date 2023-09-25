@@ -27,6 +27,7 @@ import {
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 // import { useHistory } from "react-router-dom";
+import i18n from '@/locales/i18n'
 
 const { confirm } = Modal
 
@@ -63,7 +64,11 @@ const CommentPage = () => {
         }
       })
       .catch((err) =>
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        ),
       )
       .finally(() => setLoading(false))
   }, [pageNumber, pageSize])
@@ -81,11 +86,15 @@ const CommentPage = () => {
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               setChangeTimestamp(Date.now())
-              message.success('操作成功!')
+              message.success(i18n.t('message.successInfo'))
             }
           })
           .catch((err) => {
-            message.error(`操作失败，原因：${err.response?.data?.message}`)
+            message.error(
+              `${i18n.t('message.error.failureReason')}${
+                err.response?.data?.message
+              }`,
+            )
           })
       },
     })
@@ -111,21 +120,22 @@ const CommentPage = () => {
   }, [fetchData, pageNumber, changeTimestamp])
 
   return (
-    <Card title='评论管理'>
+    <Card title="评论管理">
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}
         form={queryForm}
-        initialValues={{ category: '', status: '' }}>
+        initialValues={{ category: '', status: '' }}
+      >
         <Row>
           <Col span={6}>
-            <Form.Item label='书籍名称' name='bookName'>
-              <Input placeholder='请输入书籍名称' />
+            <Form.Item label="书籍名称" name="bookName">
+              <Input placeholder="请输入书籍名称" />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label='用户' name='nickname'>
-              <Input placeholder='请输入用户名' />
+            <Form.Item label="用户" name="nickname">
+              <Input placeholder="请输入用户名" />
             </Form.Item>
           </Col>
         </Row>
@@ -137,16 +147,18 @@ const CommentPage = () => {
             <ConditionLeftItem>
               <Button
                 icon={<UndoOutlined />}
-                type='default'
-                onClick={handleReset}>
+                type="default"
+                onClick={handleReset}
+              >
                 重置
               </Button>
             </ConditionLeftItem>
             <ConditionLeftItem>
               <Button
                 icon={<SearchOutlined />}
-                type='primary'
-                onClick={handleQuery}>
+                type="primary"
+                onClick={handleQuery}
+              >
                 查询
               </Button>
             </ConditionLeftItem>
@@ -201,11 +213,12 @@ const CommentPage = () => {
                                             编辑
                                         </Button> */}
 
-                    <Divider type='vertical' />
+                    <Divider type="vertical" />
                     <Button
-                      type='link'
+                      type="link"
                       danger
-                      onClick={() => handleDeleteAction(record.id)}>
+                      onClick={() => handleDeleteAction(record.id)}
+                    >
                       删除
                     </Button>
                   </div>

@@ -17,6 +17,7 @@ import useQuery from '@/hooks/useQuery'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import i18n from '@/locales/i18n'
 
 const { TextArea } = Input
 
@@ -62,7 +63,11 @@ const ChapterForm = () => {
         }
       })
       .catch((err) => {
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        )
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
@@ -81,7 +86,11 @@ const ChapterForm = () => {
         }
       })
       .catch((err) => {
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        )
       })
       .finally(() => setSaveLoading(false))
   }
@@ -98,7 +107,11 @@ const ChapterForm = () => {
         }
       })
       .catch((err) => {
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        )
       })
       .finally(() => setSaveLoading(false))
   }
@@ -131,14 +144,15 @@ const ChapterForm = () => {
       title={
         <>
           <Button
-            type='link'
-            size='large'
+            type="link"
+            size="large"
             icon={<LeftCircleOutlined />}
             onClick={() => navigate.goBack()}
           />
-          章节编辑
+          {i18n.t('button.Chapter.edit')}
         </>
-      }>
+      }
+    >
       {isDisplayForm ? (
         <Skeleton loading={loading} active>
           <Form
@@ -147,66 +161,72 @@ const ChapterForm = () => {
             form={form}
             initialValues={{
               ...initFormData,
-            }}>
-            <Form.Item name='chapterNumber' label='编号'>
-              <Input type='number' readOnly />
+            }}
+          >
+            <Form.Item name="chapterNumber" label={i18n.t('title.number')}>
+              <Input type="number" readOnly />
             </Form.Item>
             <Form.Item
-              name='chapterName'
-              label='章节名称'
+              name="chapterName"
+              label={i18n.t('title.chapterName')}
               rules={[
                 {
                   required: true,
-                  message: '请输入章节名称',
+                  message: `${i18n.t('message.placeholder.chapterName')}`,
                 },
-              ]}>
+              ]}
+            >
               <Input />
             </Form.Item>
             <Form.Item
-              name='needPay'
-              label='是否付费'
+              name="needPay"
+              label={i18n.t('title.payOrNot')}
               rules={[
                 {
                   required: true,
-                  message: '请输入章节名称',
+                  message: `${i18n.t('message.check.payOrNot')}`,
                 },
-              ]}>
+              ]}
+            >
               <Radio.Group>
-                <Radio value>付费</Radio>
-                <Radio value={false}>免费</Radio>
+                <Radio value>{i18n.t('radio.label.pay')}</Radio>
+
+                <Radio value={false}>{i18n.t('radio.label.free')}</Radio>
               </Radio.Group>
             </Form.Item>
             <Form.Item
               wrapperCol={{ span: 16 }}
-              name='content'
-              label='章节内容'
+              name="content"
+              label={i18n.t('title.chapterContent')}
               rules={[
                 {
                   required: true,
-                  message: '请输入章节内容',
+                  message: `${i18n.t('message.check.chapterContent')}`,
                 },
-              ]}>
+              ]}
+            >
               <TextArea rows={15} style={{ resize: 'none' }} />
             </Form.Item>
             <div style={{ marginTop: 10 }} />
-            <Row justify='end'>
+            <Row justify="end">
               <Col>
-                <Button type='default' onClick={() => form.resetFields()}>
-                  重置
+                <Button type="default" onClick={() => form.resetFields()}>
+                  {i18n.t('button.reset')}
                 </Button>
                 <span style={{ marginRight: 20 }} />
                 <Button
                   loading={saveLoading}
-                  type='primary'
-                  onClick={() => handleSaveAction()}>
-                  保存数据
+                  type="primary"
+                  onClick={() => handleSaveAction()}
+                >
+                  {i18n.t('button.saveData')}
                 </Button>
               </Col>
             </Row>
           </Form>
         </Skeleton>
       ) : (
-        <Empty description={<span>获取信息失败</span>} />
+        <Empty description={<span> {i18n.t('message.error.failure')}</span>} />
       )}
     </Card>
   )

@@ -6,6 +6,7 @@ import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import PromotionForm from './form'
+import i18n from '@/locales/i18n'
 
 const { confirm } = Modal
 
@@ -33,7 +34,7 @@ const PromotionPage = () => {
         Axios.delete(`/api/admin/v1/promotions/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success('操作成功!')
+              message.success(i18n.t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -46,14 +47,15 @@ const PromotionPage = () => {
   }
 
   return (
-    <Card title='促销管理'>
+    <Card title="促销管理">
       <ButtonWrapper>
         <Button
-          type='primary'
+          type="primary"
           onClick={() => {
             setSelectedId(undefined)
             setFormVisible(true)
-          }}>
+          }}
+        >
           新建
         </Button>
       </ButtonWrapper>
@@ -109,12 +111,14 @@ const PromotionPage = () => {
                 <div>
                   <Button
                     onClick={() => handleEditAction(record.id)}
-                    type='link'>
+                    type="link"
+                  >
                     编辑
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
-                    type='link'>
+                    type="link"
+                  >
                     删除
                   </Button>
                 </div>

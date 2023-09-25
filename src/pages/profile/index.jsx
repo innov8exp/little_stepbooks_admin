@@ -80,7 +80,11 @@ const ProfilePage = () => {
       })
       .catch((err) => {
         onError(err)
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        )
       })
       .finally(() => {
         setLoading(false)

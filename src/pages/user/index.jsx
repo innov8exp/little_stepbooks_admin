@@ -6,6 +6,7 @@ import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import UserForm from './form'
+import i18n from '@/locales/i18n'
 
 const { confirm } = Modal
 
@@ -32,7 +33,7 @@ const UserPage = () => {
           .delete(`/api/admin/v1/users/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success('操作成功!')
+              message.success(i18n.t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -45,15 +46,16 @@ const UserPage = () => {
   }
 
   return (
-    <Card title='用户管理'>
+    <Card title={i18n.t('title.userManagement')}>
       <ButtonWrapper>
         <Button
-          type='primary'
+          type="primary"
           onClick={() => {
             setSelectedId(undefined)
             setFormVisible(true)
-          }}>
-          新建
+          }}
+        >
+          {i18n.t('button.create')}
         </Button>
       </ButtonWrapper>
       <Table
@@ -123,13 +125,15 @@ const UserPage = () => {
                 <div>
                   <Button
                     onClick={() => handleEditAction(record.id)}
-                    type='link'>
-                    编辑
+                    type="link"
+                  >
+                    {i18n.t('button.edit')}
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
-                    type='link'>
-                    禁用
+                    type="link"
+                  >
+                    {i18n.t('button.disable')}
                   </Button>
                 </div>
               )

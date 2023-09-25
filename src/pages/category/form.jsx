@@ -3,6 +3,7 @@ import Axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useEffect } from 'react'
 import PropTypes from 'prop-types'
+import i18n from '@/locales/i18n'
 
 const CategoryForm = ({ id, visible, onSave, onCancel }) => {
   const [form] = Form.useForm()
@@ -23,7 +24,7 @@ const CategoryForm = ({ id, visible, onSave, onCancel }) => {
     Axios.post(`/api/admin/v1/categories`, { ...values })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success('操作成功!')
+          message.success(i18n.t('message.successInfo'))
           onSave()
         }
       })
@@ -36,7 +37,7 @@ const CategoryForm = ({ id, visible, onSave, onCancel }) => {
     Axios.put(`/api/admin/v1/categories/${id}`, { ...values })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success('操作成功!')
+          message.success(i18n.t('message.successInfo'))
           onSave()
         }
       })
@@ -62,29 +63,32 @@ const CategoryForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={500}
       style={{ maxHeight: 500 }}
-      title='分类表单'
-      okText='保存'
-      cancelText='取消'
+      title={i18n.t('title.classificationForm')}
+      okText={i18n.t('button.save')}
+      cancelText={i18n.t('button.cancel')}
       onCancel={onCancel}
-      onOk={okHandler}>
+      onOk={okHandler}
+    >
       <Form
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 14 }}
-        layout='horizontal'
+        layout="horizontal"
         form={form}
-        name='form_in_modal'>
+        name="form_in_modal"
+      >
         <Form.Item
-          name='categoryName'
-          label='名称'
+          name="categoryName"
+          label={i18n.t('title.name')}
           rules={[
             {
               required: true,
-              message: '请输入名称',
+              message: i18n.t('message.check.name'),
             },
-          ]}>
+          ]}
+        >
           <Input />
         </Form.Item>
-        <Form.Item name='description' label='描述'>
+        <Form.Item name="description" label={i18n.t('title.describe')}>
           <Input />
         </Form.Item>
       </Form>

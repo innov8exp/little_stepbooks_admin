@@ -14,7 +14,10 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import EnvFlag from '@/components/env-flag'
 import { Routes } from '@/libs/router'
-
+import { Radio } from 'antd'
+import enUS from 'antd/locale/en_US'
+import zhCN from 'antd/locale/zh_CN'
+import i18n from '@/locales/i18n'
 const { Header } = Layout
 
 const HeaderContainer = styled(Header)`
@@ -60,6 +63,16 @@ const Trigger = styled.span`
 const MainHeader = ({ onToggleClick }) => {
   const [collapsed, setCollapsed] = useState(true)
   const { logout, refreshUserInfo, userInfo } = useSession()
+
+  const [locale, setLocal] = useState(zhCN)
+
+  // const { locales, inc } = useStore()
+
+  const changeLocale = (e) => {
+    const localeValue = e.target.value
+    setLocal(localeValue)
+    i18n.changeLanguage(localeValue)
+  }
 
   const items = [
     {
@@ -122,6 +135,14 @@ const MainHeader = ({ onToggleClick }) => {
             </Space>
           </a>
         </Dropdown>
+        <Radio.Group value={locale} onChange={changeLocale}>
+          <Radio.Button key="en" value={enUS}>
+            English
+          </Radio.Button>
+          <Radio.Button key="cn" value={zhCN}>
+            中文
+          </Radio.Button>
+        </Radio.Group>
       </HeaderFuncWrapper>
     </HeaderContainer>
   )

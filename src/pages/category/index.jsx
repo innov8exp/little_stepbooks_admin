@@ -10,6 +10,7 @@ import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import CategoryForm from './form'
+import i18n from '@/locales/i18n'
 
 const { confirm } = Modal
 
@@ -28,7 +29,7 @@ const CategoryPage = () => {
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: '确定删除次记录?',
+      title: `${i18n.t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
       okText: 'Yes',
       okType: 'primary',
@@ -38,7 +39,7 @@ const CategoryPage = () => {
           .delete(`/api/admin/v1/categories/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success('操作成功!')
+              message.success(i18n.t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -66,15 +67,16 @@ const CategoryPage = () => {
   }
 
   return (
-    <Card title='分类管理'>
+    <Card title={i18n.t('title.categoryManagement')}>
       <ButtonWrapper>
         <Button
-          type='primary'
+          type="primary"
           onClick={() => {
             setSelectedId(undefined)
             setFormVisible(true)
-          }}>
-          新建
+          }}
+        >
+          {i18n.t('button.create')}
         </Button>
       </ButtonWrapper>
 
@@ -106,8 +108,9 @@ const CategoryPage = () => {
                     ''
                   ) : (
                     <Button
-                      type='link'
-                      onClick={() => handleSortAction(record.id, 'UP')}>
+                      type="link"
+                      onClick={() => handleSortAction(record.id, 'UP')}
+                    >
                       <UpCircleOutlined />
                     </Button>
                   )}
@@ -116,21 +119,24 @@ const CategoryPage = () => {
                     ''
                   ) : (
                     <Button
-                      type='link'
-                      onClick={() => handleSortAction(record.id, 'DOWN')}>
+                      type="link"
+                      onClick={() => handleSortAction(record.id, 'DOWN')}
+                    >
                       <DownCircleOutlined />
                     </Button>
                   )}
 
                   <Button
                     onClick={() => handleEditAction(record.id)}
-                    type='link'>
-                    编辑
+                    type="link"
+                  >
+                    {i18n.t('button.edit')}
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
-                    type='link'>
-                    删除
+                    type="link"
+                  >
+                    {i18n.t('button.delete')}
                   </Button>
                 </div>
               )

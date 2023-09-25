@@ -31,6 +31,7 @@ import {
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import i18n from '@/locales/i18n'
 
 const { confirm } = Modal
 
@@ -65,7 +66,11 @@ const BookPage = () => {
         }
       })
       .catch((err) =>
-        message.error(`操作失败，原因：${err.response?.data?.message}`),
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        ),
       )
   }
 
@@ -93,7 +98,11 @@ const BookPage = () => {
         }
       })
       .catch((err) =>
-        message.error(`操作失败，原因：${err.response?.data?.message}`),
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        ),
       )
       .finally(() => setLoading(false))
   }, [pageNumber, pageSize, queryCriteria?.author, queryCriteria?.bookName])
@@ -116,7 +125,11 @@ const BookPage = () => {
             }
           })
           .catch((err) => {
-            message.error(`操作失败，原因：${err.response?.data?.message}`)
+            message.error(
+              `${i18n.t('message.error.failureReason')}${
+                err.response?.data?.message
+              }`,
+            )
           })
       },
     })
@@ -152,14 +165,14 @@ const BookPage = () => {
   const handleStatusChange = (id, status) => {
     const cCount = chapterCount?.find((cc) => cc.bookId === id)?.chapterCount
     if (!cCount) {
-      message.error('未发现书籍章节，请上传书籍章节！')
+      message.error(`${i18n.t('message.error.noBookChapters')}`)
       return
     }
     axios.put(`/api/admin/v1/books/${id}/status/${status}`).then((res) => {
       if (res.status === HttpStatus.OK) {
         const timestamp = new Date().getTime()
         setChangeTimestamp(timestamp)
-        message.success('操作成功!')
+        message.success(i18n.t('message.successInfo'))
       }
     })
   }
@@ -169,7 +182,7 @@ const BookPage = () => {
   }, [fetchBooks, pageNumber, changeTimestamp])
 
   return (
-    <Card title="书籍管理">
+    <Card title={i18n.t('title.book')}>
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}
@@ -178,13 +191,13 @@ const BookPage = () => {
       >
         <Row>
           <Col span={6}>
-            <Form.Item label="名称" name="bookName">
-              <Input placeholder="请输入小说名称" />
+            <Form.Item label={i18n.t('title.name')} name="bookName">
+              <Input placeholder={i18n.t('message.placeholder.bookName')} />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label="作者" name="author">
-              <Input placeholder="请输入小说作者" />
+            <Form.Item label={i18n.t('title.author')} name="author">
+              <Input placeholder={i18n.t('message.placeholder.bookAuthor')} />
             </Form.Item>
           </Col>
         </Row>
@@ -199,7 +212,7 @@ const BookPage = () => {
                 type="primary"
                 onClick={() => handleCreateAction()}
               >
-                新建
+                {i18n.t('button.create')}
               </Button>
             </ConditionItem>
           </QueryBtnWrapper>
@@ -210,7 +223,7 @@ const BookPage = () => {
                 type="default"
                 onClick={handleReset}
               >
-                重置
+                {i18n.t('button.reset')}
               </Button>
             </ConditionLeftItem>
             <ConditionLeftItem>
@@ -219,7 +232,7 @@ const BookPage = () => {
                 type="primary"
                 onClick={handleQuery}
               >
-                查询
+                {i18n.t('button.search')}
               </Button>
             </ConditionLeftItem>
           </QueryBtnWrapper>
@@ -291,14 +304,14 @@ const BookPage = () => {
                         onClick={() => handleStatusChange(record.id, 'OFFLINE')}
                         type="link"
                       >
-                        下架
+                        {i18n.t('button.OffShelf')}
                       </Button>
                     ) : (
                       <Button
                         onClick={() => handleStatusChange(record.id, 'ONLINE')}
                         type="link"
                       >
-                        上架
+                        {i18n.t('button.grounding')}
                       </Button>
                     )}
 
@@ -309,7 +322,7 @@ const BookPage = () => {
                       }
                       type="link"
                     >
-                      章节管理(
+                      {i18n.t('button.Chapter')}(
                       {chapterCount?.find((cc) => cc.bookId === record.id)
                         ?.chapterCount || 0}
                       )
@@ -319,7 +332,7 @@ const BookPage = () => {
                       type="link"
                       onClick={() => handleEditAction(record.id)}
                     >
-                      编辑
+                      {i18n.t('button.edit')}
                     </Button>
 
                     <Divider type="vertical" />
@@ -328,7 +341,7 @@ const BookPage = () => {
                       danger
                       onClick={() => handleDeleteAction(record.id)}
                     >
-                      删除
+                      {i18n.t('button.delete')}
                     </Button>
                   </div>
                 )

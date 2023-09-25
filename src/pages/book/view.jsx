@@ -35,7 +35,11 @@ const BookView = () => {
           }
         })
         .catch((err) => {
-          message.error(`操作失败，原因：${err.response?.data?.message}`)
+          message.error(
+            `${i18n.t('message.error.failureReason')}${
+              err.response?.data?.message
+            }`,
+          )
           reject(err)
         })
     })
@@ -60,7 +64,11 @@ const BookView = () => {
         }
       })
       .catch((err) => {
-        message.error(`操作失败，原因：${err.response?.data?.message}`)
+        message.error(
+          `${i18n.t('message.error.failureReason')}${
+            err.response?.data?.message
+          }`,
+        )
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
