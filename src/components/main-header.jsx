@@ -128,17 +128,22 @@ const MainHeader = ({ onToggleClick }) => {
         <Dropdown menu={{ items }}>
           <a onClick={(e) => e.preventDefault()}>
             <Space>
-              {userInfo ? userInfo.username : '未登录'}
+              {userInfo ? userInfo.username : `${i18n.t('title.notLoggedIn')}`}
               <DownOutlined />
             </Space>
           </a>
         </Dropdown>
-        <Radio.Group value={language} onChange={changeLocale}>
-          <Radio.Button key="en" value="en_US">
-            English
-          </Radio.Button>
+        <Radio.Group
+          value={language}
+          onChange={changeLocale}
+          size="small"
+          style={{ marginLeft: '10px' }}
+        >
           <Radio.Button key="cn" value="zh_CN">
             中文
+          </Radio.Button>
+          <Radio.Button key="en" value="en_US">
+            English
           </Radio.Button>
         </Radio.Group>
       </HeaderFuncWrapper>

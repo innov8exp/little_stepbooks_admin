@@ -26,12 +26,13 @@ import {
 } from '../../components/styled'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
-import i18n from '@/locales/i18n'
 // import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
 const OrderPage = () => {
+  const { t } = useTranslation()
   const [queryForm] = Form.useForm()
   // const history = useHistory();
   const [changeTimestamp, setChangeTimestamp] = useState()
@@ -71,9 +72,7 @@ const OrderPage = () => {
       })
       .catch((err) =>
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         ),
       )
       .finally(() => setLoading(false))
@@ -81,11 +80,11 @@ const OrderPage = () => {
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: '确定删除当前记录？',
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
-      okText: '确定',
+      okText: `${t('button.determine')}`,
       okType: 'primary',
-      cancelText: '取消',
+      cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
           .delete(`/api/admin/v1/orders/${id}`)
@@ -93,12 +92,12 @@ const OrderPage = () => {
             if (res.status === HttpStatus.OK) {
               const timestamp = new Date().getTime()
               setChangeTimestamp(timestamp)
-              message.success(i18n.t('message.successInfo'))
+              message.success(t('message.successInfo'))
             }
           })
           .catch((err) => {
             message.error(
-              `${i18n.t('message.error.failureReason')}${
+              `${t('message.error.failureReason')}${
                 err.response?.data?.message
               }`,
             )
@@ -131,7 +130,7 @@ const OrderPage = () => {
   }, [fetchOrders, pageNumber, changeTimestamp])
 
   return (
-    <Card title="订单管理">
+    <Card title={t('title.label.orderManagement')}>
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}
@@ -140,13 +139,13 @@ const OrderPage = () => {
       >
         <Row>
           <Col span={6}>
-            <Form.Item label="订单编号" name="orderNo">
-              <Input placeholder="请输入订单编号" />
+            <Form.Item label={t('title.label.orderNumber')} name="orderNo">
+              <Input placeholder={t('message.placeholder.orderNumber')} />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label="用户" name="username">
-              <Input placeholder="请输入用户名" />
+            <Form.Item label={t('title.label.userName')} name="username">
+              <Input placeholder={t('message.placeholder.enterUserName')} />
             </Form.Item>
           </Col>
         </Row>
@@ -161,7 +160,7 @@ const OrderPage = () => {
                 type="default"
                 onClick={handleReset}
               >
-                重置
+                {t('button.reset')}
               </Button>
             </ConditionLeftItem>
             <ConditionLeftItem>
@@ -170,7 +169,7 @@ const OrderPage = () => {
                 type="primary"
                 onClick={handleQuery}
               >
-                查询
+                {t('button.search')}
               </Button>
             </ConditionLeftItem>
           </QueryBtnWrapper>
@@ -184,7 +183,7 @@ const OrderPage = () => {
                 (pageNumber - 1) * pageSize + index + 1,
             },
             {
-              title: '订单编号',
+              title: `${t('title.label.orderNumber')}`,
               key: 'orderNo',
               dataIndex: 'orderNo',
               width: 150,
@@ -198,41 +197,41 @@ const OrderPage = () => {
               // ),
             },
             {
-              title: '用户名',
+              title: `${t('title.label.userNickName')}`,
               key: 'username',
               dataIndex: 'username',
             },
             {
-              title: '用户昵称',
+              title: `${t('title.userNickname')}`,
               key: 'nickname',
               dataIndex: 'nickname',
             },
             {
-              title: '交易金额',
+              title: `${t('title.transactionAmount')}`,
               key: 'transactionAmount',
               dataIndex: 'transactionAmount',
               render: (text) =>
                 `$ ${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
             },
             {
-              title: '书币数量',
+              title: `${t('title.label.numberOfBookCoins')}`,
               key: 'coinAmount',
               dataIndex: 'coinAmount',
             },
             {
-              title: '状态',
+              title: `${t('title.status')}`,
               key: 'status',
               dataIndex: 'status',
               render: (text) => {
                 return text === 'PAID' ? (
-                  <Tag color="green">已支付</Tag>
+                  <Tag color="green">{t('title.paid')}</Tag>
                 ) : (
-                  <Tag color="red">未支付</Tag>
+                  <Tag color="red">{t('Unpaid')}</Tag>
                 )
               },
             },
             {
-              title: '操作',
+              title: `${t('title.operate')}`,
               key: 'action',
               render: (text, record) => {
                 return (
@@ -252,7 +251,7 @@ const OrderPage = () => {
                       danger
                       onClick={() => handleDeleteAction(record.id)}
                     >
-                      删除
+                      {t('button.delete')}
                     </Button>
                   </div>
                 )

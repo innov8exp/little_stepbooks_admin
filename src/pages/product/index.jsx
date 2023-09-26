@@ -6,11 +6,12 @@ import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import ProductForm from './form'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
 const ProductPage = () => {
+  const { t } = useTranslation()
   const [changeTime, setChangeTime] = useState(Date.now())
   const { loading, fetchedData } = useFetch(`/api/admin/v1/products`, [
     changeTime,
@@ -25,17 +26,17 @@ const ProductPage = () => {
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: '确定删除次记录?',
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
-      okText: 'Yes',
+      okText: `${t('button.determine')}`,
       okType: 'primary',
-      cancelText: 'No',
+      cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
           .delete(`/api/admin/v1/products/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success(i18n.t('message.successInfo'))
+              message.success(t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -48,7 +49,7 @@ const ProductPage = () => {
   }
 
   return (
-    <Card title="产品套餐管理">
+    <Card title={t('title.label.productPackage')}>
       <ButtonWrapper>
         <Button
           type="primary"
@@ -57,7 +58,7 @@ const ProductPage = () => {
             setFormVisible(true)
           }}
         >
-          新建
+          {t('button.create')}
         </Button>
       </ButtonWrapper>
       <Table
@@ -68,33 +69,33 @@ const ProductPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: '产品编号',
+            title: `${t('title.productNumber')}`,
             key: 'productNo',
             dataIndex: 'productNo',
           },
           {
-            title: '书币',
+            title: `${t('title.bookCurrency')}`,
             key: 'coinAmount',
             dataIndex: 'coinAmount',
           },
           {
-            title: '价格',
+            title: `${t('title.price')}`,
             key: 'price',
             dataIndex: 'price',
             render: (text) => `$ ${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
           },
           {
-            title: '平台',
+            title: `${t('title.label.platform')}`,
             key: 'platform',
             dataIndex: 'platform',
           },
           {
-            title: '平台产品ID',
+            title: `${t('title.label.platformProductID')}`,
             key: 'storeProductId',
             dataIndex: 'storeProductId',
           },
           {
-            title: '操作',
+            title: `${t('title.operate')}`,
             key: 'action',
             width: 300,
             render: (text, record) => {
@@ -104,13 +105,13 @@ const ProductPage = () => {
                     onClick={() => handleEditAction(record.id)}
                     type="link"
                   >
-                    编辑
+                    {t('button.edit')}
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
                     type="link"
                   >
-                    删除
+                    {t('button.delete')}
                   </Button>
                 </div>
               )

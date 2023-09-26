@@ -6,11 +6,12 @@ import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import UserForm from './form'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
 const UserPage = () => {
+  const { t } = useTranslation()
   const [changeTime, setChangeTime] = useState(Date.now())
   const { loading, fetchedData } = useFetch(`/api/admin/v1/users`, [changeTime])
   const [formVisible, setFormVisible] = useState(false)
@@ -23,17 +24,17 @@ const UserPage = () => {
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: '确定删除次记录?',
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
-      okText: 'Yes',
+      okText: `${t('button.determine')}`,
       okType: 'primary',
-      cancelText: 'No',
+      cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
           .delete(`/api/admin/v1/users/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success(i18n.t('message.successInfo'))
+              message.success(t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -46,7 +47,7 @@ const UserPage = () => {
   }
 
   return (
-    <Card title={i18n.t('title.userManagement')}>
+    <Card title={t('title.userManagement')}>
       <ButtonWrapper>
         <Button
           type="primary"
@@ -55,7 +56,7 @@ const UserPage = () => {
             setFormVisible(true)
           }}
         >
-          {i18n.t('button.create')}
+          {t('button.create')}
         </Button>
       </ButtonWrapper>
       <Table
@@ -66,17 +67,17 @@ const UserPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: 'Username',
+            title: `${t('title.label.userNickName')}`,
             key: 'username',
             dataIndex: 'username',
           },
           {
-            title: '昵称',
+            title: `${t('title.userNickname')}`,
             key: 'nickname',
             dataIndex: 'nickname',
           },
           {
-            title: '邮箱',
+            title: `${t('title.email')}`,
             key: 'email',
             dataIndex: 'email',
           },
@@ -91,33 +92,36 @@ const UserPage = () => {
             dataIndex: 'facebookId',
           },
           {
-            title: '手机',
+            title: `${t('title.phone')}`,
             key: 'phone',
             dataIndex: 'phone',
           },
           {
-            title: '设备编号',
+            title: `${t('title.deviceId')}`,
             key: 'deviceId',
             dataIndex: 'deviceId',
           },
           {
-            title: '性别',
+            title: `${t('title.gender')}`,
             key: 'gender',
             dataIndex: 'gender',
           },
           {
-            title: '创建时间',
+            title: `${t('title.creationTime')}`,
             key: 'createdAt',
             dataIndex: 'createdAt',
           },
           {
-            title: '状态',
+            title: `${t('title.status')}`,
             key: 'active',
             dataIndex: 'active',
-            render: (text) => (text ? '激活' : '禁用'),
+            render: (text) =>
+              text
+                ? `${t('title.status.activation')}`
+                : `${t('title.status.disable')}`,
           },
           {
-            title: '操作',
+            title: `${t('title.operate')}`,
             key: 'action',
             width: 150,
             render: (text, record) => {
@@ -127,13 +131,13 @@ const UserPage = () => {
                     onClick={() => handleEditAction(record.id)}
                     type="link"
                   >
-                    {i18n.t('button.edit')}
+                    {t('button.edit')}
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
                     type="link"
                   >
-                    {i18n.t('button.disable')}
+                    {t('button.disable')}
                   </Button>
                 </div>
               )

@@ -8,8 +8,10 @@ import ViewItem from '@/components/view-item'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 const BookView = () => {
+  const { t } = useTranslation()
   const query = useQuery()
   const queryId = query.get('id')
   const navigate = useNavigate()
@@ -36,9 +38,7 @@ const BookView = () => {
         })
         .catch((err) => {
           message.error(
-            `${i18n.t('message.error.failureReason')}${
-              err.response?.data?.message
-            }`,
+            `${t('message.error.failureReason')}${err.response?.data?.message}`,
           )
           reject(err)
         })
@@ -65,9 +65,7 @@ const BookView = () => {
       })
       .catch((err) => {
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         )
         setIsDisplayForm(false)
       })
@@ -93,7 +91,7 @@ const BookView = () => {
             icon={<LeftCircleOutlined />}
             onClick={() => navigate(Routes.BOOK_LIST.path)}
           />
-          小说查看
+          {t('title.bookViewing')}
         </>
       }
     >
@@ -107,45 +105,63 @@ const BookView = () => {
               ...initFormData,
             }}
           >
-            <Divider orientation="left">基本信息</Divider>
-            <ViewItem label="书名" value={initFormData?.bookName} />
-            <ViewItem label="作者" value={initFormData?.author} />
+            <Divider orientation="left">{t('title.basicInfo')}</Divider>
             <ViewItem
-              label="分类"
+              label={t('title.bookName')}
+              value={initFormData?.bookName}
+            />
+            <ViewItem label={t('title.author')} value={initFormData?.author} />
+            <ViewItem
+              label={t('title.classification')}
               value={categoryDict.fetchedData
                 ?.filter((cate) => selectCategories?.includes(cate.id))
                 .map((cate) => cate.categoryName)
                 .join(', ')}
             />
             <ViewItem
-              label="关键词"
+              label={t('title.keyword')}
               value={initFormData?.keywords?.join(', ')}
             />
-            <ViewItem label="书籍介绍" value={initFormData?.introduction} />
             <ViewItem
-              label="封面"
+              label={t('title.bookIntroduction')}
+              value={initFormData?.introduction}
+            />
+            <ViewItem
+              label={t('title.cover')}
               value={
                 <img src={imageUrl} alt="avatar" style={{ height: 200 }} />
               }
             />
-            <Divider orientation="left">小说属性</Divider>
+            <Divider orientation="left">{t('title.bookProperties')}</Divider>
             <ViewItem
-              label="连载"
-              value={initFormData?.isSerialized ? '是' : '否'}
+              label={t('title.publishInInstalments')}
+              value={
+                initFormData?.isSerialized
+                  ? t('title.status.yes')
+                  : t('title.status.no')
+              }
             />
             <ViewItem
-              label="完结"
-              value={initFormData?.hasEnding ? '是' : '否'}
+              label={t('title.end')}
+              value={
+                initFormData?.hasEnding
+                  ? t('title.status.yes')
+                  : t('title.status.no')
+              }
             />
-            <Divider orientation="left">小说状态</Divider>
+            <Divider orientation="left">{t('title.status.booking')}</Divider>
             <ViewItem
-              label="状态"
-              value={initFormData?.status === 'ONLINE' ? '已上架' : '未上架'}
+              label={t('title.status')}
+              value={
+                initFormData?.status === 'ONLINE'
+                  ? t('title.listed')
+                  : t('title.notListed')
+              }
             />
           </Form>
         </Skeleton>
       ) : (
-        <Empty description={<span>获取信息失败</span>} />
+        <Empty description={<span>{t('message.error.failure')}</span>} />
       )}
     </Card>
   )

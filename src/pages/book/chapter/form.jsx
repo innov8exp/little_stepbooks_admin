@@ -17,11 +17,12 @@ import useQuery from '@/hooks/useQuery'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { TextArea } = Input
 
 const ChapterForm = () => {
+  const { t } = useTranslation()
   const query = useQuery()
   const queryId = query.get('id')
   const bookId = query.get('bookId')
@@ -43,7 +44,7 @@ const ChapterForm = () => {
         })
       return
     }
-    form.setFieldsValue({ content: '加载中...' })
+    form.setFieldsValue({ content: `${t('message.tips.loading')}` })
     setLoading(true)
     setIsDisplayForm(true)
     axios.get(`/api/admin/v1/chapters/${queryId}/content`).then((res) => {
@@ -64,9 +65,7 @@ const ChapterForm = () => {
       })
       .catch((err) => {
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         )
         setIsDisplayForm(false)
       })
@@ -81,15 +80,13 @@ const ChapterForm = () => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success('保存成功!')
+          message.success(`${t('message.successfullySaved')}`)
           navigate(Routes.BOOK_LIST.path)
         }
       })
       .catch((err) => {
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         )
       })
       .finally(() => setSaveLoading(false))
@@ -103,14 +100,12 @@ const ChapterForm = () => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success('保存成功!')
+          message.success(`${t('message.successfullySaved')}`)
         }
       })
       .catch((err) => {
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         )
       })
       .finally(() => setSaveLoading(false))
@@ -149,7 +144,7 @@ const ChapterForm = () => {
             icon={<LeftCircleOutlined />}
             onClick={() => navigate.goBack()}
           />
-          {i18n.t('button.Chapter.edit')}
+          {t('button.Chapter.edit')}
         </>
       }
     >
@@ -163,16 +158,16 @@ const ChapterForm = () => {
               ...initFormData,
             }}
           >
-            <Form.Item name="chapterNumber" label={i18n.t('title.number')}>
+            <Form.Item name="chapterNumber" label={t('title.number')}>
               <Input type="number" readOnly />
             </Form.Item>
             <Form.Item
               name="chapterName"
-              label={i18n.t('title.chapterName')}
+              label={t('title.chapterName')}
               rules={[
                 {
                   required: true,
-                  message: `${i18n.t('message.placeholder.chapterName')}`,
+                  message: `${t('message.placeholder.chapterName')}`,
                 },
               ]}
             >
@@ -180,28 +175,28 @@ const ChapterForm = () => {
             </Form.Item>
             <Form.Item
               name="needPay"
-              label={i18n.t('title.payOrNot')}
+              label={t('title.payOrNot')}
               rules={[
                 {
                   required: true,
-                  message: `${i18n.t('message.check.payOrNot')}`,
+                  message: `${t('message.check.payOrNot')}`,
                 },
               ]}
             >
               <Radio.Group>
-                <Radio value>{i18n.t('radio.label.pay')}</Radio>
+                <Radio value>{t('radio.label.pay')}</Radio>
 
-                <Radio value={false}>{i18n.t('radio.label.free')}</Radio>
+                <Radio value={false}>{t('radio.label.free')}</Radio>
               </Radio.Group>
             </Form.Item>
             <Form.Item
               wrapperCol={{ span: 16 }}
               name="content"
-              label={i18n.t('title.chapterContent')}
+              label={t('title.chapterContent')}
               rules={[
                 {
                   required: true,
-                  message: `${i18n.t('message.check.chapterContent')}`,
+                  message: `${t('message.check.chapterContent')}`,
                 },
               ]}
             >
@@ -211,7 +206,7 @@ const ChapterForm = () => {
             <Row justify="end">
               <Col>
                 <Button type="default" onClick={() => form.resetFields()}>
-                  {i18n.t('button.reset')}
+                  {t('button.reset')}
                 </Button>
                 <span style={{ marginRight: 20 }} />
                 <Button
@@ -219,14 +214,14 @@ const ChapterForm = () => {
                   type="primary"
                   onClick={() => handleSaveAction()}
                 >
-                  {i18n.t('button.saveData')}
+                  {t('button.saveData')}
                 </Button>
               </Col>
             </Row>
           </Form>
         </Skeleton>
       ) : (
-        <Empty description={<span> {i18n.t('message.error.failure')}</span>} />
+        <Empty description={<span> {t('message.error.failure')}</span>} />
       )}
     </Card>
   )

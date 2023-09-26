@@ -26,7 +26,7 @@ import useQuery from '@/hooks/useQuery'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { Option } = Select
 const { TextArea } = Input
@@ -50,6 +50,7 @@ const beforeUpload = (file) => {
 }
 
 const BookForm = () => {
+  const { t } = useTranslation()
   const query = useQuery()
   const queryId = query.get('id')
   const navigate = useNavigate()
@@ -81,9 +82,7 @@ const BookForm = () => {
         })
         .catch((err) => {
           message.error(
-            `${i18n.t('message.error.failureReason')}${
-              err.response?.data?.message
-            }`,
+            `${t('message.error.failureReason')}${err.response?.data?.message}`,
           )
           reject(err)
         })
@@ -110,9 +109,7 @@ const BookForm = () => {
       })
       .catch((err) => {
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         )
         setIsDisplayForm(false)
       })
@@ -138,9 +135,7 @@ const BookForm = () => {
       })
       .catch((err) => {
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         )
       })
       .finally(() => setSaveLoading(false))
@@ -161,9 +156,7 @@ const BookForm = () => {
       })
       .catch((err) => {
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         )
       })
       .finally(() => setSaveLoading(false))
@@ -206,7 +199,7 @@ const BookForm = () => {
   const uploadButton = (
     <div>
       {uploading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>封面上传</div>
+      <div style={{ marginTop: 8 }}>{t('title.coverUpload')}</div>
     </div>
   )
 
@@ -223,15 +216,13 @@ const BookForm = () => {
         if (res.status === HttpStatus.OK) {
           onSuccess()
           form.setFieldsValue({ coverImg: res.data })
-          message.success('上传成功!')
+          message.success(`${t('message.tips.uploadSuccess')}`)
         }
       })
       .catch((err) => {
         onError(err)
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         )
       })
       .finally(() => {
@@ -253,7 +244,7 @@ const BookForm = () => {
             icon={<LeftCircleOutlined />}
             onClick={() => navigate(Routes.BOOK_LIST.path)}
           />
-          {i18n.t('button.bookEditing')}
+          {t('button.bookEditing')}
         </>
       }
     >
@@ -267,14 +258,14 @@ const BookForm = () => {
               ...initFormData,
             }}
           >
-            <Divider orientation="left">基本信息</Divider>
+            <Divider orientation="left">{t('title.basicInfo')}</Divider>
             <Form.Item
               name="bookName"
-              label={i18n.t('bookName')}
+              label={t('bookName')}
               rules={[
                 {
                   required: true,
-                  message: `${i18n.t('message.check.bookName')}`,
+                  message: `${t('message.check.bookName')}`,
                 },
               ]}
             >
@@ -282,11 +273,11 @@ const BookForm = () => {
             </Form.Item>
             <Form.Item
               name="author"
-              label={i18n.t('title.author')}
+              label={t('title.author')}
               rules={[
                 {
                   required: true,
-                  message: `${i18n.t('message.check.enterAuthor')}`,
+                  message: `${t('message.check.enterAuthor')}`,
                 },
               ]}
             >
@@ -294,11 +285,11 @@ const BookForm = () => {
             </Form.Item>
             <Form.Item
               name="categories"
-              label={i18n.t('title.classification')}
+              label={t('title.classification')}
               rules={[
                 {
                   required: true,
-                  message: `${i18n.t('message.check.selectClassification')}`,
+                  message: `${t('message.check.selectClassification')}`,
                 },
               ]}
             >
@@ -312,20 +303,20 @@ const BookForm = () => {
                 })}
               </Checkbox.Group>
             </Form.Item>
-            <Form.Item name="keywords" label={i18n.t('title.keyword')}>
+            <Form.Item name="keywords" label={t('title.keyword')}>
               <Select
                 mode="tags"
                 style={{ width: '100%' }}
-                placeholder={i18n.t('message.check.searchKeywords')}
+                placeholder={t('message.check.searchKeywords')}
               />
             </Form.Item>
             <Form.Item
               name="introduction"
-              label={i18n.t('title.bookIntroduction')}
+              label={t('title.bookIntroduction')}
               rules={[
                 {
                   required: true,
-                  message: `${i18n.t('message.check.bookIntroduction')}`,
+                  message: `${t('message.check.bookIntroduction')}`,
                 },
               ]}
             >
@@ -333,11 +324,11 @@ const BookForm = () => {
             </Form.Item>
             <Form.Item
               name="coverImg"
-              label={i18n.t('title.cover')}
+              label={t('title.cover')}
               rules={[
                 {
                   required: true,
-                  message: `${i18n.t('message.check.uploadCoverImage')}`,
+                  message: `${t('message.check.uploadCoverImage')}`,
                 },
               ]}
             >
@@ -358,39 +349,37 @@ const BookForm = () => {
                 )}
               </Upload>
             </Form.Item>
-            <Divider orientation="left">
-              {i18n.t('title.bookProperties')}
-            </Divider>
+            <Divider orientation="left">{t('title.bookProperties')}</Divider>
             <Form.Item
               name="chargeType"
-              label={i18n.t('title.paymentType')}
+              label={t('title.paymentType')}
               rules={[
                 {
                   required: true,
-                  message: `${i18n.t('message.check.selectPaymentType')} `,
+                  message: `${t('message.check.selectPaymentType')} `,
                 },
               ]}
             >
               <Select>
                 <Option value="FREE">
-                  {i18n.t('select.option.allChapterFree')}
+                  {t('select.option.allChapterFree')}
                 </Option>
                 <Option value="FULL_CHARGE">
-                  {i18n.t('select.option.allChapterPay')}
+                  {t('select.option.allChapterPay')}
                 </Option>
                 <Option value="PART_CHARGE">
                   {' '}
-                  {i18n.t('select.option.PartialChapterPay')}
+                  {t('select.option.PartialChapterPay')}
                 </Option>
               </Select>
             </Form.Item>
             <Form.Item
               name="price"
-              label={i18n.t('title.chapterUnitPrice')}
+              label={t('title.chapterUnitPrice')}
               rules={[
                 {
                   required: true,
-                  message: `${i18n.t('message.check.unitPrice')}`,
+                  message: `${t('message.check.unitPrice')}`,
                 },
               ]}
             >
@@ -398,17 +387,17 @@ const BookForm = () => {
             </Form.Item>
             <Form.Item
               name="isSerialized"
-              label={i18n.t('title.publishInInstalments')}
+              label={t('title.publishInInstalments')}
             >
               <Radio.Group>
-                <Radio value>{i18n.t('radio.label.yes')}</Radio>
-                <Radio value={false}>{i18n.t('radio.label.deny')}</Radio>
+                <Radio value>{t('radio.label.yes')}</Radio>
+                <Radio value={false}>{t('radio.label.deny')}</Radio>
               </Radio.Group>
             </Form.Item>
-            <Form.Item name="hasEnding" label={i18n.t('title.end')}>
+            <Form.Item name="hasEnding" label={t('title.end')}>
               <Radio.Group>
-                <Radio value>{i18n.t('radio.label.yes')}</Radio>
-                <Radio value={false}>{i18n.t('radio.label.deny')}</Radio>
+                <Radio value>{t('radio.label.yes')}</Radio>
+                <Radio value={false}>{t('radio.label.deny')}</Radio>
               </Radio.Group>
             </Form.Item>
 
@@ -416,7 +405,7 @@ const BookForm = () => {
             <Row justify="end">
               <Col>
                 <Button type="default" onClick={() => form.resetFields()}>
-                  {i18n.t('button.reset')}
+                  {t('button.reset')}
                 </Button>
                 <span style={{ marginRight: 20 }} />
                 <Button
@@ -424,14 +413,14 @@ const BookForm = () => {
                   type="primary"
                   onClick={() => handleSaveAction()}
                 >
-                  {i18n.t('button.saveData')}
+                  {t('button.saveData')}
                 </Button>
               </Col>
             </Row>
           </Form>
         </Skeleton>
       ) : (
-        <Empty description={<span>{i18n.t('message.error.failure')}</span>} />
+        <Empty description={<span>{t('message.error.failure')}</span>} />
       )}
     </Card>
   )

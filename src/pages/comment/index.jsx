@@ -27,11 +27,12 @@ import {
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 // import { useHistory } from "react-router-dom";
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
 const CommentPage = () => {
+  const { t } = useTranslation()
   const [queryForm] = Form.useForm()
   //   const history = useHistory();
   const [changeTimestamp, setChangeTimestamp] = useState()
@@ -65,9 +66,7 @@ const CommentPage = () => {
       })
       .catch((err) =>
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         ),
       )
       .finally(() => setLoading(false))
@@ -75,23 +74,23 @@ const CommentPage = () => {
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: '确定删除当前记录？',
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
-      okText: '确定',
+      okText: `${t('button.determine')}`,
       okType: 'primary',
-      cancelText: '取消',
+      cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
           .delete(`/api/admin/v1/comments/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               setChangeTimestamp(Date.now())
-              message.success(i18n.t('message.successInfo'))
+              message.success(t('message.successInfo'))
             }
           })
           .catch((err) => {
             message.error(
-              `${i18n.t('message.error.failureReason')}${
+              `${t('message.error.failureReason')}${
                 err.response?.data?.message
               }`,
             )
@@ -120,7 +119,7 @@ const CommentPage = () => {
   }, [fetchData, pageNumber, changeTimestamp])
 
   return (
-    <Card title="评论管理">
+    <Card title={t('title.comment')}>
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}
@@ -129,13 +128,13 @@ const CommentPage = () => {
       >
         <Row>
           <Col span={6}>
-            <Form.Item label="书籍名称" name="bookName">
-              <Input placeholder="请输入书籍名称" />
+            <Form.Item label={t('title.label.bookName')} name="bookName">
+              <Input placeholder={t('message.placeholder.bookName')} />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label="用户" name="nickname">
-              <Input placeholder="请输入用户名" />
+            <Form.Item label={t('title.label.userName')} name="nickname">
+              <Input placeholder={t('message.placeholder.enterUserName')} />
             </Form.Item>
           </Col>
         </Row>
@@ -150,7 +149,7 @@ const CommentPage = () => {
                 type="default"
                 onClick={handleReset}
               >
-                重置
+                {t('button.reset')}
               </Button>
             </ConditionLeftItem>
             <ConditionLeftItem>
@@ -159,7 +158,7 @@ const CommentPage = () => {
                 type="primary"
                 onClick={handleQuery}
               >
-                查询
+                {t('button.search')}
               </Button>
             </ConditionLeftItem>
           </QueryBtnWrapper>
@@ -173,33 +172,33 @@ const CommentPage = () => {
                 (pageNumber - 1) * pageSize + index + 1,
             },
             {
-              title: '用户名',
+              title: `${t('title.label.userNickName')}`,
               key: 'username',
               dataIndex: 'username',
             },
             {
-              title: '用户昵称',
+              title: `${t('title.userNickname')}`,
               key: 'nickname',
               dataIndex: 'nickname',
             },
             {
-              title: '用户头像',
+              title: `${t('title.userProfile')}`,
               key: 'avatarImg',
               dataIndex: 'avatarImg',
               render: (text) => <Image width={30} src={text} />,
             },
             {
-              title: '书籍',
+              title: `${t('title.label.books')}`,
               key: 'bookName',
               dataIndex: 'bookName',
             },
             {
-              title: '评论内容',
+              title: `${t('title.commentContent')}`,
               key: 'content',
               dataIndex: 'content',
             },
             {
-              title: '操作',
+              title: `${t('title.operate')}`,
               key: 'action',
               render: (text, record) => {
                 return (
@@ -219,7 +218,7 @@ const CommentPage = () => {
                       danger
                       onClick={() => handleDeleteAction(record.id)}
                     >
-                      删除
+                      {t('button.delete')}
                     </Button>
                   </div>
                 )

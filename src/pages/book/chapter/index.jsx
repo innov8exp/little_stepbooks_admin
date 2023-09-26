@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import ChapterView from './view'
 import UploadForm from './form'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
@@ -31,6 +31,7 @@ const CustomLink = styled.a`
 `
 
 const ChapterPage = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const query = useQuery()
   const queryId = query.get('id')
@@ -75,9 +76,7 @@ const ChapterPage = () => {
       })
       .catch((err) =>
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         ),
       )
       .finally(() => setLoading(false))
@@ -85,11 +84,11 @@ const ChapterPage = () => {
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: `${i18n.t('message.tips.delete')}`,
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
-      okText: `${i18n.t('button.determine')}`,
+      okText: `${t('button.determine')}`,
       okType: 'primary',
-      cancelText: `${i18n.t('button.cancel')}`,
+      cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
           .delete(`/api/admin/v1/chapters/${id}`)
@@ -97,12 +96,12 @@ const ChapterPage = () => {
             if (res.status === HttpStatus.OK) {
               const timestamp = new Date().getTime()
               setChangeTimestamp(timestamp)
-              message.success(i18n.t('message.successInfo'))
+              message.success(t('message.successInfo'))
             }
           })
           .catch((err) => {
             message.error(
-              `${i18n.t('message.error.failureReason')}${
+              `${t('message.error.failureReason')}${
                 err.response?.data?.message
               }`,
             )
@@ -146,9 +145,7 @@ const ChapterPage = () => {
       })
       .catch((err) =>
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         ),
       )
       .finally(() => {
@@ -171,7 +168,7 @@ const ChapterPage = () => {
             icon={<LeftCircleOutlined />}
             onClick={() => navigate.goBack()}
           />
-          《{queryName}》- {i18n.t('button.Chapter')}
+          《{queryName}》- {t('button.Chapter')}
         </>
       }
     >
@@ -184,7 +181,7 @@ const ChapterPage = () => {
                 type="primary"
                 onClick={() => handleCreateAction()}
               >
-                {i18n.t('button.newChapter')}
+                {t('button.newChapter')}
               </Button>
             </ConditionItem>
             <ConditionItem>
@@ -193,12 +190,12 @@ const ChapterPage = () => {
                 type="primary"
                 onClick={() => handleUploadAction()}
               >
-                {i18n.t('button.uploadChapter')}
+                {t('button.uploadChapter')}
               </Button>
             </ConditionItem>
             <ConditionItem>
               <CustomLink href="/api/admin/v1/chapters/template/download">
-                {i18n.t('button.templateDownload')}
+                {t('button.templateDownload')}
               </CustomLink>
             </ConditionItem>
           </QueryBtnWrapper>
@@ -209,7 +206,7 @@ const ChapterPage = () => {
                 type="primary"
                 onClick={handleQuery}
               >
-                {i18n.t('button.search')}
+                {t('button.search')}
               </Button>
             </ConditionLeftItem>
           </QueryBtnWrapper>
@@ -223,29 +220,29 @@ const ChapterPage = () => {
             //         (pageNumber - 1) * pageSize + index + 1,
             // },
             {
-              title: '章节序号',
+              title: `${t('title.chapterNumber')}`,
               key: 'chapterNumber',
               dataIndex: 'chapterNumber',
             },
             {
-              title: '章节名称',
+              title: `${t('title.chapterName')}`,
               key: 'chapterName',
               dataIndex: 'chapterName',
             },
             {
-              title: '章节介绍',
+              title: `${t('title.chapterIntroduction')}`,
               key: 'introduction',
               dataIndex: 'introduction',
             },
             {
-              title: '是否付费',
+              title: `${t('title.payOrNot')}`,
               key: 'needPay',
               dataIndex: 'needPay',
               render: (text, record) => (
                 <Switch
                   onChange={(checked) => handleSwitchChange(record.id, checked)}
-                  checkedChildren="付费"
-                  unCheckedChildren="免费"
+                  checkedChildren={`${t('radio.label.pay')}`}
+                  unCheckedChildren={`${t('radio.label.free')}`}
                   checked={text}
                 />
               ),
@@ -256,17 +253,17 @@ const ChapterPage = () => {
             //     dataIndex: 'contentLink',
             // },
             {
-              title: '创建时间',
+              title: `${t('title.creationTime')}`,
               key: 'createdAt',
               dataIndex: 'createdAt',
             },
             {
-              title: '更新时间',
+              title: `${t('title.updateTme')}`,
               key: 'modifiedAt',
               dataIndex: 'modifiedAt',
             },
             {
-              title: '操作',
+              title: `${t('title.operate')}`,
               key: 'action',
               render: (text, record) => (
                 <div>
@@ -274,14 +271,14 @@ const ChapterPage = () => {
                     onClick={() => handleViewAction(record.id)}
                     type="link"
                   >
-                    {i18n.t('button.preview')}
+                    {t('button.preview')}
                   </Button>
                   <Divider type="vertical" />
                   <Button
                     type="link"
                     onClick={() => handleEditAction(record.id)}
                   >
-                    {i18n.t('button.edit')}
+                    {t('button.edit')}
                   </Button>
 
                   <Divider type="vertical" />
@@ -290,7 +287,7 @@ const ChapterPage = () => {
                     danger
                     onClick={() => handleDeleteAction(record.id)}
                   >
-                    {i18n.t('button.delete')}
+                    {t('button.delete')}
                   </Button>
                 </div>
               ),

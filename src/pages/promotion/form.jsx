@@ -5,7 +5,7 @@ import HttpStatus from 'http-status-codes'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { Option } = Select
 
@@ -13,6 +13,7 @@ function disabledDate(current) {
   return current && current < moment().endOf('day')
 }
 const PromotionForm = ({ id, visible, onSave, onCancel }) => {
+  const { t } = useTranslation()
   const [form] = Form.useForm()
   const [promotionType, setPromotionType] = useState()
 
@@ -83,7 +84,7 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success(i18n.t('message.successInfo'))
+          message.success(t('message.successInfo'))
           onSave()
         }
       })
@@ -102,7 +103,7 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success(i18n.t('message.successInfo'))
+          message.success(t('message.successInfo'))
           onSave()
         }
       })
@@ -128,9 +129,9 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={640}
       style={{ maxHeight: 500 }}
-      title="促销表单"
-      okText="保存"
-      cancelText="取消"
+      title={t('title.label.promotionForm')}
+      okText={t('button.save')}
+      cancelText={t('button.cancel')}
       onCancel={onCancel}
       onOk={okHandler}
     >
@@ -146,28 +147,28 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
         </Form.Item>
         <Form.Item
           name="bookName"
-          label="书籍"
+          label={t('title.label.books')}
           rules={[
             {
               required: true,
-              message: '请选择书籍',
+              message: `${t('message.check.selectBook')}`,
             },
           ]}
         >
           <DebounceSelect
             showSearch
             fetchOptions={fetchBook}
-            placeholder="请输入书籍名称搜索"
+            placeholder={t('message.placeholder.enterBookSearch')}
             onChange={(option) => handleSelectChangeAction(option)}
           />
         </Form.Item>
         <Form.Item
           name="promotionType"
-          label="促销类型"
+          label={t('title.label.promotionType')}
           rules={[
             {
               required: true,
-              message: '请选择促销类型',
+              message: `${t('message.check.selectPromotionType')}`,
             },
           ]}
         >
@@ -184,20 +185,28 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
               }
             }}
           >
-            <Option value="LIMIT_FREE">限时免费</Option>
-            <Option value="LIMIT_DISCOUNT">限时折扣</Option>
+            <Option value="LIMIT_FREE">
+              {t('title.label.limitedTimeFree')}
+            </Option>
+            <Option value="LIMIT_DISCOUNT">
+              {' '}
+              {t('title.label.LimitedTimeDiscount')}
+            </Option>
           </Select>
         </Form.Item>
-        <Form.Item name="originalCoinAmount" label="章节原价（书币）">
+        <Form.Item
+          name="originalCoinAmount"
+          label={t('title.label.chapterOriginalPrice')}
+        >
           <Input type="number" readOnly />
         </Form.Item>
         <Form.Item
           name="discountPercent"
-          label="折扣%"
+          label={t('title.label.discount')}
           rules={[
             {
               required: true,
-              message: '请输入折扣%',
+              message: `${t('message.check.enterDiscount')}`,
             },
           ]}
         >
@@ -214,16 +223,16 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
             }}
           />
         </Form.Item>
-        <Form.Item name="coinAmount" label="折扣后章节单价（书币）">
+        <Form.Item name="coinAmount" label={t('title.label.chapterUnitPrice')}>
           <Input type="number" readOnly />
         </Form.Item>
         <Form.Item
           name="timeRange"
-          label="促销时间"
+          label={t('title.label.salesTime')}
           rules={[
             {
               required: true,
-              message: '请选择促销时间',
+              message: `${t('message.check.selectPromotionTime')}`,
             },
           ]}
         >

@@ -31,11 +31,12 @@ import {
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
 const BookPage = () => {
+  const { t } = useTranslation()
   const [queryForm] = Form.useForm()
   const navigate = useNavigate()
   const [changeTimestamp, setChangeTimestamp] = useState()
@@ -67,9 +68,7 @@ const BookPage = () => {
       })
       .catch((err) =>
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         ),
       )
   }
@@ -99,9 +98,7 @@ const BookPage = () => {
       })
       .catch((err) =>
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         ),
       )
       .finally(() => setLoading(false))
@@ -126,7 +123,7 @@ const BookPage = () => {
           })
           .catch((err) => {
             message.error(
-              `${i18n.t('message.error.failureReason')}${
+              `${t('message.error.failureReason')}${
                 err.response?.data?.message
               }`,
             )
@@ -165,14 +162,14 @@ const BookPage = () => {
   const handleStatusChange = (id, status) => {
     const cCount = chapterCount?.find((cc) => cc.bookId === id)?.chapterCount
     if (!cCount) {
-      message.error(`${i18n.t('message.error.noBookChapters')}`)
+      message.error(`${t('message.error.noBookChapters')}`)
       return
     }
     axios.put(`/api/admin/v1/books/${id}/status/${status}`).then((res) => {
       if (res.status === HttpStatus.OK) {
         const timestamp = new Date().getTime()
         setChangeTimestamp(timestamp)
-        message.success(i18n.t('message.successInfo'))
+        message.success(t('message.successInfo'))
       }
     })
   }
@@ -182,7 +179,7 @@ const BookPage = () => {
   }, [fetchBooks, pageNumber, changeTimestamp])
 
   return (
-    <Card title={i18n.t('title.book')}>
+    <Card title={t('title.book')}>
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}
@@ -191,13 +188,13 @@ const BookPage = () => {
       >
         <Row>
           <Col span={6}>
-            <Form.Item label={i18n.t('title.name')} name="bookName">
-              <Input placeholder={i18n.t('message.placeholder.bookName')} />
+            <Form.Item label={t('title.name')} name="bookName">
+              <Input placeholder={t('message.placeholder.bookName')} />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label={i18n.t('title.author')} name="author">
-              <Input placeholder={i18n.t('message.placeholder.bookAuthor')} />
+            <Form.Item label={t('title.author')} name="author">
+              <Input placeholder={t('message.placeholder.bookAuthor')} />
             </Form.Item>
           </Col>
         </Row>
@@ -212,7 +209,7 @@ const BookPage = () => {
                 type="primary"
                 onClick={() => handleCreateAction()}
               >
-                {i18n.t('button.create')}
+                {t('button.create')}
               </Button>
             </ConditionItem>
           </QueryBtnWrapper>
@@ -223,7 +220,7 @@ const BookPage = () => {
                 type="default"
                 onClick={handleReset}
               >
-                {i18n.t('button.reset')}
+                {t('button.reset')}
               </Button>
             </ConditionLeftItem>
             <ConditionLeftItem>
@@ -232,7 +229,7 @@ const BookPage = () => {
                 type="primary"
                 onClick={handleQuery}
               >
-                {i18n.t('button.search')}
+                {t('button.search')}
               </Button>
             </ConditionLeftItem>
           </QueryBtnWrapper>
@@ -246,7 +243,7 @@ const BookPage = () => {
                 (pageNumber - 1) * pageSize + index + 1,
             },
             {
-              title: '名称',
+              title: `${t('title.name')}`,
               key: 'bookName',
               dataIndex: 'bookName',
               width: 150,
@@ -259,42 +256,44 @@ const BookPage = () => {
               ),
             },
             {
-              title: '作者',
+              title: `${t('title.author')}`,
               key: 'author',
               dataIndex: 'author',
             },
             {
-              title: '封面',
+              title: `${t('title.cover')}`,
               key: 'coverImg',
               dataIndex: 'coverImg',
               render: (text) => <Image width={50} src={text} />,
             },
             {
-              title: '连载',
+              title: `${t('title.publishInInstalments')}`,
               key: 'isSerialized',
               dataIndex: 'isSerialized',
-              render: (text) => (text ? '是' : '否'),
+              render: (text) =>
+                text ? `${t('title.status.yes')}` : `${t('title.status.no')}`,
             },
             {
-              title: '完结',
+              title: `${t('title.end')}`,
               key: 'hasEnding',
               dataIndex: 'hasEnding',
-              render: (text) => (text ? '是' : '否'),
+              render: (text) =>
+                text ? `${t('title.status.yes')}` : `${t('title.status.no')}`,
             },
             {
-              title: '状态',
+              title: `${t('title.status')}`,
               key: 'status',
               dataIndex: 'status',
               render: (text) => {
                 return text === 'ONLINE' ? (
-                  <Tag color="green">已上架</Tag>
+                  <Tag color="green">{t('title.listed')}</Tag>
                 ) : (
-                  <Tag color="red">未上架</Tag>
+                  <Tag color="red">{t('title.notListed')}</Tag>
                 )
               },
             },
             {
-              title: '操作',
+              title: `${t('title.operate')}`,
               key: 'action',
               render: (text, record) => {
                 return (
@@ -304,14 +303,14 @@ const BookPage = () => {
                         onClick={() => handleStatusChange(record.id, 'OFFLINE')}
                         type="link"
                       >
-                        {i18n.t('button.OffShelf')}
+                        {t('button.OffShelf')}
                       </Button>
                     ) : (
                       <Button
                         onClick={() => handleStatusChange(record.id, 'ONLINE')}
                         type="link"
                       >
-                        {i18n.t('button.grounding')}
+                        {t('button.grounding')}
                       </Button>
                     )}
 
@@ -322,7 +321,7 @@ const BookPage = () => {
                       }
                       type="link"
                     >
-                      {i18n.t('button.Chapter')}(
+                      {t('button.Chapter')}(
                       {chapterCount?.find((cc) => cc.bookId === record.id)
                         ?.chapterCount || 0}
                       )
@@ -332,7 +331,7 @@ const BookPage = () => {
                       type="link"
                       onClick={() => handleEditAction(record.id)}
                     >
-                      {i18n.t('button.edit')}
+                      {t('button.edit')}
                     </Button>
 
                     <Divider type="vertical" />
@@ -341,7 +340,7 @@ const BookPage = () => {
                       danger
                       onClick={() => handleDeleteAction(record.id)}
                     >
-                      {i18n.t('button.delete')}
+                      {t('button.delete')}
                     </Button>
                   </div>
                 )

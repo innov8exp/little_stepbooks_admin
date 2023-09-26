@@ -13,8 +13,10 @@ import Config from '@/libs/config'
 import { Routes } from '@/libs/router'
 import { Button, Form, Input, message } from 'antd'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 const SignInPage = () => {
+  const { t } = useTranslation()
   const [form] = Form.useForm()
   const { loading, setLoading, login } = useSession()
 
@@ -23,7 +25,7 @@ const SignInPage = () => {
     form
       .validateFields()
       .then((values) => login(values))
-      .catch(() => message.error('请检查输入项！'))
+      .catch(() => message.error(`${t('message.check.checkInputItems')}`))
   }
   return (
     <AuthLayout>
@@ -45,11 +47,11 @@ const SignInPage = () => {
         >
           <Form.Item
             name="email"
-            label={<LabelText>{'邮箱'}</LabelText>}
+            label={<LabelText>{`${t('title.email')}`}</LabelText>}
             rules={[
               {
                 required: true,
-                message: '请输入邮箱',
+                message: `${t('message.check.enterEmail')}`,
               },
             ]}
           >
@@ -59,14 +61,16 @@ const SignInPage = () => {
             name="password"
             label={
               <LabelWrapper>
-                <LabelText>{'密码'}</LabelText>
-                <Link to={Routes.FORGET_PASSWORD.path}>{'忘记密码？'}</Link>
+                <LabelText>{`${t('title.password')}`}</LabelText>
+                <Link to={Routes.FORGET_PASSWORD.path}>{`${t(
+                  'title.forgotPassword',
+                )}`}</Link>
               </LabelWrapper>
             }
             rules={[
               {
                 required: true,
-                message: '请输入密码',
+                message: `${t('message.check.enterPassword')}`,
               },
             ]}
           >
@@ -80,7 +84,7 @@ const SignInPage = () => {
               block
               style={{ borderRadius: '4px', height: '40px' }}
             >
-              {'登录'}
+              {`${t('title.login')}`}
             </Button>
           </Form.Item>
         </Form>

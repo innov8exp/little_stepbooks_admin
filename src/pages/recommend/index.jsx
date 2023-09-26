@@ -6,11 +6,12 @@ import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import RecommendForm from './form'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
 const RecommendPage = () => {
+  const { t } = useTranslation()
   const [changeTime, setChangeTime] = useState(Date.now())
   const { loading, fetchedData } = useFetch(`/api/admin/v1/recommends`, [
     changeTime,
@@ -25,17 +26,17 @@ const RecommendPage = () => {
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: '确定删除次记录?',
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
-      okText: 'Yes',
+      okText: `${t('button.determine')}`,
       okType: 'primary',
-      cancelText: 'No',
+      cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
           .delete(`/api/admin/v1/recommends/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success(i18n.t('message.successInfo'))
+              message.success(t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -48,7 +49,7 @@ const RecommendPage = () => {
   }
 
   return (
-    <Card title="首页推荐设置">
+    <Card title={t('title.homepageRecommendedSettings')}>
       <ButtonWrapper>
         <Button
           type="primary"
@@ -57,7 +58,7 @@ const RecommendPage = () => {
             setFormVisible(true)
           }}
         >
-          新建
+          {t('button.create')}
         </Button>
       </ButtonWrapper>
       <Table
@@ -68,51 +69,61 @@ const RecommendPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: '书籍',
+            title: `${t('title.name')}`,
             key: 'bookName',
             dataIndex: 'bookName',
           },
           {
-            title: '书籍封面',
+            title: `${t('title.bookCover')}`,
             key: 'coverImg',
             dataIndex: 'coverImg',
             render: (text) => <Image width={50} src={text} />,
           },
           {
-            title: '作者',
+            title: `${t('title.author')}`,
             key: 'author',
             dataIndex: 'author',
           },
           {
-            title: '连载',
+            title: `${t('title.publishInInstalments')}`,
             key: 'isSerialized',
             dataIndex: 'isSerialized',
-            render: (text) => (text ? '是' : '否'),
+            render: (text) =>
+              text ? `${t('radio.label.yes')}` : `${t('radio.label.deny')}`,
           },
           {
-            title: '完结',
+            title: `${t('title.end')}`,
             key: 'hasEnding',
             dataIndex: 'hasEnding',
-            render: (text) => (text ? '是' : '否'),
+            render: (text) =>
+              text ? `${t('radio.label.yes')}` : `${t('radio.label.deny')}`,
           },
           {
-            title: '推荐类型',
+            title: `${t('title.recommendType')}`,
             key: 'recommendType',
             dataIndex: 'recommendType',
             width: 150,
             render: (text) => {
               console.log(text)
               if (text === 'TODAY') {
-                return <Tag color="green">今日推荐</Tag>
+                return (
+                  <Tag color="green">
+                    {t('select.option.TodayRecommendation')}
+                  </Tag>
+                )
               }
               if (text === 'TOP_SEARCH') {
-                return <Tag color="green">热搜推荐</Tag>
+                return (
+                  <Tag color="green">
+                    {t('select.option.hotSearchRecommendations')}
+                  </Tag>
+                )
               }
               return <span />
             },
           },
           {
-            title: '操作',
+            title: `${t('title.operate')}`,
             key: 'action',
             width: 100,
             render: (text, record) => {
@@ -130,7 +141,7 @@ const RecommendPage = () => {
                     onClick={() => handleDeleteAction(record.id)}
                     type="link"
                   >
-                    删除
+                    {t('button.delete')}
                   </Button>
                 </div>
               )

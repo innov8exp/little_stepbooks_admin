@@ -24,11 +24,11 @@ const TagPage = () => {
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: '确定删除次记录?',
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
-      okText: 'Yes',
+      okText: `${t('button.determine')}`,
       okType: 'primary',
-      cancelText: 'No',
+      cancelText: `${t('button.cancel')}`,
       onOk() {
         Axios.delete(`/api/admin/v1/tags/${id}`)
           .then((res) => {
@@ -66,17 +66,17 @@ const TagPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: '标签名称',
+            title: `${t('title.tagName')}`,
             key: 'tagName',
             dataIndex: 'tagName',
           },
           {
-            title: '描述',
+            title: `${t('title.describe')}`,
             key: 'description',
             dataIndex: 'description',
           },
           {
-            title: '操作',
+            title: `${t('title.operate')}`,
             key: 'action',
             width: 300,
             render: (text, record) => {

@@ -6,11 +6,12 @@ import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import PromotionForm from './form'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
 const PromotionPage = () => {
+  const { t } = useTranslation()
   const [changeTime, setChangeTime] = useState(Date.now())
   const { loading, fetchedData } = useFetch(`/api/admin/v1/promotions`, [
     changeTime,
@@ -25,16 +26,16 @@ const PromotionPage = () => {
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: '确定删除次记录?',
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
-      okText: 'Yes',
+      okText: `${t('button.determine')}`,
       okType: 'primary',
-      cancelText: 'No',
+      cancelText: `${t('button.cancel')}`,
       onOk() {
         Axios.delete(`/api/admin/v1/promotions/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success(i18n.t('message.successInfo'))
+              message.success(t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -47,7 +48,7 @@ const PromotionPage = () => {
   }
 
   return (
-    <Card title="促销管理">
+    <Card title={t('title.label.promotion')}>
       <ButtonWrapper>
         <Button
           type="primary"
@@ -56,7 +57,7 @@ const PromotionPage = () => {
             setFormVisible(true)
           }}
         >
-          新建
+          {t('button.create')}
         </Button>
       </ButtonWrapper>
       <Table
@@ -67,43 +68,46 @@ const PromotionPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: '书籍',
+            title: `${t('title.name')}`,
             key: 'bookName',
             dataIndex: 'bookName',
           },
           {
-            title: '章节原价（书币）',
+            title: `${t('title.label.chapterOriginalPrice')}`,
             key: 'originalCoinAmount',
             dataIndex: 'originalCoinAmount',
           },
           {
-            title: '章节现价（书币）',
+            title: `${t('title.currentPrice')}`,
             key: 'coinAmount',
             dataIndex: 'coinAmount',
           },
           {
-            title: '促销类型',
+            title: `${t('title.label.promotionType')}`,
             key: 'promotionType',
             dataIndex: 'promotionType',
-            render: (text) => (text === 'LIMIT_FREE' ? '限时免费' : '限时促销'),
+            render: (text) =>
+              text === 'LIMIT_FREE'
+                ? `${t('title.label.limitedTimeFree')}`
+                : `${t('title.LimitedPromotion')}`,
           },
           {
-            title: '开始时间',
+            title: `${t('title.startTime')}`,
             key: 'limitFrom',
             dataIndex: 'limitFrom',
           },
           {
-            title: '结束时间',
+            title: `${t('title.endtTime')}`,
             key: 'limitTo',
             dataIndex: 'limitTo',
           },
           {
-            title: '折扣%',
+            title: `${t('title.label.discount')}`,
             key: 'discountPercent',
             dataIndex: 'discountPercent',
           },
           {
-            title: '操作',
+            title: `${t('title.operate')}`,
             key: 'action',
             width: 300,
             render: (text, record) => {
@@ -113,13 +117,13 @@ const PromotionPage = () => {
                     onClick={() => handleEditAction(record.id)}
                     type="link"
                   >
-                    编辑
+                    {t('button.edit')}
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
                     type="link"
                   >
-                    删除
+                    {t('button.delete')}
                   </Button>
                 </div>
               )

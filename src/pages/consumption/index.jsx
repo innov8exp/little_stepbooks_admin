@@ -25,11 +25,14 @@ import {
 } from '../../components/styled'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 // import { useHistory } from 'react-router-dom';
 
 const { confirm } = Modal
 
 const ConsumptionPage = () => {
+  const { t } = useTranslation()
   const [queryForm] = Form.useForm()
   // const history = useHistory();
   const [changeTimestamp, setChangeTimestamp] = useState()
@@ -72,9 +75,7 @@ const ConsumptionPage = () => {
       })
       .catch((err) =>
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         ),
       )
       .finally(() => setLoading(false))
@@ -88,7 +89,7 @@ const ConsumptionPage = () => {
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: '确定删除当前记录？',
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
       okText: '确定',
       okType: 'primary',
@@ -105,7 +106,7 @@ const ConsumptionPage = () => {
           })
           .catch((err) => {
             message.error(
-              `${i18n.t('message.error.failureReason')}${
+              `${t('message.error.failureReason')}${
                 err.response?.data?.message
               }`,
             )
@@ -138,7 +139,7 @@ const ConsumptionPage = () => {
   }, [fetchConsumptions, pageNumber, changeTimestamp])
 
   return (
-    <Card title="消费明细">
+    <Card title={t('title.label.consumption')}>
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}
@@ -147,18 +148,21 @@ const ConsumptionPage = () => {
       >
         <Row>
           <Col span={6}>
-            <Form.Item label="订单编号" name="consumeOrderNo">
-              <Input placeholder="请输入订单编号" />
+            <Form.Item
+              label={t('title.label.orderNumber')}
+              name="consumeOrderNo"
+            >
+              <Input placeholder={t('message.placeholder.orderNumber')} />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label="书籍名称" name="bookName">
-              <Input placeholder="请输入书籍名称" />
+            <Form.Item label={t('title.label.bookName')} name="bookName">
+              <Input placeholder={t('message.placeholder.bookName')} />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label="用户名" name="username">
-              <Input placeholder="请输入用户名" />
+            <Form.Item label={t('title.label.userNickName')} name="username">
+              <Input placeholder={t('message.placeholder.enterUserName')} />
             </Form.Item>
           </Col>
         </Row>
@@ -173,7 +177,7 @@ const ConsumptionPage = () => {
                 type="default"
                 onClick={handleReset}
               >
-                重置
+                {t('button.reset')}
               </Button>
             </ConditionLeftItem>
             <ConditionLeftItem>
@@ -182,7 +186,7 @@ const ConsumptionPage = () => {
                 type="primary"
                 onClick={handleQuery}
               >
-                查询
+                {t('button.search')}
               </Button>
             </ConditionLeftItem>
           </QueryBtnWrapper>
@@ -196,7 +200,7 @@ const ConsumptionPage = () => {
                 (pageNumber - 1) * pageSize + index + 1,
             },
             {
-              title: '订单编号',
+              title: `${t('title.label.orderNumber')}`,
               key: 'consumeOrderNo',
               dataIndex: 'consumeOrderNo',
               width: 150,
@@ -210,27 +214,27 @@ const ConsumptionPage = () => {
               // ),
             },
             {
-              title: '用户名',
+              title: `${t('title.label.userNickName')}`,
               key: 'username',
               dataIndex: 'username',
             },
             {
-              title: '用户昵称',
+              title: `${t('title.userNickname')}`,
               key: 'nickname',
               dataIndex: 'nickname',
             },
             {
-              title: '书籍',
+              title: `${t('title.label.books')}`,
               key: 'bookName',
               dataIndex: 'bookName',
             },
             {
-              title: '章节',
+              title: `${t('title.chapter')}`,
               key: 'chapterName',
               dataIndex: 'chapterName',
             },
             {
-              title: '消费书币数量',
+              title: `${t('title.coinAmount')}`,
               key: 'coinAmount',
               dataIndex: 'coinAmount',
             },
@@ -245,7 +249,7 @@ const ConsumptionPage = () => {
             //     },
             // },
             {
-              title: '用户平台',
+              title: `${t('title.clientPlatform')}`,
               key: 'clientPlatform',
               dataIndex: 'clientPlatform',
               render: (text) => {
@@ -253,7 +257,7 @@ const ConsumptionPage = () => {
               },
             },
             {
-              title: '操作',
+              title: `${t('title.operate')}`,
               key: 'action',
               render: (text, record) => {
                 return (

@@ -6,7 +6,7 @@ import DebounceSelect from '@/components/debounce-select'
 import HttpStatus from 'http-status-codes'
 import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { Option } = Select
 
@@ -29,6 +29,7 @@ const beforeUpload = (file) => {
 }
 
 const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
+  const { t } = useTranslation()
   const [form] = Form.useForm()
   const [uploading, setUploading] = useState(false)
   const [imageUrl, setImageUrl] = useState()
@@ -61,7 +62,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success(i18n.t('message.successInfo'))
+          message.success(t('message.successInfo'))
           onSave()
         }
       })
@@ -78,7 +79,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success(i18n.t('message.successInfo'))
+          message.success(t('message.successInfo'))
           onSave()
         }
       })
@@ -144,7 +145,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
   const uploadButton = (
     <div>
       {uploading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>宣传图上传</div>
+      <div style={{ marginTop: 8 }}>{t('title.uploadPromotionalImages')}</div>
     </div>
   )
 
@@ -161,15 +162,13 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
         if (res.status === HttpStatus.OK) {
           onSuccess()
           form.setFieldsValue({ adsImg: res.data })
-          message.success('上传成功!')
+          message.success(`${t('message.tips.uploadSuccess')}`)
         }
       })
       .catch((err) => {
         onError(err)
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         )
       })
   }
@@ -178,9 +177,9 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={640}
       style={{ maxHeight: 500 }}
-      title="广告表单"
-      okText="保存"
-      cancelText="取消"
+      title={t('title.advertisingForm')}
+      okText={t('button.save')}
+      cancelText={t('button.cancel')}
       onCancel={onCancel}
       onOk={okHandler}
     >
@@ -196,37 +195,37 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
         </Form.Item>
         <Form.Item
           name="bookName"
-          label="书籍"
+          label={t('title.label.books')}
           rules={[
             {
               required: true,
-              message: '请选择书籍',
+              message: `${t('message.check.selectBook')}`,
             },
           ]}
         >
           <DebounceSelect
             showSearch
             fetchOptions={fetchBook}
-            placeholder="请输入书籍名称搜索"
+            placeholder={t('message.placeholder.enterBookSearch')}
             onChange={({ value }) => handleSelectChangeAction(value)}
           />
         </Form.Item>
         <Form.Item
           name="adsType"
-          label="广告类型"
+          label={t('title.adType')}
           rules={[
             {
               required: true,
-              message: '请选择广告类型',
+              message: `${t('message.check.selectAdvertisingType')}`,
             },
           ]}
         >
           <Select>
-            <Option value="RECOMMEND">推荐</Option>
-            <Option value="CAROUSEL">轮播</Option>
+            <Option value="RECOMMEND">{t('radio.label.RECOMMEND')}</Option>
+            <Option value="CAROUSEL">{t('radio.label.CAROUSEL')}</Option>
           </Select>
         </Form.Item>
-        <Form.Item name="adsImg" label="封面">
+        <Form.Item name="adsImg" label={t('title.cover')}>
           <Input hidden />
           <Upload
             name="file"
@@ -244,10 +243,10 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
             )}
           </Upload>
         </Form.Item>
-        <Form.Item name="introduction" label="简介">
+        <Form.Item name="introduction" label={t('title.briefIntroduction')}>
           <TextArea rows={3} style={{ resize: 'none' }} />
         </Form.Item>
-        <Form.Item name="sortIndex" label="显示顺序">
+        <Form.Item name="sortIndex" label={t('title.ORDER')}>
           <Input type="number" />
         </Form.Item>
       </Form>

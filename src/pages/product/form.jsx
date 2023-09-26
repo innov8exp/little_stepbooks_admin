@@ -3,13 +3,13 @@ import Axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useEffect } from 'react'
 import PropTypes from 'prop-types'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { Option } = Select
 
 const ProductForm = ({ id, visible, onSave, onCancel }) => {
   const [form] = Form.useForm()
-
+  const { t } = useTranslation()
   useEffect(() => {
     if (id) {
       Axios.get(`/api/admin/v1/products/${id}`)
@@ -26,7 +26,7 @@ const ProductForm = ({ id, visible, onSave, onCancel }) => {
     Axios.post(`/api/admin/v1/products`, { ...values })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success(i18n.t('message.successInfo'))
+          message.success(t('message.successInfo'))
           onSave()
         }
       })
@@ -39,7 +39,7 @@ const ProductForm = ({ id, visible, onSave, onCancel }) => {
     Axios.put(`/api/admin/v1/products/${id}`, { ...values })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success(i18n.t('message.successInfo'))
+          message.success(t('message.successInfo'))
           onSave()
         }
       })
@@ -65,9 +65,9 @@ const ProductForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={500}
       style={{ maxHeight: 500 }}
-      title="产品套餐表单"
-      okText="保存"
-      cancelText="取消"
+      title={t('title.label.productPackageForm')}
+      okText={t('button.save')}
+      cancelText={t('button.cancel')}
       onCancel={onCancel}
       onOk={okHandler}
     >
@@ -83,11 +83,11 @@ const ProductForm = ({ id, visible, onSave, onCancel }) => {
                 </Form.Item> */}
         <Form.Item
           name="coinAmount"
-          label="书币数量"
+          label={t('title.label.numberOfBookCoins')}
           rules={[
             {
               required: true,
-              message: '请输入书币数量',
+              message: `${t('message.placeholder.enterQuantityOfBook')}`,
             },
           ]}
         >
@@ -95,11 +95,11 @@ const ProductForm = ({ id, visible, onSave, onCancel }) => {
         </Form.Item>
         <Form.Item
           name="price"
-          label="价格（$）"
+          label={t('title.label.price')}
           rules={[
             {
               required: true,
-              message: '请输入价格',
+              message: `${t('message.placeholder.enterPrice')}`,
             },
           ]}
         >
@@ -107,11 +107,11 @@ const ProductForm = ({ id, visible, onSave, onCancel }) => {
         </Form.Item>
         <Form.Item
           name="platform"
-          label="平台"
+          label={t('title.label.platform')}
           rules={[
             {
               required: true,
-              message: '请选择平台',
+              message: `${t('message.placeholder.electPlatform')}`,
             },
           ]}
         >
@@ -122,11 +122,11 @@ const ProductForm = ({ id, visible, onSave, onCancel }) => {
         </Form.Item>
         <Form.Item
           name="storeProductId"
-          label="平台产品ID"
+          label={t('title.label.platformProductID')}
           rules={[
             {
               required: true,
-              message: '请输入平台产品ID',
+              message: `${t('message.placeholder.electPlatformID')}`,
             },
           ]}
         >

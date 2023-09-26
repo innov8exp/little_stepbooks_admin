@@ -13,13 +13,15 @@ import { Button, Form, Input, message } from 'antd'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Routes } from '@/libs/router'
+import { useTranslation } from 'react-i18next'
 
 const ForgetPasswordPage = () => {
+  const { t } = useTranslation()
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
 
   const forgetPassword = () => {
-    message.success('请查看邮件！')
+    message.success(`${t('message.tips.checkEmail')}`)
     setLoading(false)
   }
 
@@ -28,7 +30,7 @@ const ForgetPasswordPage = () => {
     form
       .validateFields()
       .then((values) => forgetPassword(values))
-      .catch(() => message.error('请检查输入项！'))
+      .catch(() => message.error(`${t('message.check.checkInputItems')}`))
   }
   return (
     <AuthLayout>
@@ -52,14 +54,16 @@ const ForgetPasswordPage = () => {
             name="email"
             label={
               <LabelWrapper>
-                <LabelText>{'邮箱'}</LabelText>
-                <Link to={Routes.SIGN_IN.path}>{'返回登录'}</Link>
+                <LabelText>{`${t('title.email')}`}</LabelText>
+                <Link to={Routes.SIGN_IN.path}>{`${t(
+                  'title.returnLogin',
+                )}`}</Link>
               </LabelWrapper>
             }
             rules={[
               {
                 required: true,
-                message: '请输入邮箱',
+                message: `${t('message.check.enterEmail')}`,
               },
             ]}
           >
@@ -73,7 +77,7 @@ const ForgetPasswordPage = () => {
               block
               style={{ borderRadius: '4px', height: '40px' }}
             >
-              {'找回密码'}
+              {`${t('title.retrievePassword')}`}
             </Button>
           </Form.Item>
         </Form>

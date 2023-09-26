@@ -5,12 +5,12 @@ import DebounceSelect from '@/components/debounce-select'
 import HttpStatus from 'http-status-codes'
 import { useEffect } from 'react'
 import PropTypes from 'prop-types'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { Option } = Select
 const RecommendForm = ({ id, visible, onSave, onCancel }) => {
   const [form] = Form.useForm()
-
+  const { t } = useTranslation()
   useEffect(() => {
     if (id) {
       axios
@@ -59,7 +59,7 @@ const RecommendForm = ({ id, visible, onSave, onCancel }) => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success(i18n.t('message.successInfo'))
+          message.success(t('message.successInfo'))
           onSave()
         }
       })
@@ -76,7 +76,7 @@ const RecommendForm = ({ id, visible, onSave, onCancel }) => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success(i18n.t('message.successInfo'))
+          message.success(t('message.successInfo'))
           onSave()
         }
       })
@@ -109,9 +109,9 @@ const RecommendForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={640}
       style={{ maxHeight: 500 }}
-      title="标签表单"
-      okText="保存"
-      cancelText="取消"
+      title={t('title.homepageRecommendation')}
+      okText={t('button.save')}
+      cancelText={t('button.cancel')}
       onCancel={onCancel}
       onOk={okHandler}
     >
@@ -127,28 +127,32 @@ const RecommendForm = ({ id, visible, onSave, onCancel }) => {
         </Form.Item>
         <Form.Item
           name="bookName"
-          label="书籍"
+          label={t('title.label.books')}
           rules={[
             {
               required: true,
-              message: '请选择书籍',
+              message: `${t('message.check.selectBook')}`,
             },
           ]}
         >
           <DebounceSelect
             showSearch
             fetchOptions={fetchBook}
-            placeholder="请输入书籍名称搜索"
+            placeholder={t('message.placeholder.enterBookSearch')}
             onChange={({ value }) => handleSelectChangeAction(value)}
           />
         </Form.Item>
-        <Form.Item name="recommendType" label="推荐类型">
+        <Form.Item name="recommendType" label={t('title.recommendType')}>
           <Select>
-            <Option value="TODAY">今日推荐</Option>
-            <Option value="TOP_SEARCH">热搜推荐</Option>
+            <Option value="TODAY">
+              {t('select.option.TodayRecommendation')}
+            </Option>
+            <Option value="TOP_SEARCH">
+              {t('select.option.hotSearchRecommendations')}
+            </Option>
           </Select>
         </Form.Item>
-        <Form.Item name="introduction" label="简介">
+        <Form.Item name="introduction" label={t('title.briefIntroduction')}>
           <TextArea rows={3} style={{ resize: 'none' }} />
         </Form.Item>
       </Form>

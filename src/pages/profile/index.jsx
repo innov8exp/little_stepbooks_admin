@@ -13,6 +13,7 @@ import {
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const { TextArea } = Input
 
@@ -35,9 +36,10 @@ const beforeUpload = (file) => {
 }
 
 const ProfilePage = () => {
+  const { t } = useTranslation()
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
-  const [saveLoading, setSaveLoading] = useState(false)
+  const [saveLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [imageUrl, setImageUrl] = useState()
 
@@ -58,7 +60,7 @@ const ProfilePage = () => {
   const uploadButton = (
     <div>
       {uploading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>头像上传</div>
+      <div style={{ marginTop: 8 }}>{t('title.label.pictureUpload')}</div>
     </div>
   )
 
@@ -75,15 +77,13 @@ const ProfilePage = () => {
         if (res.status === HttpStatus.OK) {
           onSuccess()
           form.setFieldsValue({ coverImg: res.data })
-          message.success('上传成功!')
+          message.success(`${t('message.tips.uploadSuccess')}`)
         }
       })
       .catch((err) => {
         onError(err)
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         )
       })
       .finally(() => {
@@ -92,7 +92,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <Card title="个人信息">
+    <Card title={t('title.label.personalInfo')}>
       {
         <Skeleton loading={loading} active>
           <Form
@@ -103,11 +103,11 @@ const ProfilePage = () => {
           >
             <Form.Item
               name="bookName"
-              label="用户名"
+              label={t('title.bookName')}
               rules={[
                 {
                   required: true,
-                  message: '请输入书名',
+                  message: `${t('message.check.bookName')}`,
                 },
               ]}
             >
@@ -115,11 +115,11 @@ const ProfilePage = () => {
             </Form.Item>
             <Form.Item
               name="author"
-              label="角色"
+              label={t('title.label.role')}
               rules={[
                 {
                   required: true,
-                  message: '请输入作者',
+                  message: `${t('message.check.enterRole')}`,
                 },
               ]}
             >
@@ -127,11 +127,11 @@ const ProfilePage = () => {
             </Form.Item>
             <Form.Item
               name="introduction"
-              label="个人介绍"
+              label={t('title.label.personal')}
               rules={[
                 {
                   required: true,
-                  message: '请输入个人介绍',
+                  message: `${t('message.check.enterPersonalIntro')}`,
                 },
               ]}
             >
@@ -139,11 +139,11 @@ const ProfilePage = () => {
             </Form.Item>
             <Form.Item
               name="coverImg"
-              label="头像"
+              label={t('title.label.picture')}
               rules={[
                 {
                   required: true,
-                  message: '请上传封面图片',
+                  message: `${t('message.check.uploadCoverImage')}`,
                 },
               ]}
             >
@@ -169,11 +169,11 @@ const ProfilePage = () => {
             <Row justify="end">
               <Col>
                 <Button type="default" onClick={() => form.resetFields()}>
-                  重置
+                  {t('button.reset')}
                 </Button>
                 <span style={{ marginRight: 20 }} />
                 <Button loading={saveLoading} type="primary" onClick={() => {}}>
-                  保存修改
+                  {t('button.saveChanges')}
                 </Button>
               </Col>
             </Row>

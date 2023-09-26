@@ -5,7 +5,7 @@ import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { Dragger } = Upload
 
@@ -15,6 +15,7 @@ const CenterWrapper = styled.div`
 `
 
 const UploadForm = (bookId, visible, onCancel) => {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [uploadingPercent, setUploadingPercent] = useState(0)
   const [uploadStatus, setUploadStatus] =
@@ -45,16 +46,14 @@ const UploadForm = (bookId, visible, onCancel) => {
         if (res.status === HttpStatus.OK) {
           onSuccess()
           setUploadStatus('success')
-          message.success(`${i18n.t('message.successInfo.parsedSuccessfully')}`)
+          message.success(`${t('message.successInfo.parsedSuccessfully')}`)
         }
       })
       .catch((err) => {
         onError(err)
         setUploadStatus('exception')
         message.error(
-          `${i18n.t('message.error.failureReason')}${
-            err.response?.data?.message
-          }`,
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
         )
       })
       .finally(() => {
@@ -66,11 +65,11 @@ const UploadForm = (bookId, visible, onCancel) => {
     setLoading(true)
     const isJpgOrPng = file.type === 'text/plain'
     if (!isJpgOrPng) {
-      message.error(`${i18n.t('message.error.uploadType')}`)
+      message.error(`${t('message.error.uploadType')}`)
     }
     const isLt50M = file.size / 1024 / 1024 < 50
     if (!isLt50M) {
-      message.error(`${i18n.t('message.error.fileSize')}`)
+      message.error(`${t('message.error.fileSize')}`)
     }
     setLoading(isJpgOrPng && isLt50M)
     return isJpgOrPng && isLt50M
@@ -84,16 +83,16 @@ const UploadForm = (bookId, visible, onCancel) => {
 
   useEffect(() => {
     if (uploadingPercent === 100) {
-      setTipText('上传成功，解析中...')
+      setTipText(`${t('message.tips.uploadParsing')}`)
     } else {
-      setTipText('正在上传...')
+      setTipText(`${t('message.tips.uploading')}`)
     }
   }, [uploadingPercent])
 
   return (
     <Modal
       open={visible}
-      title="上传文件"
+      title={t('title.uploadFiles')}
       onCancel={() => {
         clear()
         onCancel()
@@ -118,13 +117,10 @@ const UploadForm = (bookId, visible, onCancel) => {
         ''
       )}
       <Space direction="vertical" style={{ width: '100%' }}>
-        <Alert
-          message="全新上传：删除所有已存在章节，并上传。续传已有：保留现有章节，并上传"
-          type="info"
-        />
+        <Alert message={t('message.tips.newUpload')} type="info" />
         <Switch
-          checkedChildren="续传已有"
-          unCheckedChildren="全新上传"
+          checkedChildren={t('title.alreadyExists')}
+          unCheckedChildren={t('title.newUpload')}
           defaultChecked
           onChange={(value) =>
             value ? setUploadType('CONTINUE') : setUploadType('NEW')
@@ -138,7 +134,7 @@ const UploadForm = (bookId, visible, onCancel) => {
           <p className="ant-upload-drag-icon">
             <InboxOutlined />
           </p>
-          <p className="ant-upload-text">点击或拖拽文件到此区域上传</p>
+          <p className="ant-upload-text">{t('title.clickOrDrag')}</p>
         </Dragger>
       </Space>
     </Modal>

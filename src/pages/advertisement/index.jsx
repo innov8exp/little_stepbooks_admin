@@ -6,11 +6,12 @@ import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import AdvertisementForm from './form'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
 const AdvertisementPage = () => {
+  const { t } = useTranslation()
   const [changeTime, setChangeTime] = useState(Date.now())
   const { loading, fetchedData } = useFetch(`/api/admin/v1/advertisements`, [
     changeTime,
@@ -25,17 +26,17 @@ const AdvertisementPage = () => {
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: '确定删除次记录?',
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
-      okText: 'Yes',
+      okText: `${t('button.determine')}`,
       okType: 'primary',
-      cancelText: 'No',
+      cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
           .delete(`/api/admin/v1/advertisements/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success(i18n.t('message.successInfo'))
+              message.success(t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -48,7 +49,7 @@ const AdvertisementPage = () => {
   }
 
   return (
-    <Card title="广告设置">
+    <Card title={t('title.advertisingSettings')}>
       <ButtonWrapper>
         <Button
           type="primary"
@@ -57,7 +58,7 @@ const AdvertisementPage = () => {
             setFormVisible(true)
           }}
         >
-          新建
+          {t('button.create')}
         </Button>
       </ButtonWrapper>
       <Table
@@ -68,34 +69,37 @@ const AdvertisementPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: '书籍',
+            title: `${t('title.label.books')}`,
             key: 'bookName',
             dataIndex: 'bookName',
           },
           {
-            title: '宣传图片',
+            title: `${t('title.promotionalImages')}`,
             key: 'adsImg',
             dataIndex: 'adsImg',
             render: (text) => <Image width={50} src={text} />,
           },
           {
-            title: '简介',
+            title: `${t('title.briefIntroduction')}`,
             key: 'introduction',
             dataIndex: 'introduction',
           },
           {
-            title: '广告类型',
+            title: `${t('title.adType')}`,
             key: 'adsType',
             dataIndex: 'adsType',
-            render: (text) => (text === 'RECOMMEND' ? '推荐' : '轮播'),
+            render: (text) =>
+              text === 'RECOMMEND'
+                ? `${t('radio.label.RECOMMEND')}`
+                : `${t('radio.label.CAROUSEL')}`,
           },
           {
-            title: '显示顺序',
+            title: `${t('title.ORDER')}`,
             key: 'sortIndex',
             dataIndex: 'sortIndex',
           },
           {
-            title: '操作',
+            title: `${t('title.operate')}`,
             key: 'action',
             width: 300,
             render: (text, record) => {
@@ -105,13 +109,13 @@ const AdvertisementPage = () => {
                     onClick={() => handleEditAction(record.id)}
                     type="link"
                   >
-                    编辑
+                    {t('button.edit')}
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
                     type="link"
                   >
-                    删除
+                    {t('button.delete')}
                   </Button>
                 </div>
               )

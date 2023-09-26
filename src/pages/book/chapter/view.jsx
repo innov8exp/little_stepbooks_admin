@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { Modal, Spin } from 'antd'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const ChapterViewPage = (id, visible, onClose) => {
+  const { t } = useTranslation()
   const [content, setContent] = useState()
   const [loading, setLoading] = useState(false)
   useEffect(() => {
@@ -25,7 +26,7 @@ const ChapterViewPage = (id, visible, onClose) => {
   return (
     <Modal
       open={visible}
-      title={i18n.t('title.preview')}
+      title={t('title.preview')}
       onCancel={() => {
         setContent('')
         onClose()

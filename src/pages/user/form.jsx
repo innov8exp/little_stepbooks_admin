@@ -3,9 +3,10 @@ import Axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useEffect } from 'react'
 import PropTypes from 'prop-types'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const UserForm = ({ id, visible, onSave, onCancel }) => {
+  const { t } = useTranslation()
   const [form] = Form.useForm()
   useEffect(() => {
     if (id) {
@@ -23,7 +24,7 @@ const UserForm = ({ id, visible, onSave, onCancel }) => {
     Axios.post(`/api/admin/v1/users`, { ...values })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success(i18n.t('message.successInfo'))
+          message.success(t('message.successInfo'))
           onSave()
         }
       })
@@ -36,7 +37,7 @@ const UserForm = ({ id, visible, onSave, onCancel }) => {
     Axios.put(`/api/admin/v1/users/${id}`, { ...values })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success(i18n.t('message.successInfo'))
+          message.success(t('message.successInfo'))
           onSave()
         }
       })
@@ -62,9 +63,9 @@ const UserForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={500}
       style={{ maxHeight: 500 }}
-      title={i18n.t('title.signForm')}
-      okText={i18n.t('button.save')}
-      cancelText={i18n.t('button.cancel')}
+      title={t('title.signForm')}
+      okText={t('button.save')}
+      cancelText={t('button.cancel')}
       onCancel={onCancel}
       onOk={okHandler}
     >
@@ -77,17 +78,17 @@ const UserForm = ({ id, visible, onSave, onCancel }) => {
       >
         <Form.Item
           name="username"
-          label={i18n.t('title.name')}
+          label={t('title.name')}
           rules={[
             {
               required: true,
-              message: i18n.t('message.check.name'),
+              message: t('message.check.name'),
             },
           ]}
         >
           <Input />
         </Form.Item>
-        <Form.Item name="description" label={i18n.t('title.describe')}>
+        <Form.Item name="description" label={t('title.describe')}>
           <Input />
         </Form.Item>
       </Form>

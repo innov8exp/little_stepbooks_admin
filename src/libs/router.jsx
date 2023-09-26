@@ -130,7 +130,7 @@ export const Router = createBrowserRouter([
       },
       {
         path: Routes.PROMOTION_LIST.path,
-        element: Routes.PRODUCT_LIST.element,
+        element: Routes.PROMOTION_LIST.element,
       },
       {
         path: Routes.RECOMMEND_LIST.path,

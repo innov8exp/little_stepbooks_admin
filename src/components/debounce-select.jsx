@@ -2,9 +2,10 @@ import { Empty, message, Select, Space, Spin } from 'antd'
 import debounce from 'lodash/debounce'
 import PropTypes from 'prop-types'
 import React from 'react'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
+  const { t } = useTranslation()
   const [fetching, setFetching] = React.useState(false)
   const [options, setOptions] = React.useState([])
   const fetchRef = React.useRef(0)
@@ -28,9 +29,7 @@ const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
         })
         .catch((err) =>
           message.error(
-            `${i18n.t('message.error.failureReason')}${
-              err.response?.data?.message
-            }`,
+            `${t('message.error.failureReason')}${err.response?.data?.message}`,
           ),
         )
     }

@@ -10,11 +10,12 @@ import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import CategoryForm from './form'
-import i18n from '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
 const CategoryPage = () => {
+  const { t } = useTranslation()
   const [changeTime, setChangeTime] = useState(Date.now())
   const { loading, fetchedData } = useFetch(`/api/admin/v1/categories`, [
     changeTime,
@@ -29,7 +30,7 @@ const CategoryPage = () => {
 
   const handleDeleteAction = (id) => {
     confirm({
-      title: `${i18n.t('message.tips.delete')}`,
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
       okText: 'Yes',
       okType: 'primary',
@@ -39,7 +40,7 @@ const CategoryPage = () => {
           .delete(`/api/admin/v1/categories/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              message.success(i18n.t('message.successInfo'))
+              message.success(t('message.successInfo'))
               setChangeTime(Date.now())
             }
           })
@@ -67,7 +68,7 @@ const CategoryPage = () => {
   }
 
   return (
-    <Card title={i18n.t('title.categoryManagement')}>
+    <Card title={t('title.categoryManagement')}>
       <ButtonWrapper>
         <Button
           type="primary"
@@ -76,7 +77,7 @@ const CategoryPage = () => {
             setFormVisible(true)
           }}
         >
-          {i18n.t('button.create')}
+          {t('button.create')}
         </Button>
       </ButtonWrapper>
 
@@ -88,17 +89,17 @@ const CategoryPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: '分类名称',
+            title: `${t('title.classificationName')}`,
             key: 'categoryName',
             dataIndex: 'categoryName',
           },
           {
-            title: '描述',
+            title: `${t('title.describe')}`,
             key: 'description',
             dataIndex: 'description',
           },
           {
-            title: '操作',
+            title: `${t('title.operate')}`,
             key: 'action',
             width: 300,
             render: (text, record, index) => {
@@ -130,13 +131,13 @@ const CategoryPage = () => {
                     onClick={() => handleEditAction(record.id)}
                     type="link"
                   >
-                    {i18n.t('button.edit')}
+                    {t('button.edit')}
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
                     type="link"
                   >
-                    {i18n.t('button.delete')}
+                    {t('button.delete')}
                   </Button>
                 </div>
               )
