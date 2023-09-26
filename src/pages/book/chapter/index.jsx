@@ -140,7 +140,7 @@ const ChapterPage = () => {
       })
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
-          message.success(`操作成功`)
+          message.success(`${t('message.successInfo')}`)
         }
       })
       .catch((err) =>
