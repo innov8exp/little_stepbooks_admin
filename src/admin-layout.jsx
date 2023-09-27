@@ -85,28 +85,50 @@ const AdminLayout = () => {
       ),
     ]),
 
-    getItem(t('menu.bookManage'), '3', <BookOutlined />, [
+    getItem(t('menu.course'), '3', <BookOutlined />, [
       getItem(
-        <Link to={Routes.CATEGORY_LIST.path}>{t('menu.category')}</Link>,
+        <Link to={Routes.COURSE_CATEGORY_LIST.path}>
+          {t('menu.courseCategoryList')}
+        </Link>,
         '31',
         <BookOutlined />,
       ),
 
       getItem(
-        <Link to={Routes.BOOK_LIST.path}>{t('menu.book')}</Link>,
+        <Link to={Routes.COURSE.path}>{t('menu.courseList')}</Link>,
         '32',
         <BookOutlined />,
       ),
 
       getItem(
-        <Link to={Routes.COMMENT_LIST.path}>{t('menu.comment')}</Link>,
+        <Link to={Routes.COURSE_COMMENT.path}>{t('menu.courseComment')}</Link>,
         '33',
         <CommentOutlined />,
       ),
     ]),
 
+    getItem(t('menu.bookManage'), '4', <BookOutlined />, [
+      getItem(
+        <Link to={Routes.CATEGORY_LIST.path}>{t('menu.category')}</Link>,
+        '341',
+        <BookOutlined />,
+      ),
+
+      getItem(
+        <Link to={Routes.BOOK_LIST.path}>{t('menu.book')}</Link>,
+        '42',
+        <BookOutlined />,
+      ),
+
+      getItem(
+        <Link to={Routes.COMMENT_LIST.path}>{t('menu.comment')}</Link>,
+        '43',
+        <CommentOutlined />,
+      ),
+    ]),
+
     // 订单中心
-    getItem(t('menu.order'), '4', <ShoppingOutlined />, [
+    getItem(t('menu.order'), '5', <ShoppingOutlined />, [
       getItem(
         <Link to={Routes.ORDER_LIST.path}>{t('menu.orderList')}</Link>,
         '41',
@@ -122,7 +144,7 @@ const AdminLayout = () => {
     ]),
 
     // 运营管理
-    getItem(t('menu.product'), '5', <FundProjectionScreenOutlined />, [
+    getItem(t('menu.product'), '6', <FundProjectionScreenOutlined />, [
       getItem(
         <Link to={Routes.PRODUCT_LIST.path}>{t('menu.productList')}</Link>,
         '51',
@@ -157,7 +179,7 @@ const AdminLayout = () => {
       ),
     ]),
 
-    getItem(t('menu.system'), '6', <SettingOutlined />, [
+    getItem(t('menu.system'), '7', <SettingOutlined />, [
       getItem(
         <Link to="/category1">{t('menu.basic')}</Link>,
         '61',
@@ -204,9 +226,26 @@ const AdminLayout = () => {
     getBreadcrumbItem(Routes.TAG_LIST.path, t('menu.user'), t('menu.tag'), 6),
 
     getBreadcrumbItem(
+      Routes.COURSE_CATEGORY_LIST.path,
+      t('menu.course'),
+      t('menu.courseCategoryList'),
+    ),
+
+    getBreadcrumbItem(
+      Routes.COURSE.path,
+      t('menu.course'),
+      t('menu.courseList'),
+    ),
+    getBreadcrumbItem(
+      Routes.COURSE_COMMENT.path,
+      t('menu.course'),
+      t('menu.courseComment'),
+    ),
+
+    getBreadcrumbItem(
       Routes.CATEGORY_LIST.path,
       t('menu.bookManage'),
-      t('menu.category'),
+      t('menu.courseCategoryList'),
     ),
     getBreadcrumbItem(
       Routes.BOOK_LIST.path,

@@ -1,4 +1,4 @@
-import { Form, Input, message, Modal } from 'antd'
+import { Form, Input, message, Modal, Select } from 'antd'
 import Axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useEffect } from 'react'
@@ -63,7 +63,7 @@ const UserForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={500}
       style={{ maxHeight: 500 }}
-      title={t('title.signForm')}
+      title={t('title.userForm')}
       okText={t('button.save')}
       cancelText={t('button.cancel')}
       onCancel={onCancel}
@@ -77,19 +77,75 @@ const UserForm = ({ id, visible, onSave, onCancel }) => {
         name="form_in_modal"
       >
         <Form.Item
-          name="username"
-          label={t('title.name')}
+          name="userName"
+          label={t('title.label.userNickName')}
           rules={[
             {
               required: true,
-              message: t('message.check.name'),
+              message: t('message.placeholder.enterUserName'),
             },
           ]}
         >
-          <Input />
+          <Input
+            placeholder={t('message.placeholder.enterUserName')}
+            maxLength={10}
+          />
         </Form.Item>
-        <Form.Item name="description" label={t('title.describe')}>
-          <Input />
+        <Form.Item
+          name="userNickName"
+          label={t('title.userNickname')}
+          rules={[
+            {
+              required: true,
+              message: t('message.check.userNickName'),
+            },
+          ]}
+        >
+          <Input placeholder={t('message.check.userNickName')} maxLength={20} />
+        </Form.Item>
+        <Form.Item
+          name="email"
+          label={t('title.email')}
+          rules={[
+            {
+              required: true,
+              message: t('message.check.email'),
+            },
+            {
+              type: 'email',
+              message: t('message.check.validEmail'),
+            },
+          ]}
+        >
+          <Input placeholder={t('message.check.email')} />
+        </Form.Item>
+        <Form.Item name="googleID" label={'GoogleID'}>
+          <Input
+            placeholder={t('message.placeholder.enterGooleID')}
+            maxLength={20}
+          />
+        </Form.Item>
+        <Form.Item name="facebookID" label={'FacebookID'}>
+          <Input
+            placeholder={t('message.placeholder.enterFacebookID')}
+            maxLength={20}
+          />
+        </Form.Item>
+        <Form.Item name="phone" label={t('title.phone')}>
+          <Input
+            placeholder={t('message.placeholder.enterPhone')}
+            maxLength={10}
+          />
+        </Form.Item>
+        <Form.Item name="gender" label={t('title.gender')}>
+          <Select placeholder={t('message.placeholder.selectGender')}>
+            <Select.Option value="male">
+              {t('select.option.male')}
+            </Select.Option>
+            <Select.Option value="female">
+              {t('select.option.female')}
+            </Select.Option>
+          </Select>
         </Form.Item>
       </Form>
     </Modal>

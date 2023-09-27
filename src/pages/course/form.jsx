@@ -13,7 +13,6 @@ import {
   Form,
   Input,
   message,
-  Radio,
   Row,
   Select,
   Skeleton,
@@ -242,9 +241,9 @@ const BookForm = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.BOOK_LIST.path)}
+            onClick={() => navigate(Routes.COURSE.path)}
           />
-          {t('button.bookEditing')}
+          {t('button.courseEditing')}
         </>
       }
     >
@@ -260,28 +259,31 @@ const BookForm = () => {
           >
             <Divider orientation="left">{t('title.basicInfo')}</Divider>
             <Form.Item
-              name="bookName"
-              label={t('title.bookName')}
+              name="courseName"
+              label={t('title.courseName')}
               rules={[
                 {
                   required: true,
-                  message: `${t('message.check.bookName')}`,
+                  message: `${t('message.check.courseName')}`,
                 },
               ]}
             >
-              <Input />
+              <Input
+                placeholder={t('message.check.courseName')}
+                maxLength={30}
+              />
             </Form.Item>
             <Form.Item
-              name="author"
-              label={t('title.author')}
+              name="lecturer"
+              label={t('title.lecturer')}
               rules={[
                 {
                   required: true,
-                  message: `${t('message.check.enterAuthor')}`,
+                  message: `${t('message.check.lecturer')}`,
                 },
               ]}
             >
-              <Input />
+              <Input placeholder={t('message.check.lecturer')} maxLength={20} />
             </Form.Item>
             <Form.Item
               name="categories"
@@ -293,7 +295,9 @@ const BookForm = () => {
                 },
               ]}
             >
-              <Checkbox.Group>
+              <Checkbox.Group
+                placeholder={t('message.check.selectClassification')}
+              >
                 {categoryDict.fetchedData?.map((cate) => {
                   return (
                     <Checkbox value={cate.id} key={cate.id}>
@@ -312,15 +316,19 @@ const BookForm = () => {
             </Form.Item>
             <Form.Item
               name="introduction"
-              label={t('title.bookIntroduction')}
+              label={t('title.courseIntroduction')}
               rules={[
                 {
                   required: true,
-                  message: `${t('message.check.bookIntroduction')}`,
+                  message: `${t('message.check.courseIntroduction')}`,
                 },
               ]}
             >
-              <TextArea rows={2} style={{ resize: 'none' }} />
+              <TextArea
+                rows={2}
+                style={{ resize: 'none' }}
+                placeholder={t('message.check.courseIntroduction')}
+              />
             </Form.Item>
             <Form.Item
               name="coverImg"
@@ -349,7 +357,7 @@ const BookForm = () => {
                 )}
               </Upload>
             </Form.Item>
-            <Divider orientation="left">{t('title.bookProperties')}</Divider>
+            <Divider orientation="left">{t('title.courseProperties')}</Divider>
             <Form.Item
               name="chargeType"
               label={t('title.paymentType')}
@@ -360,7 +368,7 @@ const BookForm = () => {
                 },
               ]}
             >
-              <Select>
+              <Select placeholder={t('message.check.selectPaymentType')}>
                 <Option value="FREE">
                   {t('select.option.allChapterFree')}
                 </Option>
@@ -375,32 +383,19 @@ const BookForm = () => {
             </Form.Item>
             <Form.Item
               name="price"
-              label={t('title.chapterUnitPrice')}
+              label={t('title.courseUnitPrice')}
               rules={[
                 {
                   required: true,
-                  message: `${t('message.check.unitPrice')}`,
+                  message: `${t('message.check.courseUnitPrice')}`,
                 },
               ]}
             >
-              <Input type="number" />
+              <Input
+                type="number"
+                placeholder={t('message.check.courseUnitPrice')}
+              />
             </Form.Item>
-            <Form.Item
-              name="isSerialized"
-              label={t('title.publishInInstalments')}
-            >
-              <Radio.Group>
-                <Radio value>{t('radio.label.yes')}</Radio>
-                <Radio value={false}>{t('radio.label.deny')}</Radio>
-              </Radio.Group>
-            </Form.Item>
-            <Form.Item name="hasEnding" label={t('title.end')}>
-              <Radio.Group>
-                <Radio value>{t('radio.label.yes')}</Radio>
-                <Radio value={false}>{t('radio.label.deny')}</Radio>
-              </Radio.Group>
-            </Form.Item>
-
             <div style={{ marginTop: 10 }} />
             <Row justify="end">
               <Col>

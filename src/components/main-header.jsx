@@ -78,7 +78,7 @@ const MainHeader = ({ onToggleClick }) => {
       icon: <UserOutlined />,
       label: (
         <Link to={Routes.PROFILE.path}>
-          <HeaderMenuItem>个人信息</HeaderMenuItem>
+          <HeaderMenuItem>{i18n.t('title.personalInformation')}</HeaderMenuItem>
         </Link>
       ),
     },
@@ -87,7 +87,7 @@ const MainHeader = ({ onToggleClick }) => {
       icon: <SettingOutlined />,
       label: (
         <Link to="/main/setting">
-          <HeaderMenuItem>设置</HeaderMenuItem>
+          <HeaderMenuItem>{i18n.t('title.setting')}</HeaderMenuItem>
         </Link>
       ),
     },
@@ -95,7 +95,7 @@ const MainHeader = ({ onToggleClick }) => {
       key: '3',
       danger: true,
       icon: <LogoutOutlined />,
-      label: <HeaderMenuItem>登出</HeaderMenuItem>,
+      label: <HeaderMenuItem>{i18n.t('title.logOut')}</HeaderMenuItem>,
       onClick: logout,
     },
   ]

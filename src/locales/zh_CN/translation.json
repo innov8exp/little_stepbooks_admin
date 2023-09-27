@@ -24,6 +24,10 @@
   "menu.basic": "基础配置",
   "menu.configuration": "App配置",
   "menu.adminUser": "Admin用户管理",
+  "menu.course": "课程管理",
+  "menu.courseList": "课程列表",
+  "menu.courseCategoryList": "分类列表",
+  "menu.courseComment": "评论管理",
 
   "title.userStatistics": "用户统计",
   "title.orderStatistics": "订单统计",
@@ -138,6 +142,17 @@
   "title.status.disable": "禁用",
   "title.coverUpload": "封面上传",
   "title.notLoggedIn": "未登录",
+  "title.course": "课程管理",
+  "title.courseName": "课程名称",
+  "title.lecturer": "讲师",
+  "title.courseIntroduction": "课程介绍",
+  "title.courseProperties": "课程属性",
+  "title.courseUnitPrice": "课程单价",
+  "title.label.course": "课程",
+  "title.personalInformation": "个人信息",
+  "title.setting": "设置",
+  "title.logOut": "登出",
+  "title.userForm": "用户表单",
 
   "button.create": "新建",
   "button.edit": "编辑",
@@ -159,6 +174,7 @@
   "button.preview": "预览",
   "button.bookEditing": "书籍编辑",
   "button.saveChanges": "保存修改",
+  "button.courseEditing": "课程编辑",
 
   "message.check.name": "请输入名称",
   "message.check.payOrNot": "请选择是否付费",
@@ -181,6 +197,13 @@
   "message.check.checkInputItems": "请检查输入项！",
   "message.check.enterEmail": "请输入邮箱",
   "message.check.enterPassword": "请输入密码",
+  "message.check.courseName": "请输入课程名称",
+  "message.check.lecturer": "请输入讲师",
+  "message.check.courseIntroduction": "请输入课程介绍",
+  "message.check.courseUnitPrice": "请输入课程单价",
+  "message.check.userNickName": "请输入用户昵称",
+  "message.check.email": "请输入邮箱",
+  "message.check.validEmail": "邮箱不是有效的邮箱",
 
   "message.tips.delete": "确定删除当前记录?",
   "message.tips.uploadParsing": "上传成功，解析中...",
@@ -200,6 +223,13 @@
   "message.placeholder.electPlatform": "请选择平台",
   "message.placeholder.electPlatformID": "请输入平台产品ID",
   "message.placeholder.enterBookSearch": "请输入书籍名称搜索",
+  "message.placeholder.courseName": "请输入课程名称",
+  "message.placeholder.lecturer": "请输入讲师",
+  "message.placeholder.enterGooleID": "请输入GoogleID",
+  "message.placeholder.enterFacebookID": "请输入FacebookID",
+  "message.placeholder.enterPhone": "请输入手机",
+  "message.placeholder.selectGender": "请选择性别",
+  "message.placeholder.describe": "请输入描述",
 
   "message.error.failure": "获取信息失败",
   "message.successInfo": "操作成功!",
@@ -211,6 +241,7 @@
   "message.error.emptyPage": "抱歉，您访问的页面不存在!",
   "message.goIndex": "返回主页",
   "message.successfullySaved": "保存成功",
+  "message.archiveSuccessful!": "归档成功!",
 
   "radio.label.pay": "付费",
   "radio.label.free": "免费",
@@ -223,5 +254,7 @@
   "select.option.allChapterPay": "全部章节付费",
   "select.option.PartialChapterPay": "部分章节付费",
   "select.option.TodayRecommendation": "今日推荐",
-  "select.option.hotSearchRecommendations": "热搜推荐"
+  "select.option.hotSearchRecommendations": "热搜推荐",
+  "select.option.male": "男",
+  "select.option.female": "女"
 }

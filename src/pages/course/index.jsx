@@ -144,11 +144,11 @@ const BookPage = () => {
   }
 
   const handleCreateAction = () => {
-    navigate(Routes.BOOK_FORM.path)
+    navigate(Routes.COURSE_FORM.path)
   }
 
   const handleEditAction = (id) => {
-    navigate(`${Routes.BOOK_FORM.path}?id=${id}`)
+    navigate(`${Routes.COURSE_FORM.path}?id=${id}`)
   }
 
   const handleViewAction = (id) => {
@@ -179,7 +179,7 @@ const BookPage = () => {
   }, [fetchBooks, pageNumber, changeTimestamp])
 
   return (
-    <Card title={t('title.book')}>
+    <Card title={t('title.course')}>
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}
@@ -188,13 +188,13 @@ const BookPage = () => {
       >
         <Row>
           <Col span={6}>
-            <Form.Item label={t('title.name')} name="bookName">
-              <Input placeholder={t('message.placeholder.bookName')} />
+            <Form.Item label={t('title.courseName')} name="courseName">
+              <Input placeholder={t('message.placeholder.courseName')} />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label={t('title.author')} name="author">
-              <Input placeholder={t('message.placeholder.bookAuthor')} />
+            <Form.Item label={t('title.lecturer')} name="lecturer">
+              <Input placeholder={t('message.placeholder.lecturer')} />
             </Form.Item>
           </Col>
         </Row>
@@ -243,9 +243,9 @@ const BookPage = () => {
                 (pageNumber - 1) * pageSize + index + 1,
             },
             {
-              title: `${t('title.name')}`,
-              key: 'bookName',
-              dataIndex: 'bookName',
+              title: `${t('title.courseName')}`,
+              key: 'courseName',
+              dataIndex: 'courseName',
               width: 150,
               render: (text, record) => (
                 <Button onClick={() => handleViewAction(record.id)} type="link">
@@ -256,9 +256,9 @@ const BookPage = () => {
               ),
             },
             {
-              title: `${t('title.author')}`,
-              key: 'author',
-              dataIndex: 'author',
+              title: `${t('title.lecturer')}`,
+              key: 'lecturer',
+              dataIndex: 'lecturer',
             },
             {
               title: `${t('title.cover')}`,
@@ -266,20 +266,20 @@ const BookPage = () => {
               dataIndex: 'coverImg',
               render: (text) => <Image width={50} src={text} />,
             },
-            {
-              title: `${t('title.publishInInstalments')}`,
-              key: 'isSerialized',
-              dataIndex: 'isSerialized',
-              render: (text) =>
-                text ? `${t('title.status.yes')}` : `${t('title.status.no')}`,
-            },
-            {
-              title: `${t('title.end')}`,
-              key: 'hasEnding',
-              dataIndex: 'hasEnding',
-              render: (text) =>
-                text ? `${t('title.status.yes')}` : `${t('title.status.no')}`,
-            },
+            // {
+            //   title: `${t('title.publishInInstalments')}`,
+            //   key: 'isSerialized',
+            //   dataIndex: 'isSerialized',
+            //   render: (text) =>
+            //     text ? `${t('title.status.yes')}` : `${t('title.status.no')}`,
+            // },
+            // {
+            //   title: `${t('title.end')}`,
+            //   key: 'hasEnding',
+            //   dataIndex: 'hasEnding',
+            //   render: (text) =>
+            //     text ? `${t('title.status.yes')}` : `${t('title.status.no')}`,
+            // },
             {
               title: `${t('title.status')}`,
               key: 'status',

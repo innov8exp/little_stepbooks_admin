@@ -21,6 +21,11 @@ import Promotion from '@/pages/promotion'
 import Recommend from '@/pages/recommend'
 import Tag from '@/pages/tag'
 import User from '@/pages/user'
+import Course from '@/pages/course'
+import CourseCategory from '@/pages/courseCategory'
+import CourseComment from '@/pages/courseComment'
+import CourseForm from '@/pages/course/form'
+import CourseView from '@/pages/course/view'
 
 import { createBrowserRouter } from 'react-router-dom'
 
@@ -51,6 +56,14 @@ export const Routes = {
   SIGN_IN: { path: '/sign-in', element: <SignIn /> },
   FORGET_PASSWORD: { path: '/forget-password', element: <ForgetPassword /> },
   COMING_SOON: { path: '/coming-soon', element: <ComingSoon /> },
+  COURSE: { path: '/course-list', element: <Course /> },
+  COURSE_CATEGORY_LIST: {
+    path: '/courseCategory-list',
+    element: <CourseCategory />,
+  },
+  COURSE_COMMENT: { path: '/courseComment-list', element: <CourseComment /> },
+  COURSE_FORM: { path: '/course_form', element: <CourseForm /> },
+  COURSE_VIEW: { path: '/course-view', element: <CourseView /> },
 }
 
 export const Router = createBrowserRouter([
@@ -143,6 +156,26 @@ export const Router = createBrowserRouter([
       {
         path: Routes.PROFILE.path,
         element: Routes.PROFILE.element,
+      },
+      {
+        path: Routes.COURSE.path,
+        element: Routes.COURSE.element,
+      },
+      {
+        path: Routes.COURSE_CATEGORY_LIST.path,
+        element: Routes.COURSE_CATEGORY_LIST.element,
+      },
+      {
+        path: Routes.COURSE_COMMENT.path,
+        element: Routes.COURSE_COMMENT.element,
+      },
+      {
+        path: Routes.COURSE_FORM.path,
+        element: Routes.COURSE_FORM.element,
+      },
+      {
+        path: Routes.COURSE_VIEW.path,
+        element: Routes.COURSE_VIEW.element,
       },
       {
         path: '*',

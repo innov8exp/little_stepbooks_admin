@@ -25,7 +25,7 @@ const TagForm = ({ id, visible, onSave, onCancel }) => {
     Axios.post(`/api/admin/v1/tags`, { ...values })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success(  t('message.successInfo'))
+          message.success(t('message.successInfo'))
           onSave()
         }
       })
@@ -38,7 +38,7 @@ const TagForm = ({ id, visible, onSave, onCancel }) => {
     Axios.put(`/api/admin/v1/tags/${id}`, { ...values })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success(  t('message.successInfo'))
+          message.success(t('message.successInfo'))
           onSave()
         }
       })
@@ -64,9 +64,9 @@ const TagForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={500}
       style={{ maxHeight: 500 }}
-      title={  t('title.signForm')}
-      okText={  t('button.save')}
-      cancelText={  t('button.cancel')}
+      title={t('title.signForm')}
+      okText={t('button.save')}
+      cancelText={t('button.cancel')}
       onCancel={onCancel}
       onOk={okHandler}
     >
@@ -79,18 +79,21 @@ const TagForm = ({ id, visible, onSave, onCancel }) => {
       >
         <Form.Item
           name="tagName"
-          label={  t('title.name')}
+          label={t('title.name')}
           rules={[
             {
               required: true,
-              message:   t('message.check.name'),
+              message: t('message.check.name'),
             },
           ]}
         >
-          <Input />
+          <Input placeholder={t('message.check.name')} maxLength={20} />
         </Form.Item>
-        <Form.Item name="description" label={  t('title.describe')}>
-          <Input />
+        <Form.Item name="description" label={t('title.describe')}>
+          <Input
+            placeholder={t('message.placeholder.describe')}
+            maxLength={50}
+          />
         </Form.Item>
       </Form>
     </Modal>
