@@ -207,6 +207,9 @@
   "message.placeholder.enterPhone": "Please enter your phone number",
   "message.placeholder.selectGender": "Please select gender",
   "message.placeholder.describe": "Please enter a description",
+  "message.placeholder.recommendType": "Please select the recommended type",
+  "message.placeholder.briefIntroduction": "Please enter a brief introduction",
+  "message.placeholder.ORDER": "Please enter the display order",
 
   "message.tips.delete": "Confirm deletion of secondary records?",
   "message.tips.uploadParsing": "Upload successful, parsing in progress...",

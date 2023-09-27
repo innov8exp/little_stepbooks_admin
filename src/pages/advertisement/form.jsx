@@ -220,7 +220,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
             },
           ]}
         >
-          <Select>
+          <Select placeholder={t('message.check.selectAdvertisingType')}>
             <Option value="RECOMMEND">{t('radio.label.RECOMMEND')}</Option>
             <Option value="CAROUSEL">{t('radio.label.CAROUSEL')}</Option>
           </Select>
@@ -244,10 +244,14 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
           </Upload>
         </Form.Item>
         <Form.Item name="introduction" label={t('title.briefIntroduction')}>
-          <TextArea rows={3} style={{ resize: 'none' }} />
+          <TextArea
+            rows={3}
+            style={{ resize: 'none' }}
+            placeholder={t('message.placeholder.briefIntroduction')}
+          />
         </Form.Item>
         <Form.Item name="sortIndex" label={t('title.ORDER')}>
-          <Input type="number" />
+          <Input type="number" placeholder={t('message.placeholder.ORDER')} />
         </Form.Item>
       </Form>
     </Modal>

@@ -230,6 +230,9 @@
   "message.placeholder.enterPhone": "请输入手机",
   "message.placeholder.selectGender": "请选择性别",
   "message.placeholder.describe": "请输入描述",
+  "message.placeholder.recommendType": "请选择推荐类型",
+  "message.placeholder.briefIntroduction": "请输入简介",
+  "message.placeholder.ORDER": "请输入显示顺序",
 
   "message.error.failure": "获取信息失败",
   "message.successInfo": "操作成功!",

@@ -143,7 +143,7 @@ const RecommendForm = ({ id, visible, onSave, onCancel }) => {
           />
         </Form.Item>
         <Form.Item name="recommendType" label={t('title.recommendType')}>
-          <Select>
+          <Select placeholder={t('message.placeholder.recommendType')}>
             <Option value="TODAY">
               {t('select.option.TodayRecommendation')}
             </Option>
@@ -153,7 +153,12 @@ const RecommendForm = ({ id, visible, onSave, onCancel }) => {
           </Select>
         </Form.Item>
         <Form.Item name="introduction" label={t('title.briefIntroduction')}>
-          <TextArea rows={3} style={{ resize: 'none' }} />
+          <TextArea
+            rows={3}
+            style={{ resize: 'none' }}
+            placeholder={t('message.placeholder.briefIntroduction')}
+            maxLength={300}
+          />
         </Form.Item>
       </Form>
     </Modal>

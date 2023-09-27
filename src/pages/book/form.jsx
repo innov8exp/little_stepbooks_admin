@@ -269,7 +269,7 @@ const BookForm = () => {
                 },
               ]}
             >
-              <Input />
+              <Input placeholder={t('message.check.bookName')} maxLength={20} />
             </Form.Item>
             <Form.Item
               name="author"
@@ -281,7 +281,10 @@ const BookForm = () => {
                 },
               ]}
             >
-              <Input />
+              <Input
+                placeholder={t('message.check.enterAuthor')}
+                maxLength={20}
+              />
             </Form.Item>
             <Form.Item
               name="categories"
@@ -293,7 +296,9 @@ const BookForm = () => {
                 },
               ]}
             >
-              <Checkbox.Group>
+              <Checkbox.Group
+                placeholder={t('message.check.selectClassification')}
+              >
                 {categoryDict.fetchedData?.map((cate) => {
                   return (
                     <Checkbox value={cate.id} key={cate.id}>
@@ -320,7 +325,11 @@ const BookForm = () => {
                 },
               ]}
             >
-              <TextArea rows={2} style={{ resize: 'none' }} />
+              <TextArea
+                rows={2}
+                style={{ resize: 'none' }}
+                placeholder={t('message.check.bookIntroduction')}
+              />
             </Form.Item>
             <Form.Item
               name="coverImg"
@@ -360,7 +369,7 @@ const BookForm = () => {
                 },
               ]}
             >
-              <Select>
+              <Select placeholder={t('message.check.selectPaymentType')}>
                 <Option value="FREE">
                   {t('select.option.allChapterFree')}
                 </Option>
@@ -383,7 +392,7 @@ const BookForm = () => {
                 },
               ]}
             >
-              <Input type="number" />
+              <Input type="number" placeholder={t('message.check.unitPrice')} />
             </Form.Item>
             <Form.Item
               name="isSerialized"

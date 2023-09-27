@@ -91,7 +91,7 @@ const ProductForm = ({ id, visible, onSave, onCancel }) => {
             },
           ]}
         >
-          <Input />
+          <Input placeholder={t('message.placeholder.enterQuantityOfBook')} />
         </Form.Item>
         <Form.Item
           name="price"
@@ -103,7 +103,7 @@ const ProductForm = ({ id, visible, onSave, onCancel }) => {
             },
           ]}
         >
-          <Input />
+          <Input placeholder={t('message.placeholder.enterPrice')} />
         </Form.Item>
         <Form.Item
           name="platform"
@@ -115,7 +115,7 @@ const ProductForm = ({ id, visible, onSave, onCancel }) => {
             },
           ]}
         >
-          <Select>
+          <Select placeholder={t('message.placeholder.electPlatform')}>
             <Option value="IOS">iOS</Option>
             <Option value="ANDROID">Android</Option>
           </Select>
@@ -130,7 +130,10 @@ const ProductForm = ({ id, visible, onSave, onCancel }) => {
             },
           ]}
         >
-          <Input />
+          <Input
+            placeholder={t('message.placeholder.electPlatformID')}
+            maxLength={20}
+          />
         </Form.Item>
       </Form>
     </Modal>

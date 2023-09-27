@@ -184,6 +184,7 @@ const PromotionForm = ({ id, visible, onSave, onCancel }) => {
                 form.setFieldsValue({ discountPercent: '' })
               }
             }}
+            placeholder={t('message.check.selectPromotionType')}
           >
             <Option value="LIMIT_FREE">
               {t('title.label.limitedTimeFree')}
