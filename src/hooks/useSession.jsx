@@ -15,8 +15,8 @@ const useSession = () => {
     try {
       const resp = await asyncUserInfo
       setUserInfo(resp.data)
-      navigate(Routes.DASHBOARD.path)
     } catch (err) {
+      console.log(err)
       if (err.response.status === HttpStatus.UNAUTHORIZED) {
         message.error('获取授权失败，请重新登录！')
         navigate(Routes.SIGN_IN.path)
@@ -32,7 +32,8 @@ const useSession = () => {
     try {
       const resp = await asyncLogin(values)
       if (resp.status === HttpStatus.OK) {
-        await refreshUserInfo()
+        window.location.href = Routes.DASHBOARD.path
+        // navigate(Routes.DASHBOARD.path, { replace: true })
       }
     } catch (error) {
       if (error.response.status === HttpStatus.UNAUTHORIZED) {
@@ -50,7 +51,7 @@ const useSession = () => {
       const resp = await axios.post('/api/admin/auth/logout')
       if (resp.status === HttpStatus.OK) {
         removeUserInfo()
-        navigate(Routes.SIGN_IN.path)
+        navigate(Routes.SIGN_IN.path, { replace: true })
       }
     } catch (error) {
       message.error(`登出失败，原因：${error.message}`)
