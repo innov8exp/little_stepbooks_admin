@@ -1,5 +1,5 @@
 {
-    "taskDefinitionArn": "arn:aws-cn:ecs:cn-north-1:855070278401:task-definition/aws-ecs-task-definition-admin-web-stage:1",
+    "taskDefinitionArn": "arn:aws-cn:ecs:cn-north-1:855070278401:task-definition/aws-ecs-task-definition-admin-web-stage:3",
     "containerDefinitions": [
         {
             "name": "stepbook-admin-web",
@@ -7,7 +7,7 @@
             "cpu": 0,
             "portMappings": [
                 {
-                    "name": "stepbook-admin-8082-tcp",
+                    "name": "stepbook-admin-web-8082-tcp",
                     "containerPort": 8082,
                     "hostPort": 8082,
                     "protocol": "tcp",
@@ -36,7 +36,7 @@
     "taskRoleArn": "arn:aws-cn:iam::855070278401:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws-cn:iam::855070278401:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 1,
+    "revision": 3,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -82,7 +82,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2023-10-06T05:54:23.951Z",
+    "registeredAt": "2023-10-06T07:11:14.713Z",
     "registeredBy": "arn:aws-cn:iam::855070278401:user/stepbook",
     "tags": []
 }
