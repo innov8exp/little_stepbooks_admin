@@ -1,0 +1,88 @@
+{
+    "taskDefinitionArn": "arn:aws-cn:ecs:cn-north-1:855070278401:task-definition/aws-ecs-task-definition-admin-web-stage:1",
+    "containerDefinitions": [
+        {
+            "name": "stepbook-admin",
+            "image": "855070278401.dkr.ecr.cn-north-1.amazonaws.com.cn/stepbook-admin-web",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "stepbook-admin-8082-tcp",
+                    "containerPort": 8082,
+                    "hostPort": 8082,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/aws-ecs-task-definition-admin-web-stage",
+                    "awslogs-region": "cn-north-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            }
+        }
+    ],
+    "family": "aws-ecs-task-definition-admin-web-stage",
+    "taskRoleArn": "arn:aws-cn:iam::855070278401:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws-cn:iam::855070278401:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 1,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2023-10-06T05:54:23.951Z",
+    "registeredBy": "arn:aws-cn:iam::855070278401:user/stepbook",
+    "tags": []
+}
