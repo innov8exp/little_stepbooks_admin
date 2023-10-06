@@ -1,14 +1,5 @@
 import { Breadcrumb, Layout, Menu } from 'antd'
-// import { MainRoutes } from './libs/router'
 
-import Header from './components/main-header'
-// import MainMenu from 'components/main-menu'
-import Config from '@/libs/config'
-import { Routes } from './libs/router'
-import { useState } from 'react'
-import { Link, Outlet, useLocation } from 'react-router-dom'
-import styled from 'styled-components'
-import { useTranslation } from 'react-i18next'
 import {
   AccountBookOutlined,
   BookOutlined,
@@ -21,6 +12,12 @@ import {
   SmileOutlined,
   UserOutlined,
 } from '@ant-design/icons'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link, Outlet, useLocation } from 'react-router-dom'
+import styled from 'styled-components'
+import Header from './components/main-header'
+import { Routes } from './libs/router'
 const { Sider, Content } = Layout
 
 const ContentHeader = styled.div`
@@ -338,9 +335,7 @@ const AdminLayout = () => {
         collapsible
         collapsed={collapsed}
       >
-        <Logo>
-          {collapsed ? Config.PROJECT_NAME_SORT : Config.PROJECT_NAME}
-        </Logo>
+        <Logo>{collapsed ? t('project.nameSort') : t('project.name')}</Logo>
         <Menu
           theme="light"
           defaultSelectedKeys={['1']}

@@ -1,4 +1,6 @@
 {
+  "project.name": "Step Book",
+  "project.nameSort": "Step",
   "menu.dashboard": "Dashboard",
   "menu.userReport": "User Report",
   "menu.orderReport": "Order Report",
@@ -28,7 +30,6 @@
   "menu.courseList": "Course List",
   "menu.courseCategoryList": "Classification Management",
   "menu.courseComment": "Comment Management",
-
   "title.userStatistics": "User Statistics",
   "title.orderStatistics": "Order Statistics",
   "title.userManagement": "USER",
@@ -153,7 +154,6 @@
   "title.setting": "Set up",
   "title.logOut": "Log out",
   "title.userForm": "User Form",
-
   "button.create": "Create",
   "button.edit": "Edit",
   "button.disable": "Disable",
@@ -175,7 +175,6 @@
   "button.bookEditing": "Book Editing",
   "button.saveChanges": "Save Changes",
   "button.courseEditing": "Course Editor",
-
   "message.check.name": "Please enter a name",
   "message.check.payOrNot": "Please choose whether to pay or not",
   "message.check.chapterContent": "Please enter the chapter content",
@@ -210,7 +209,6 @@
   "message.placeholder.recommendType": "Please select the recommended type",
   "message.placeholder.briefIntroduction": "Please enter a brief introduction",
   "message.placeholder.ORDER": "Please enter the display order",
-
   "message.tips.delete": "Confirm deletion of secondary records?",
   "message.tips.uploadParsing": "Upload successful, parsing in progress...",
   "message.tips.uploading": "Uploading...",
@@ -218,7 +216,6 @@
   "message.tips.uploadSuccess": "Upload successful!",
   "message.tips.checkEmail": "Please check the email!",
   "message.tips.loading": "Loading...",
-
   "message.placeholder.bookName": "Please enter a book name",
   "message.placeholder.bookAuthor": "Please enter the book author ",
   "message.placeholder.chapterName": "Please enter a chapter name",
@@ -231,7 +228,6 @@
   "message.placeholder.enterBookSearch": "Please enter a book name to search for",
   "message.placeholder.courseName": "Please enter the course name",
   "message.placeholder.lecturer": "Please enter the instructor",
-
   "message.error.failure": "getting information failure",
   "message.successInfo": "Operation successful! ",
   "message.error.failureReason": "Operation failed due to:",
@@ -243,14 +239,12 @@
   "message.goIndex": "Return to homepage",
   "message.successfullySaved": "Successfully saved",
   "message.archiveSuccessful!": "Archive successful!",
-
   "radio.label.pay": "pay",
   "radio.label.free": "free",
   "radio.label.yes": "yes",
   "radio.label.deny": "deny",
   "radio.label.RECOMMEND": "Recommend",
   "radio.label.CAROUSEL": "Carousel",
-
   "select.option.allChapterFree": "All chapters are free of charge",
   "select.option.allChapterPay": "Pay for all chapters",
   "select.option.PartialChapterPay": "Partial chapter payment",

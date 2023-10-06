@@ -127,7 +127,7 @@ const MainHeader = ({ onToggleClick }) => {
         <Dropdown menu={{ items }}>
           <a onClick={(e) => e.preventDefault()}>
             <Space>
-              {userInfo ? userInfo.username : `${i18n.t('title.notLoggedIn')}`}
+              {userInfo ? userInfo.nickname : `${i18n.t('title.notLoggedIn')}`}
               <DownOutlined />
             </Space>
           </a>

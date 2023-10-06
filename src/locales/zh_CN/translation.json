@@ -1,4 +1,6 @@
 {
+  "project.name": "步印童书",
+  "project.nameSort": "步印",
   "menu.dashboard": "数据报表",
   "menu.userReport": "用户报表",
   "menu.orderReport": "订单报表",
@@ -28,7 +30,6 @@
   "menu.courseList": "课程列表",
   "menu.courseCategoryList": "分类列表",
   "menu.courseComment": "评论管理",
-
   "title.userStatistics": "用户统计",
   "title.orderStatistics": "订单统计",
   "title.userManagement": "用户管理",
@@ -153,7 +154,6 @@
   "title.setting": "设置",
   "title.logOut": "登出",
   "title.userForm": "用户表单",
-
   "button.create": "新建",
   "button.edit": "编辑",
   "button.disable": "禁用",
@@ -175,7 +175,6 @@
   "button.bookEditing": "书籍编辑",
   "button.saveChanges": "保存修改",
   "button.courseEditing": "课程编辑",
-
   "message.check.name": "请输入名称",
   "message.check.payOrNot": "请选择是否付费",
   "message.check.chapterContent": "请输入章节内容",
@@ -204,7 +203,6 @@
   "message.check.userNickName": "请输入用户昵称",
   "message.check.email": "请输入邮箱",
   "message.check.validEmail": "邮箱不是有效的邮箱",
-
   "message.tips.delete": "确定删除当前记录?",
   "message.tips.uploadParsing": "上传成功，解析中...",
   "message.tips.uploading": "正在上传...",
@@ -212,7 +210,6 @@
   "message.tips.uploadSuccess": "上传成功!",
   "message.tips.checkEmail": "请查看邮件！",
   "message.tips.loading": "加载中...",
-
   "message.placeholder.bookName": "请输入书籍名称",
   "message.placeholder.bookAuthor": "请输入书籍作者",
   "message.placeholder.chapterName": "请输入章节名称",
@@ -233,7 +230,6 @@
   "message.placeholder.recommendType": "请选择推荐类型",
   "message.placeholder.briefIntroduction": "请输入简介",
   "message.placeholder.ORDER": "请输入显示顺序",
-
   "message.error.failure": "获取信息失败",
   "message.successInfo": "操作成功!",
   "message.error.failureReason": "操作失败，原因:",
@@ -245,14 +241,12 @@
   "message.goIndex": "返回主页",
   "message.successfullySaved": "保存成功",
   "message.archiveSuccessful!": "归档成功!",
-
   "radio.label.pay": "付费",
   "radio.label.free": "免费",
   "radio.label.yes": "是",
   "radio.label.deny": "否",
   "radio.label.RECOMMEND": "推荐",
   "radio.label.CAROUSEL": "轮播",
-
   "select.option.allChapterFree": "全部章节免费",
   "select.option.allChapterPay": "全部章节付费",
   "select.option.PartialChapterPay": "部分章节付费",
