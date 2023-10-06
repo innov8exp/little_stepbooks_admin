@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import {} from 'react'
 import styled from 'styled-components'
-// import { Config } from "./common/config";
 import bgImg from './assets/images/cover-login.jpg'
 
 const Container = styled.div`

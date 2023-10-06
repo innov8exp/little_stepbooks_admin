@@ -1,4 +1,8 @@
+import EnvFlag from '@/components/env-flag'
 import useSession from '@/hooks/useSession'
+import { Routes } from '@/libs/router'
+import i18n from '@/locales/i18n'
+import useLanguage from '@/stores/useLanguage'
 import {
   DownOutlined,
   HomeOutlined,
@@ -8,15 +12,11 @@ import {
   SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Dropdown, Layout, Space } from 'antd'
-import { useEffect, useState } from 'react'
+import { Dropdown, Layout, Radio, Space } from 'antd'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useEffectOnce } from 'react-use'
 import styled from 'styled-components'
-import EnvFlag from '@/components/env-flag'
-import { Routes } from '@/libs/router'
-import { Radio } from 'antd'
-import i18n from '@/locales/i18n'
-import useLanguage from '@/stores/useLanguage'
 const { Header } = Layout
 
 const HeaderContainer = styled(Header)`
@@ -105,13 +105,12 @@ const MainHeader = ({ onToggleClick }) => {
     onToggleClick(collapsed)
   }
 
-  useEffect(() => {
+  useEffectOnce(() => {
     async function fetchData() {
       await refreshUserInfo()
     }
     fetchData()
-  }, [refreshUserInfo])
-
+  })
   return (
     <HeaderContainer>
       <Trigger onClick={clickHandler}>

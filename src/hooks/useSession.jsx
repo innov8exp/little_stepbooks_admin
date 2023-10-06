@@ -50,6 +50,7 @@ const useSession = () => {
       const resp = await axios.post('/api/admin/auth/logout')
       if (resp.status === HttpStatus.OK) {
         removeUserInfo()
+        navigate(Routes.SIGN_IN.path)
       }
     } catch (error) {
       message.error(`登出失败，原因：${error.message}`)

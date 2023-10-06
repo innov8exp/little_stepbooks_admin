@@ -110,19 +110,19 @@ const AdminLayout = () => {
     getItem(t('menu.bookManage'), '4', <BookOutlined />, [
       getItem(
         <Link to={Routes.CATEGORY_LIST.path}>{t('menu.category')}</Link>,
-        '341',
+        '71',
         <BookOutlined />,
       ),
 
       getItem(
         <Link to={Routes.BOOK_LIST.path}>{t('menu.book')}</Link>,
-        '42',
+        '72',
         <BookOutlined />,
       ),
 
       getItem(
         <Link to={Routes.COMMENT_LIST.path}>{t('menu.comment')}</Link>,
-        '43',
+        '73',
         <CommentOutlined />,
       ),
     ]),
