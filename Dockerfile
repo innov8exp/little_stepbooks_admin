@@ -8,7 +8,7 @@ COPY nginx.conf.template /etc/nginx/conf.d/default.conf.template
 
 COPY docker-entrypoint.sh /
 
-EXPOSE 80
+EXPOSE 8082
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
