@@ -123,7 +123,7 @@ const UserPage = () => {
           {
             title: `${t('title.operate')}`,
             key: 'action',
-            width: 150,
+            width: 200,
             render: (text, record) => {
               return (
                 <div>
