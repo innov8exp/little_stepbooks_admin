@@ -41,7 +41,7 @@ const Logo = styled.div`
   text-align: center;
   white-space: nowrap;
   font-family: Arial, Helvetica, sans-serif;
-  background-color: #1677ff;
+  background-color: #f54a74;
 `
 const AdminLayout = () => {
   const { t } = useTranslation()

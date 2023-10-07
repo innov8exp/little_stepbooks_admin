@@ -8,7 +8,17 @@ import useLanguage from './stores/useLanguage'
 const App = () => {
   const { language } = useLanguage()
   return (
-    <ConfigProvider locale={language == 'en_US' ? en_US : zh_CN}>
+    <ConfigProvider
+      locale={language == 'en_US' ? en_US : zh_CN}
+      theme={{
+        token: {
+          // Seed Token，影响范围大
+          colorPrimary: '#F54A74',
+          colorLink: '#F54A74',
+          // 派生变量，影响范围小
+        },
+      }}
+    >
       <RouterProvider router={Router} />
     </ConfigProvider>
   )
