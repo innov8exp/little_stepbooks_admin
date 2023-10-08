@@ -12,8 +12,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        // target: 'http://api-lb-1680043106.cn-north-1.elb.amazonaws.com.cn:8081',
-        target: 'http://localhost:8081',
+        target: 'http://api-lb-1680043106.cn-north-1.elb.amazonaws.com.cn:8081',
+        // target: 'http://localhost:8081',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
