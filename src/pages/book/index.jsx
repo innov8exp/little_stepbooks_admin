@@ -89,7 +89,7 @@ const BookPage = () => {
           const responseObject = res.data
           setBooksData(responseObject.records)
           setTotal(responseObject.total)
-          if (responseObject.records) {
+          if (responseObject.records && responseObject.records.length > 0) {
             loadChapterCountByBook(
               responseObject.records.flatMap((book) => book.id),
             )

@@ -124,6 +124,15 @@ const AdminLayout = () => {
       ),
     ]),
 
+    // 产品管理
+    getItem(t('menu.sku'), '8', <BookOutlined />, [
+      getItem(
+        <Link to={Routes.BOOK_LIST.path}>{t('menu.skuList')}</Link>,
+        '81',
+        <BookOutlined />,
+      ),
+    ]),
+
     // 订单中心
     getItem(t('menu.order'), '5', <ShoppingOutlined />, [
       getItem(
@@ -141,9 +150,9 @@ const AdminLayout = () => {
     ]),
 
     // 运营管理
-    getItem(t('menu.product'), '6', <FundProjectionScreenOutlined />, [
+    getItem(t('menu.operation'), '6', <FundProjectionScreenOutlined />, [
       getItem(
-        <Link to={Routes.PRODUCT_LIST.path}>{t('menu.productList')}</Link>,
+        <Link to={Routes.PRODUCT_LIST.path}>{t('menu.coinList')}</Link>,
         '51',
         <AccountBookOutlined />,
       ),
