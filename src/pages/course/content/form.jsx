@@ -215,9 +215,9 @@ const ChapterForm = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.CHAPTER_LIST.path)}
+            onClick={() => navigate(Routes.COURSE_CONTENT_LIST.path)}
           />
-          {t('title.content.create')}
+          {t('title.course.content.create')}
         </>
       }
     >

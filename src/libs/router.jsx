@@ -26,6 +26,8 @@ import CourseCategory from '@/pages/courseCategory'
 import CourseComment from '@/pages/courseComment'
 import CourseForm from '@/pages/course/form'
 import CourseView from '@/pages/course/view'
+import ContentList from '@/pages/course/content/index'
+import ContentForm from '@/pages/course/content/form'
 
 import { createBrowserRouter } from 'react-router-dom'
 
@@ -64,6 +66,8 @@ export const Routes = {
   COURSE_COMMENT: { path: '/courseComment-list', element: <CourseComment /> },
   COURSE_FORM: { path: '/course_form', element: <CourseForm /> },
   COURSE_VIEW: { path: '/course-view', element: <CourseView /> },
+  COURSE_CONTENT_LIST: { path: '/content-list', element: <ContentList /> },
+  COURSE_CONTENT_FORM: { path: '/content-form', element: <ContentForm /> },
 }
 
 export const Router = createBrowserRouter([
@@ -111,7 +115,7 @@ export const Router = createBrowserRouter([
       },
       {
         path: Routes.CHAPTER_LIST.path,
-        element: Routes.CATEGORY_LIST.element,
+        element: Routes.CHAPTER_LIST.element,
       },
       {
         path: Routes.CHAPTER_FORM.path,
@@ -176,6 +180,14 @@ export const Router = createBrowserRouter([
       {
         path: Routes.COURSE_VIEW.path,
         element: Routes.COURSE_VIEW.element,
+      },
+      {
+        path: Routes.COURSE_CONTENT_LIST.path,
+        element: Routes.COURSE_CONTENT_LIST.element,
+      },
+      {
+        path: Routes.COURSE_CONTENT_FORM.path,
+        element: Routes.COURSE_CONTENT_FORM.element,
       },
       {
         path: '*',

@@ -6,21 +6,19 @@ import {
 import {
   Button,
   Card,
-  Checkbox,
   Col,
-  Divider,
   Empty,
   Form,
   Input,
   message,
-  Radio,
   Row,
   Select,
   Skeleton,
   Upload,
+  Checkbox,
 } from 'antd'
-import { Routes } from '@/libs/router'
 import useFetch from '@/hooks/useFetch'
+import { Routes } from '@/libs/router'
 import axios from 'axios'
 import useQuery from '@/hooks/useQuery'
 import HttpStatus from 'http-status-codes'
@@ -28,7 +26,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
-const { Option } = Select
 const { TextArea } = Input
 
 const getBase64 = (img, callback) => {
@@ -66,10 +63,6 @@ const BookForm = () => {
   const [imageUrl, setImageUrl] = useState()
 
   const categoryDict = useFetch('/api/admin/v1/categories', [])
-  // const selectedCategories = useFetch(
-  //     `/api/admin/v1/books/${queryId}/categories`,
-  //     [queryId],
-  // );
 
   const selectedCategoryList = (bookId) => {
     return new Promise((resolve, reject) => {
@@ -129,7 +122,7 @@ const BookForm = () => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success('保存成功!')
+          message.success(`${t('message.successfullySaved')}`)
           navigate(Routes.BOOK_LIST.path)
         }
       })
@@ -150,7 +143,7 @@ const BookForm = () => {
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          message.success('保存成功!')
+          message.success(`${t('message.successfullySaved')}`)
           navigate(Routes.BOOK_LIST.path)
         }
       })
@@ -258,7 +251,6 @@ const BookForm = () => {
               ...initFormData,
             }}
           >
-            <Divider orientation="left">{t('title.basicInfo')}</Divider>
             <Form.Item
               name="bookName"
               label={t('title.bookName')}
@@ -317,18 +309,18 @@ const BookForm = () => {
             </Form.Item>
             <Form.Item
               name="introduction"
-              label={t('title.bookIntroduction')}
+              label={t('title.describe')}
               rules={[
                 {
                   required: true,
-                  message: `${t('message.check.bookIntroduction')}`,
+                  message: `${t('message.placeholder.describe')}`,
                 },
               ]}
             >
               <TextArea
                 rows={2}
                 style={{ resize: 'none' }}
-                placeholder={t('message.check.bookIntroduction')}
+                placeholder={t('message.placeholder.describe')}
               />
             </Form.Item>
             <Form.Item
@@ -341,7 +333,6 @@ const BookForm = () => {
                 },
               ]}
             >
-              <Input hidden />
               <Upload
                 name="file"
                 listType="picture-card"
@@ -358,58 +349,6 @@ const BookForm = () => {
                 )}
               </Upload>
             </Form.Item>
-            <Divider orientation="left">{t('title.bookProperties')}</Divider>
-            <Form.Item
-              name="chargeType"
-              label={t('title.paymentType')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.selectPaymentType')} `,
-                },
-              ]}
-            >
-              <Select placeholder={t('message.check.selectPaymentType')}>
-                <Option value="FREE">
-                  {t('select.option.allChapterFree')}
-                </Option>
-                <Option value="FULL_CHARGE">
-                  {t('select.option.allChapterPay')}
-                </Option>
-                <Option value="PART_CHARGE">
-                  {' '}
-                  {t('select.option.PartialChapterPay')}
-                </Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name="price"
-              label={t('title.chapterUnitPrice')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.unitPrice')}`,
-                },
-              ]}
-            >
-              <Input type="number" placeholder={t('message.check.unitPrice')} />
-            </Form.Item>
-            <Form.Item
-              name="isSerialized"
-              label={t('title.publishInInstalments')}
-            >
-              <Radio.Group>
-                <Radio value>{t('radio.label.yes')}</Radio>
-                <Radio value={false}>{t('radio.label.deny')}</Radio>
-              </Radio.Group>
-            </Form.Item>
-            <Form.Item name="hasEnding" label={t('title.end')}>
-              <Radio.Group>
-                <Radio value>{t('radio.label.yes')}</Radio>
-                <Radio value={false}>{t('radio.label.deny')}</Radio>
-              </Radio.Group>
-            </Form.Item>
-
             <div style={{ marginTop: 10 }} />
             <Row justify="end">
               <Col>

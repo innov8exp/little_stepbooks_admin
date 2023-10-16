@@ -16,7 +16,6 @@ import {
   Modal,
   Row,
   Table,
-  Tag,
   Tooltip,
 } from 'antd'
 import { Routes } from '@/libs/router'
@@ -159,20 +158,20 @@ const BookPage = () => {
     navigate(`${Routes.CHAPTER_LIST.path}?id=${id}&name=${bookName}`)
   }
 
-  const handleStatusChange = (id, status) => {
-    const cCount = chapterCount?.find((cc) => cc.bookId === id)?.chapterCount
-    if (!cCount) {
-      message.error(`${t('message.error.noBookChapters')}`)
-      return
-    }
-    axios.put(`/api/admin/v1/books/${id}/status/${status}`).then((res) => {
-      if (res.status === HttpStatus.OK) {
-        const timestamp = new Date().getTime()
-        setChangeTimestamp(timestamp)
-        message.success(t('message.successInfo'))
-      }
-    })
-  }
+  // const handleStatusChange = (id, status) => {
+  //   const cCount = chapterCount?.find((cc) => cc.bookId === id)?.chapterCount
+  //   if (!cCount) {
+  //     message.error(`${t('message.error.noBookChapters')}`)
+  //     return
+  //   }
+  //   axios.put(`/api/admin/v1/books/${id}/status/${status}`).then((res) => {
+  //     if (res.status === HttpStatus.OK) {
+  //       const timestamp = new Date().getTime()
+  //       setChangeTimestamp(timestamp)
+  //       message.success(t('message.successInfo'))
+  //     }
+  //   })
+  // }
 
   useEffect(() => {
     fetchBooks()
@@ -266,39 +265,13 @@ const BookPage = () => {
               dataIndex: 'coverImg',
               render: (text) => <Image width={50} src={text} />,
             },
-            // {
-            //   title: `${t('title.publishInInstalments')}`,
-            //   key: 'isSerialized',
-            //   dataIndex: 'isSerialized',
-            //   render: (text) =>
-            //     text ? `${t('title.status.yes')}` : `${t('title.status.no')}`,
-            // },
-            // {
-            //   title: `${t('title.end')}`,
-            //   key: 'hasEnding',
-            //   dataIndex: 'hasEnding',
-            //   render: (text) =>
-            //     text ? `${t('title.status.yes')}` : `${t('title.status.no')}`,
-            // },
-            {
-              title: `${t('title.status')}`,
-              key: 'status',
-              dataIndex: 'status',
-              render: (text) => {
-                return text === 'ONLINE' ? (
-                  <Tag color="green">{t('title.listed')}</Tag>
-                ) : (
-                  <Tag color="red">{t('title.notListed')}</Tag>
-                )
-              },
-            },
             {
               title: `${t('title.operate')}`,
               key: 'action',
               render: (text, record) => {
                 return (
                   <div>
-                    {record.status === 'ONLINE' ? (
+                    {/* {record.status === 'ONLINE' ? (
                       <Button
                         onClick={() => handleStatusChange(record.id, 'OFFLINE')}
                         type="link"
@@ -314,7 +287,7 @@ const BookPage = () => {
                       </Button>
                     )}
 
-                    <Divider type="vertical" />
+                    <Divider type="vertical" /> */}
                     <Button
                       onClick={() =>
                         handleLinkToChapterAction(record.id, record.bookName)

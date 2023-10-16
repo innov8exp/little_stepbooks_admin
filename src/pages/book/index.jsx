@@ -159,20 +159,20 @@ const BookPage = () => {
     navigate(`${Routes.CHAPTER_LIST.path}?id=${id}&name=${bookName}`)
   }
 
-  const handleStatusChange = (id, status) => {
-    const cCount = chapterCount?.find((cc) => cc.bookId === id)?.chapterCount
-    if (!cCount) {
-      message.error(`${t('message.error.noBookChapters')}`)
-      return
-    }
-    axios.put(`/api/admin/v1/books/${id}/status/${status}`).then((res) => {
-      if (res.status === HttpStatus.OK) {
-        const timestamp = new Date().getTime()
-        setChangeTimestamp(timestamp)
-        message.success(t('message.successInfo'))
-      }
-    })
-  }
+  // const handleStatusChange = (id, status) => {
+  //   const cCount = chapterCount?.find((cc) => cc.bookId === id)?.chapterCount
+  //   if (!cCount) {
+  //     message.error(`${t('message.error.noBookChapters')}`)
+  //     return
+  //   }
+  //   axios.put(`/api/admin/v1/books/${id}/status/${status}`).then((res) => {
+  //     if (res.status === HttpStatus.OK) {
+  //       const timestamp = new Date().getTime()
+  //       setChangeTimestamp(timestamp)
+  //       message.success(t('message.successInfo'))
+  //     }
+  //   })
+  // }
 
   useEffect(() => {
     fetchBooks()
@@ -189,7 +189,7 @@ const BookPage = () => {
         <Row>
           <Col span={6}>
             <Form.Item label={t('title.name')} name="bookName">
-              <Input placeholder={t('message.placeholder.bookName')} />
+              <Input placeholder={t('message.placeholder.name')} />
             </Form.Item>
           </Col>
           <Col span={6}>
@@ -267,20 +267,6 @@ const BookPage = () => {
               render: (text) => <Image width={50} src={text} />,
             },
             {
-              title: `${t('title.publishInInstalments')}`,
-              key: 'isSerialized',
-              dataIndex: 'isSerialized',
-              render: (text) =>
-                text ? `${t('title.status.yes')}` : `${t('title.status.no')}`,
-            },
-            {
-              title: `${t('title.end')}`,
-              key: 'hasEnding',
-              dataIndex: 'hasEnding',
-              render: (text) =>
-                text ? `${t('title.status.yes')}` : `${t('title.status.no')}`,
-            },
-            {
               title: `${t('title.status')}`,
               key: 'status',
               dataIndex: 'status',
@@ -298,7 +284,7 @@ const BookPage = () => {
               render: (text, record) => {
                 return (
                   <div>
-                    {record.status === 'ONLINE' ? (
+                    {/* {record.status === 'ONLINE' ? (
                       <Button
                         onClick={() => handleStatusChange(record.id, 'OFFLINE')}
                         type="link"
@@ -312,9 +298,9 @@ const BookPage = () => {
                       >
                         {t('button.grounding')}
                       </Button>
-                    )}
+                    )} */}
 
-                    <Divider type="vertical" />
+                    {/* <Divider type="vertical" /> */}
                     <Button
                       onClick={() =>
                         handleLinkToChapterAction(record.id, record.bookName)

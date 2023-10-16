@@ -8,13 +8,11 @@ import {
   Card,
   Checkbox,
   Col,
-  Divider,
   Empty,
   Form,
   Input,
   message,
   Row,
-  Select,
   Skeleton,
   Upload,
 } from 'antd'
@@ -27,7 +25,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
-const { Option } = Select
 const { TextArea } = Input
 
 const getBase64 = (img, callback) => {
@@ -257,7 +254,6 @@ const BookForm = () => {
               ...initFormData,
             }}
           >
-            <Divider orientation="left">{t('title.basicInfo')}</Divider>
             <Form.Item
               name="courseName"
               label={t('title.courseName')}
@@ -307,13 +303,13 @@ const BookForm = () => {
                 })}
               </Checkbox.Group>
             </Form.Item>
-            <Form.Item name="keywords" label={t('title.keyword')}>
+            {/* <Form.Item name="keywords" label={t('title.keyword')}>
               <Select
                 mode="tags"
                 style={{ width: '100%' }}
                 placeholder={t('message.check.searchKeywords')}
               />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item
               name="introduction"
               label={t('title.courseIntroduction')}
@@ -340,7 +336,6 @@ const BookForm = () => {
                 },
               ]}
             >
-              <Input hidden />
               <Upload
                 name="file"
                 listType="picture-card"
@@ -356,45 +351,6 @@ const BookForm = () => {
                   uploadButton
                 )}
               </Upload>
-            </Form.Item>
-            <Divider orientation="left">{t('title.courseProperties')}</Divider>
-            <Form.Item
-              name="chargeType"
-              label={t('title.paymentType')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.selectPaymentType')} `,
-                },
-              ]}
-            >
-              <Select placeholder={t('message.check.selectPaymentType')}>
-                <Option value="FREE">
-                  {t('select.option.allChapterFree')}
-                </Option>
-                <Option value="FULL_CHARGE">
-                  {t('select.option.allChapterPay')}
-                </Option>
-                <Option value="PART_CHARGE">
-                  {' '}
-                  {t('select.option.PartialChapterPay')}
-                </Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name="price"
-              label={t('title.courseUnitPrice')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.courseUnitPrice')}`,
-                },
-              ]}
-            >
-              <Input
-                type="number"
-                placeholder={t('message.check.courseUnitPrice')}
-              />
             </Form.Item>
             <div style={{ marginTop: 10 }} />
             <Row justify="end">

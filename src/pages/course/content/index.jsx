@@ -3,7 +3,7 @@ import {
   LeftCircleOutlined,
   SearchOutlined,
 } from '@ant-design/icons'
-import { Button, Card, Divider, message, Modal,Table } from 'antd'
+import { Button, Card, Divider, message, Modal, Table } from 'antd'
 import { Routes } from '@/libs/router'
 import axios from 'axios'
 import useQuery from '@/hooks/useQuery'
@@ -107,11 +107,11 @@ const ChapterPage = () => {
   }
 
   const handleCreateAction = () => {
-    navigate(`${Routes.CHAPTER_FORM.path}?bookId=${queryId}`)
+    navigate(`${Routes.COURSE_CONTENT_FORM.path}?bookId=${queryId}`)
   }
 
   const handleEditAction = (id) => {
-    navigate(`${Routes.CHAPTER_FORM.path}?bookId=${queryId}&id=${id}`)
+    navigate(`${Routes.COURSE_CONTENT_FORM.path}?bookId=${queryId}&id=${id}`)
   }
 
   const handleViewAction = (id) => {
@@ -133,7 +133,7 @@ const ChapterPage = () => {
             icon={<LeftCircleOutlined />}
             onClick={() => navigate.goBack()}
           />
-          《{queryName}》- {t('title.content')}
+          《{queryName}》- {t('title.courseContent')}
         </>
       }
     >
@@ -167,14 +167,19 @@ const ChapterPage = () => {
                 (pageNumber - 1) * pageSize + index + 1,
             },
             {
-              title: `${t('title.chapterName')}`,
+              title: `${t('title.courseName')}`,
               key: 'chapterName',
               dataIndex: 'chapterName',
             },
             {
-              title: `${t('title.chapterIntroduction')}`,
-              key: 'introduction',
-              dataIndex: 'introduction',
+              title: `${t('title.duration')}`,
+              key: 'duration',
+              dataIndex: 'duration',
+            },
+            {
+              title: `${t('title.experienceClass')}`,
+              key: 'experienceClass',
+              dataIndex: 'experienceClass',
             },
             {
               title: `${t('title.operate')}`,
