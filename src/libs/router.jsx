@@ -8,7 +8,7 @@ import ChapterForm from '@/pages/book/chapter/form'
 import ChapterView from '@/pages/book/chapter/view'
 import BookForm from '@/pages/book/form'
 import BookView from '@/pages/book/view'
-import Category from '@/pages/category'
+// import Category from '@/pages/category'
 import ComingSoon from '@/pages/coming-soon'
 import Comment from '@/pages/comment'
 import Consumption from '@/pages/consumption'
@@ -19,15 +19,15 @@ import Product from '@/pages/product'
 import Profile from '@/pages/profile'
 import Promotion from '@/pages/promotion'
 import Recommend from '@/pages/recommend'
-import Tag from '@/pages/tag'
+// import Tag from '@/pages/tag'
 import User from '@/pages/user'
-import Course from '@/pages/course'
-import CourseCategory from '@/pages/courseCategory'
-import CourseComment from '@/pages/courseComment'
-import CourseForm from '@/pages/course/form'
-import CourseView from '@/pages/course/view'
-import ContentList from '@/pages/course/content/index'
-import ContentForm from '@/pages/course/content/form'
+import Course from '@/pages/book/course'
+// import CourseCategory from '@/pages/courseCategory'
+import CourseForm from '@/pages/book/course/form'
+import CourseView from '@/pages/book/course/view'
+import ContentList from '@/pages/book/course/content/index'
+import ContentForm from '@/pages/book/course/content/form'
+import Classification from '@/pages/classification'
 
 import { createBrowserRouter } from 'react-router-dom'
 
@@ -37,8 +37,12 @@ export const Routes = {
   USER_REPORT: { path: '/user-report', element: <Dashboard /> },
   ORDER_REPORT: { path: '/order-report', element: <Dashboard /> },
   USER_LIST: { path: '/user-list', element: <User /> },
-  TAG_LIST: { path: '/tag-list', element: <Tag /> },
-  CATEGORY_LIST: { path: '/category-list', element: <Category /> },
+  CLASSIFICATION_LIST: {
+    path: '/classification-list',
+    element: <Classification />,
+  },
+  // TAG_LIST: { path: '/tag-list', element: <Tag /> },
+  // CATEGORY_LIST: { path: '/category-list', element: <Category /> },
   BOOK_LIST: { path: '/book-list', element: <Book /> },
   BOOK_FORM: { path: '/book-form', element: <BookForm /> },
   BOOK_VIEW: { path: '/book-view', element: <BookView /> },
@@ -59,11 +63,6 @@ export const Routes = {
   FORGET_PASSWORD: { path: '/forget-password', element: <ForgetPassword /> },
   COMING_SOON: { path: '/coming-soon', element: <ComingSoon /> },
   COURSE: { path: '/course-list', element: <Course /> },
-  COURSE_CATEGORY_LIST: {
-    path: '/courseCategory-list',
-    element: <CourseCategory />,
-  },
-  COURSE_COMMENT: { path: '/courseComment-list', element: <CourseComment /> },
   COURSE_FORM: { path: '/course_form', element: <CourseForm /> },
   COURSE_VIEW: { path: '/course-view', element: <CourseView /> },
   COURSE_CONTENT_LIST: { path: '/content-list', element: <ContentList /> },
@@ -93,13 +92,13 @@ export const Router = createBrowserRouter([
         path: Routes.USER_LIST.path,
         element: Routes.USER_LIST.element,
       },
+      // {
+      //   path: Routes.TAG_LIST.path,
+      //   element: Routes.TAG_LIST.element,
+      // },
       {
-        path: Routes.TAG_LIST.path,
-        element: Routes.TAG_LIST.element,
-      },
-      {
-        path: Routes.CATEGORY_LIST.path,
-        element: Routes.CATEGORY_LIST.element,
+        path: Routes.CLASSIFICATION_LIST.path,
+        element: Routes.CLASSIFICATION_LIST.element,
       },
       {
         path: Routes.BOOK_LIST.path,
@@ -164,14 +163,6 @@ export const Router = createBrowserRouter([
       {
         path: Routes.COURSE.path,
         element: Routes.COURSE.element,
-      },
-      {
-        path: Routes.COURSE_CATEGORY_LIST.path,
-        element: Routes.COURSE_CATEGORY_LIST.element,
-      },
-      {
-        path: Routes.COURSE_COMMENT.path,
-        element: Routes.COURSE_COMMENT.element,
       },
       {
         path: Routes.COURSE_FORM.path,

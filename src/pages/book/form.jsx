@@ -12,7 +12,6 @@ import {
   Input,
   message,
   Row,
-  Select,
   Skeleton,
   Upload,
   Checkbox,
@@ -62,12 +61,12 @@ const BookForm = () => {
   const [uploading, setUploading] = useState(false)
   const [imageUrl, setImageUrl] = useState()
 
-  const categoryDict = useFetch('/api/admin/v1/categories', [])
+  const categoryDict = useFetch('/api/admin/v1/classifications', [])
 
   const selectedCategoryList = (bookId) => {
     return new Promise((resolve, reject) => {
       axios
-        .get(`/api/admin/v1/books/${bookId}/categories`)
+        .get(`/api/admin/v1/books/${bookId}/classifications`)
         .then((res) => {
           if (res.status === HttpStatus.OK) {
             resolve(res.data)
@@ -109,7 +108,9 @@ const BookForm = () => {
       .finally(() => setLoading(false))
     selectedCategoryList(queryId).then((selected) => {
       form.setFieldsValue({
-        categories: Array.from(new Set(selected.flatMap((mData) => mData.id))),
+        classifications: Array.from(
+          new Set(selected.flatMap((mData) => mData.id)),
+        ),
       })
     })
   }, [form, queryId])
@@ -135,7 +136,7 @@ const BookForm = () => {
   }
 
   const updateData = (book) => {
-    console.log('categories:', book.category)
+    console.log('classifications:', book.category)
     setSaveLoading(true)
     axios
       .put(`/api/admin/v1/books/${queryId}`, {
@@ -163,12 +164,12 @@ const BookForm = () => {
         if (queryId) {
           updateData({
             ...values,
-            categories: Array.from(new Set(values.categories)),
+            classifications: Array.from(new Set(values.classifications)),
           })
         } else {
           createData({
             ...values,
-            categories: Array.from(new Set(values.categories)),
+            classifications: Array.from(new Set(values.classifications)),
           })
         }
       })
@@ -279,7 +280,7 @@ const BookForm = () => {
               />
             </Form.Item>
             <Form.Item
-              name="categories"
+              name="classifications"
               label={t('title.classification')}
               rules={[
                 {
@@ -294,18 +295,11 @@ const BookForm = () => {
                 {categoryDict.fetchedData?.map((cate) => {
                   return (
                     <Checkbox value={cate.id} key={cate.id}>
-                      {cate.categoryName}
+                      {cate.classificationName}
                     </Checkbox>
                   )
                 })}
               </Checkbox.Group>
-            </Form.Item>
-            <Form.Item name="keywords" label={t('title.keyword')}>
-              <Select
-                mode="tags"
-                style={{ width: '100%' }}
-                placeholder={t('message.check.searchKeywords')}
-              />
             </Form.Item>
             <Form.Item
               name="introduction"
@@ -318,7 +312,7 @@ const BookForm = () => {
               ]}
             >
               <TextArea
-                rows={2}
+                rows={3}
                 style={{ resize: 'none' }}
                 placeholder={t('message.placeholder.describe')}
               />

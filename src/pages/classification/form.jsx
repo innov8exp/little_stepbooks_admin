@@ -1,16 +1,18 @@
-import { Form, Input, message, Modal } from 'antd'
+import { Form, Input, InputNumber, message, Modal } from 'antd'
 import Axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
+import TextArea from 'antd/es/input/TextArea'
 
-const CategoryForm = ({ id, visible, onSave, onCancel }) => {
-  const [form] = Form.useForm()
+const ClassificationForm = ({ id, visible, onSave, onCancel }) => {
   const { t } = useTranslation()
+  const [form] = Form.useForm()
+
   useEffect(() => {
     if (id) {
-      Axios.get(`/api/admin/v1/categories/${id}`)
+      Axios.get(`/api/admin/v1/classifications/${id}`)
         .then((res) => {
           if (res.status === HttpStatus.OK) {
             form.setFieldsValue({ ...res.data })
@@ -21,7 +23,7 @@ const CategoryForm = ({ id, visible, onSave, onCancel }) => {
   }, [id, form])
 
   const createData = (values) => {
-    Axios.post(`/api/admin/v1/categories`, { ...values })
+    Axios.post(`/api/admin/v1/classifications`, { ...values })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(t('message.successInfo'))
@@ -34,7 +36,7 @@ const CategoryForm = ({ id, visible, onSave, onCancel }) => {
   }
 
   const updateData = (values) => {
-    Axios.put(`/api/admin/v1/categories/${id}`, { ...values })
+    Axios.put(`/api/admin/v1/classifications/${id}`, { ...values })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(t('message.successInfo'))
@@ -61,9 +63,8 @@ const CategoryForm = ({ id, visible, onSave, onCancel }) => {
   return (
     <Modal
       open={visible}
-      width={500}
-      style={{ maxHeight: 500 }}
-      title={t('title.classificationForm')}
+      width={640}
+      title={t('title.signForm')}
       okText={t('button.save')}
       cancelText={t('button.cancel')}
       onCancel={onCancel}
@@ -77,7 +78,7 @@ const CategoryForm = ({ id, visible, onSave, onCancel }) => {
         name="form_in_modal"
       >
         <Form.Item
-          name="categoryName"
+          name="classificationName"
           label={t('title.name')}
           rules={[
             {
@@ -88,22 +89,46 @@ const CategoryForm = ({ id, visible, onSave, onCancel }) => {
         >
           <Input placeholder={t('message.check.name')} maxLength={20} />
         </Form.Item>
+        <Form.Item
+          name="minAge"
+          label={t('title.minAge')}
+          rules={[
+            {
+              required: true,
+              message: t('message.check.minAge'),
+            },
+          ]}
+        >
+          <InputNumber placeholder={t('message.check.minAge')} />
+        </Form.Item>
+        <Form.Item
+          name="maxAge"
+          label={t('title.maxAge')}
+          rules={[
+            {
+              required: true,
+              message: t('message.check.maxAge'),
+            },
+          ]}
+        >
+          <InputNumber placeholder={t('message.check.maxAge')} />
+        </Form.Item>
         <Form.Item name="description" label={t('title.describe')}>
-          <Input
+          <TextArea
             placeholder={t('message.placeholder.describe')}
             maxLength={50}
+            rows={3}
           />
         </Form.Item>
       </Form>
     </Modal>
   )
 }
-
-CategoryForm.propTypes = {
+ClassificationForm.propTypes = {
   id: PropTypes.string,
   visible: PropTypes.bool,
   onSave: PropTypes.func,
   onCancel: PropTypes.func,
 }
 
-export default CategoryForm
+export default ClassificationForm

@@ -1,7 +1,6 @@
 import { Breadcrumb, Layout, Menu } from 'antd'
 
 import {
-  AccountBookOutlined,
   BookOutlined,
   CommentOutlined,
   DashboardOutlined,
@@ -75,38 +74,18 @@ const AdminLayout = () => {
         '21',
         <UserOutlined />,
       ),
-      getItem(
-        <Link to={Routes.TAG_LIST.path}>{t('menu.tag')}</Link>,
-        '22',
-        <BookOutlined />,
-      ),
-    ]),
-
-    getItem(t('menu.course'), '3', <BookOutlined />, [
-      getItem(
-        <Link to={Routes.COURSE_CATEGORY_LIST.path}>
-          {t('menu.courseCategoryList')}
-        </Link>,
-        '31',
-        <BookOutlined />,
-      ),
-
-      getItem(
-        <Link to={Routes.COURSE.path}>{t('menu.courseList')}</Link>,
-        '32',
-        <BookOutlined />,
-      ),
-
-      getItem(
-        <Link to={Routes.COURSE_COMMENT.path}>{t('menu.courseComment')}</Link>,
-        '33',
-        <CommentOutlined />,
-      ),
+      // getItem(
+      //   <Link to={Routes.TAG_LIST.path}>{t('menu.tag')}</Link>,
+      //   '22',
+      //   <BookOutlined />,
+      // ),
     ]),
 
     getItem(t('menu.bookManage'), '4', <BookOutlined />, [
       getItem(
-        <Link to={Routes.CATEGORY_LIST.path}>{t('menu.category')}</Link>,
+        <Link to={Routes.CLASSIFICATION_LIST.path}>
+          {t('menu.classificationManagement')}
+        </Link>,
         '71',
         <BookOutlined />,
       ),
@@ -114,6 +93,11 @@ const AdminLayout = () => {
       getItem(
         <Link to={Routes.BOOK_LIST.path}>{t('menu.book')}</Link>,
         '72',
+        <BookOutlined />,
+      ),
+      getItem(
+        <Link to={Routes.COURSE.path}>{t('menu.courseList')}</Link>,
+        '32',
         <BookOutlined />,
       ),
 
@@ -152,11 +136,6 @@ const AdminLayout = () => {
     // 运营管理
     getItem(t('menu.operation'), '6', <FundProjectionScreenOutlined />, [
       getItem(
-        <Link to={Routes.PRODUCT_LIST.path}>{t('menu.coinList')}</Link>,
-        '51',
-        <AccountBookOutlined />,
-      ),
-      getItem(
         <Link to={Routes.PROMOTION_LIST.path}>{t('menu.promotionList')}</Link>,
         '52',
         <FundProjectionScreenOutlined />,
@@ -164,13 +143,6 @@ const AdminLayout = () => {
       getItem(
         <Link to={Routes.RECOMMEND_LIST.path}>{t('menu.recommend')}</Link>,
         '53',
-        <FundProjectionScreenOutlined />,
-      ),
-      getItem(
-        <Link to={Routes.ADVERTISEMENT_LIST.path}>
-          {t('menu.advertisement')}
-        </Link>,
-        '54',
         <FundProjectionScreenOutlined />,
       ),
       getItem(
@@ -229,12 +201,12 @@ const AdminLayout = () => {
       t('menu.user'),
       t('menu.userList'),
     ),
-    getBreadcrumbItem(Routes.TAG_LIST.path, t('menu.user'), t('menu.tag'), 6),
+    // getBreadcrumbItem(Routes.TAG_LIST.path, t('menu.user'), t('menu.tag'), 6),
 
     getBreadcrumbItem(
-      Routes.COURSE_CATEGORY_LIST.path,
-      t('menu.course'),
-      t('menu.courseCategoryList'),
+      Routes.CLASSIFICATION_LIST.path,
+      t('menu.bookManage'),
+      t('menu.classificationManagement'),
     ),
 
     getBreadcrumbItem(
@@ -242,17 +214,7 @@ const AdminLayout = () => {
       t('menu.course'),
       t('menu.courseList'),
     ),
-    getBreadcrumbItem(
-      Routes.COURSE_COMMENT.path,
-      t('menu.course'),
-      t('menu.courseComment'),
-    ),
 
-    getBreadcrumbItem(
-      Routes.CATEGORY_LIST.path,
-      t('menu.bookManage'),
-      t('menu.courseCategoryList'),
-    ),
     getBreadcrumbItem(
       Routes.BOOK_LIST.path,
       t('menu.bookManage'),

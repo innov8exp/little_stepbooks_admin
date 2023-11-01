@@ -1,23 +1,19 @@
-import {
-  DownCircleOutlined,
-  ExclamationCircleOutlined,
-  UpCircleOutlined,
-} from '@ant-design/icons'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, Card, message, Modal, Table } from 'antd'
 import useFetch from '@/hooks/useFetch'
-import axios from 'axios'
+import Axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
-import CategoryForm from './form'
+import ClassificationForm from './form'
 import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
-const CategoryPage = () => {
+const ClassificationPage = () => {
   const { t } = useTranslation()
   const [changeTime, setChangeTime] = useState(Date.now())
-  const { loading, fetchedData } = useFetch(`/api/admin/v1/categories`, [
+  const { loading, fetchedData } = useFetch(`/api/admin/v1/classifications`, [
     changeTime,
   ])
   const [formVisible, setFormVisible] = useState(false)
@@ -32,12 +28,11 @@ const CategoryPage = () => {
     confirm({
       title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
-      okText: 'Yes',
+      okText: `${t('button.determine')}`,
       okType: 'primary',
-      cancelText: 'No',
+      cancelText: `${t('button.cancel')}`,
       onOk() {
-        axios
-          .delete(`/api/admin/v1/categories/${id}`)
+        Axios.delete(`/api/admin/v1/classifications/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success(t('message.successInfo'))
@@ -52,23 +47,8 @@ const CategoryPage = () => {
     })
   }
 
-  const handleSortAction = (id, direction) => {
-    axios
-      .put(`/api/admin/v1/categories/${id}/sort`, { direction })
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          message.success('change succeed!')
-          setChangeTime(Date.now())
-        }
-      })
-      .catch((err) => {
-        console.error(err)
-        message.error(err.message)
-      })
-  }
-
   return (
-    <Card title={t('title.categoryManagement')}>
+    <Card title={t('title.classification')}>
       <ButtonWrapper>
         <Button
           type="primary"
@@ -80,7 +60,6 @@ const CategoryPage = () => {
           {t('button.create')}
         </Button>
       </ButtonWrapper>
-
       <Table
         columns={[
           {
@@ -90,8 +69,18 @@ const CategoryPage = () => {
           },
           {
             title: `${t('title.classificationName')}`,
-            key: 'categoryName',
-            dataIndex: 'categoryName',
+            key: 'classificationName',
+            dataIndex: 'classificationName',
+          },
+          {
+            title: `${t('title.minAge')}`,
+            key: 'minAge',
+            dataIndex: 'minAge',
+          },
+          {
+            title: `${t('title.maxAge')}`,
+            key: 'maxAge',
+            dataIndex: 'maxAge',
           },
           {
             title: `${t('title.describe')}`,
@@ -102,31 +91,9 @@ const CategoryPage = () => {
             title: `${t('title.operate')}`,
             key: 'action',
             width: 300,
-            render: (text, record, index) => {
+            render: (text, record) => {
               return (
                 <div>
-                  {index === 0 ? (
-                    ''
-                  ) : (
-                    <Button
-                      type="link"
-                      onClick={() => handleSortAction(record.id, 'UP')}
-                    >
-                      <UpCircleOutlined />
-                    </Button>
-                  )}
-
-                  {index === fetchedData.length - 1 ? (
-                    ''
-                  ) : (
-                    <Button
-                      type="link"
-                      onClick={() => handleSortAction(record.id, 'DOWN')}
-                    >
-                      <DownCircleOutlined />
-                    </Button>
-                  )}
-
                   <Button
                     onClick={() => handleEditAction(record.id)}
                     type="link"
@@ -149,7 +116,7 @@ const CategoryPage = () => {
         pagination={false}
         loading={loading}
       />
-      <CategoryForm
+      <ClassificationForm
         visible={formVisible}
         onCancel={() => setFormVisible(false)}
         onSave={() => {
@@ -162,4 +129,4 @@ const CategoryPage = () => {
   )
 }
 
-export default CategoryPage
+export default ClassificationPage

@@ -1,4 +1,4 @@
-import { Form, Input, message, Modal, Select } from 'antd'
+import { Form, Input, message, Select } from 'antd'
 import Axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useEffect } from 'react'
@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 
 const { Option } = Select
 
-const ProductForm = ({ id, visible, onSave, onCancel }) => {
+const ProductForm = ({ id, onSave }) => {
   const [form] = Form.useForm()
   const { t } = useTranslation()
   useEffect(() => {
@@ -61,82 +61,71 @@ const ProductForm = ({ id, visible, onSave, onCancel }) => {
       .catch()
   }
   return (
-    <Modal
-      open={visible}
-      width={500}
-      style={{ maxHeight: 500 }}
-      title={t('title.label.productPackageForm')}
-      okText={t('button.save')}
-      cancelText={t('button.cancel')}
-      onCancel={onCancel}
-      onOk={okHandler}
+    <Form
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 14 }}
+      layout="horizontal"
+      form={form}
+      name="form_in_modal"
     >
-      <Form
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 14 }}
-        layout="horizontal"
-        form={form}
-        name="form_in_modal"
-      >
-        {/* <Form.Item name="coinAmount" label="编号" required>
+      {/* <Form.Item name="coinAmount" label="编号" required>
                     <Input readOnly />
                 </Form.Item> */}
-        <Form.Item
-          name="coinAmount"
-          label={t('title.label.numberOfBookCoins')}
-          rules={[
-            {
-              required: true,
-              message: `${t('message.placeholder.enterQuantityOfBook')}`,
-            },
-          ]}
-        >
-          <Input placeholder={t('message.placeholder.enterQuantityOfBook')} />
-        </Form.Item>
-        <Form.Item
-          name="price"
-          label={t('title.label.price')}
-          rules={[
-            {
-              required: true,
-              message: `${t('message.placeholder.enterPrice')}`,
-            },
-          ]}
-        >
-          <Input placeholder={t('message.placeholder.enterPrice')} />
-        </Form.Item>
-        <Form.Item
-          name="platform"
-          label={t('title.label.platform')}
-          rules={[
-            {
-              required: true,
-              message: `${t('message.placeholder.electPlatform')}`,
-            },
-          ]}
-        >
-          <Select placeholder={t('message.placeholder.electPlatform')}>
-            <Option value="IOS">iOS</Option>
-            <Option value="ANDROID">Android</Option>
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name="storeProductId"
-          label={t('title.label.platformProductID')}
-          rules={[
-            {
-              required: true,
-              message: `${t('message.placeholder.electPlatformID')}`,
-            },
-          ]}
-        >
-          <Input
-            placeholder={t('message.placeholder.electPlatformID')}
-            maxLength={20}
-          />
-        </Form.Item>
-      </Form>
-    </Modal>
+      <Form.Item
+        name="coinAmount"
+        label={t('title.label.numberOfBookCoins')}
+        rules={[
+          {
+            required: true,
+            message: `${t('message.placeholder.enterQuantityOfBook')}`,
+          },
+        ]}
+      >
+        <Input placeholder={t('message.placeholder.enterQuantityOfBook')} />
+      </Form.Item>
+      <Form.Item
+        name="price"
+        label={t('title.label.price')}
+        rules={[
+          {
+            required: true,
+            message: `${t('message.placeholder.enterPrice')}`,
+          },
+        ]}
+      >
+        <Input placeholder={t('message.placeholder.enterPrice')} />
+      </Form.Item>
+      <Form.Item
+        name="platform"
+        label={t('title.label.platform')}
+        rules={[
+          {
+            required: true,
+            message: `${t('message.placeholder.electPlatform')}`,
+          },
+        ]}
+      >
+        <Select placeholder={t('message.placeholder.electPlatform')}>
+          <Option value="IOS">iOS</Option>
+          <Option value="ANDROID">Android</Option>
+        </Select>
+      </Form.Item>
+      <Form.Item
+        name="storeProductId"
+        label={t('title.label.platformProductID')}
+        rules={[
+          {
+            required: true,
+            message: `${t('message.placeholder.electPlatformID')}`,
+          },
+        ]}
+      >
+        <Input
+          placeholder={t('message.placeholder.electPlatformID')}
+          maxLength={20}
+        />
+      </Form.Item>
+    </Form>
   )
 }
 
