@@ -14,7 +14,9 @@ import {
   Row,
   Skeleton,
   Upload,
+  Checkbox,
 } from 'antd'
+import useFetch from '@/hooks/useFetch'
 import { Routes } from '@/libs/router'
 import axios from 'axios'
 import useQuery from '@/hooks/useQuery'
@@ -22,67 +24,76 @@ import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import UploadComponent from '@/components/upload'
 
 const { TextArea } = Input
 
-const ChapterForm = () => {
+const getBase64 = (img, callback) => {
+  const reader = new FileReader()
+  reader.addEventListener('load', () => callback(reader.result))
+  reader.readAsDataURL(img)
+}
+
+const beforeUpload = (file) => {
+  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+  if (!isJpgOrPng) {
+    message.error('You can only upload JPG/PNG file!')
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2
+  if (!isLt2M) {
+    message.error('Image must smaller than 2MB!')
+  }
+  return isJpgOrPng && isLt2M
+}
+
+const BookForm = () => {
   const { t } = useTranslation()
   const query = useQuery()
   const queryId = query.get('id')
-  const bookId = query.get('bookId')
   const navigate = useNavigate()
   const [form] = Form.useForm()
-  const [initFormData, setInitFormData] = useState()
+  const [initFormData, setInitFormData] = useState({
+    isSerialized: false,
+    hasEnding: true,
+  })
   const [loading, setLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
   const [uploading, setUploading] = useState(false)
   const [imageUrl, setImageUrl] = useState()
 
-  const getBase64 = (img, callback) => {
-    const reader = new FileReader()
-    reader.addEventListener('load', () => callback(reader.result))
-    reader.readAsDataURL(img)
-  }
+  const categoryDict = useFetch('/api/admin/v1/classifications', [])
 
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
-    if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!')
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2
-    if (!isLt2M) {
-      message.error('Image must smaller than 2MB!')
-    }
-    return isJpgOrPng && isLt2M
+  const selectedCategoryList = (bookId) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`/api/admin/v1/books/${bookId}/classifications`)
+        .then((res) => {
+          if (res.status === HttpStatus.OK) {
+            resolve(res.data)
+          }
+        })
+        .catch((err) => {
+          message.error(
+            `${t('message.error.failureReason')}${err.response?.data?.message}`,
+          )
+          reject(err)
+        })
+    })
   }
 
   const initData = useCallback(() => {
     if (!queryId) {
-      axios
-        .get(`/api/admin/v1/chapters/max-chapter-number?bookId=${bookId}`)
-        .then((res) => {
-          if (res.status === HttpStatus.OK) {
-            form.setFieldsValue({ chapterNumber: res.data + 1 })
-          }
-        })
       return
     }
-    form.setFieldsValue({ content: `${t('message.tips.loading')}` })
     setLoading(true)
     setIsDisplayForm(true)
-    axios.get(`/api/admin/v1/chapters/${queryId}/content`).then((res) => {
-      if (res.status === HttpStatus.OK) {
-        form.setFieldsValue({ content: res.data })
-      }
-    })
 
     axios
-      .get(`/api/admin/v1/chapters/${queryId}`)
+      .get(`/api/admin/v1/books/${queryId}`)
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
+          setImageUrl(resultData.coverImg)
           setInitFormData({
             ...resultData,
           })
@@ -95,12 +106,19 @@ const ChapterForm = () => {
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
-  }, [bookId, form, queryId])
+    selectedCategoryList(queryId).then((selected) => {
+      form.setFieldsValue({
+        classifications: Array.from(
+          new Set(selected.flatMap((mData) => mData.id)),
+        ),
+      })
+    })
+  }, [form, queryId])
 
   const createData = (book) => {
     setSaveLoading(true)
     axios
-      .post('/api/admin/v1/chapters', {
+      .post('/api/admin/v1/books', {
         ...book,
       })
       .then((res) => {
@@ -117,15 +135,17 @@ const ChapterForm = () => {
       .finally(() => setSaveLoading(false))
   }
 
-  const updateData = (chapter) => {
+  const updateData = (book) => {
+    console.log('classifications:', book.category)
     setSaveLoading(true)
     axios
-      .put(`/api/admin/v1/chapters/${queryId}`, {
-        ...chapter,
+      .put(`/api/admin/v1/books/${queryId}`, {
+        ...book,
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(`${t('message.successfullySaved')}`)
+          navigate(Routes.BOOK_LIST.path)
         }
       })
       .catch((err) => {
@@ -140,15 +160,16 @@ const ChapterForm = () => {
     form
       .validateFields()
       .then((values) => {
+        console.log('数字：', values)
         if (queryId) {
           updateData({
             ...values,
-            bookId,
+            classifications: Array.from(new Set(values.classifications)),
           })
         } else {
           createData({
             ...values,
-            bookId,
+            classifications: Array.from(new Set(values.classifications)),
           })
         }
       })
@@ -172,7 +193,7 @@ const ChapterForm = () => {
   const uploadButton = (
     <div>
       {uploading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>{t('title.imageUpload')}</div>
+      <div style={{ marginTop: 8 }}>{t('title.coverUpload')}</div>
     </div>
   )
 
@@ -215,9 +236,9 @@ const ChapterForm = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.COURSE_CONTENT_LIST.path)}
+            onClick={() => navigate(Routes.BOOK_LIST.path)}
           />
-          {t('title.course.content.create')}
+          {t('button.bookEditing')}
         </>
       }
     >
@@ -232,62 +253,77 @@ const ChapterForm = () => {
             }}
           >
             <Form.Item
-              name="chapterName"
-              label={t('title.chapterName')}
+              name="bookName"
+              label={t('title.bookName')}
               rules={[
                 {
                   required: true,
-                  message: `${t('message.placeholder.chapterName')}`,
+                  message: `${t('message.check.bookName')}`,
+                },
+              ]}
+            >
+              <Input placeholder={t('message.check.bookName')} maxLength={20} />
+            </Form.Item>
+            <Form.Item
+              name="author"
+              label={t('title.author')}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.enterAuthor')}`,
                 },
               ]}
             >
               <Input
-                placeholder={t('message.placeholder.chapterName')}
+                placeholder={t('message.check.enterAuthor')}
                 maxLength={20}
               />
             </Form.Item>
             <Form.Item
-              wrapperCol={{ span: 16 }}
-              name="content"
-              label={t('title.briefIntroduction')}
+              name="classifications"
+              label={t('title.classification')}
               rules={[
                 {
                   required: true,
-                  message: `${t('message.placeholder.briefIntroduction')}`,
+                  message: `${t('message.check.selectClassification')}`,
+                },
+              ]}
+            >
+              <Checkbox.Group
+                placeholder={t('message.check.selectClassification')}
+              >
+                {categoryDict.fetchedData?.map((cate) => {
+                  return (
+                    <Checkbox value={cate.id} key={cate.id}>
+                      {cate.classificationName}
+                    </Checkbox>
+                  )
+                })}
+              </Checkbox.Group>
+            </Form.Item>
+            <Form.Item
+              name="introduction"
+              label={t('title.describe')}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.placeholder.describe')}`,
                 },
               ]}
             >
               <TextArea
-                rows={8}
+                rows={3}
                 style={{ resize: 'none' }}
-                maxLength={300}
-                placeholder={t('message.placeholder.briefIntroduction')}
+                placeholder={t('message.placeholder.describe')}
               />
             </Form.Item>
             <Form.Item
-              name="audioFrequency"
-              label={t('title.audioFrequency')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.audioFrequency')}`,
-                },
-              ]}
-            >
-              <UploadComponent
-                name="file"
-                showUploadList={true}
-                buttonName={t('title.audioFrequencyUpload')}
-                fileType={'video'}
-              ></UploadComponent>
-            </Form.Item>
-            <Form.Item
               name="coverImg"
-              label={t('title.image')}
+              label={t('title.cover')}
               rules={[
                 {
                   required: true,
-                  message: `${t('message.check.uploadImage')}`,
+                  message: `${t('message.check.uploadCoverImage')}`,
                 },
               ]}
             >
@@ -326,10 +362,10 @@ const ChapterForm = () => {
           </Form>
         </Skeleton>
       ) : (
-        <Empty description={<span> {t('message.error.failure')}</span>} />
+        <Empty description={<span>{t('message.error.failure')}</span>} />
       )}
     </Card>
   )
 }
 
-export default ChapterForm
+export default BookForm

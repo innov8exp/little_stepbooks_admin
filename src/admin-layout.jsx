@@ -74,13 +74,9 @@ const AdminLayout = () => {
         '21',
         <UserOutlined />,
       ),
-      // getItem(
-      //   <Link to={Routes.TAG_LIST.path}>{t('menu.tag')}</Link>,
-      //   '22',
-      //   <BookOutlined />,
-      // ),
     ]),
 
+    // 书籍管理
     getItem(t('menu.bookManage'), '4', <BookOutlined />, [
       getItem(
         <Link to={Routes.CLASSIFICATION_LIST.path}>
@@ -89,7 +85,6 @@ const AdminLayout = () => {
         '71',
         <BookOutlined />,
       ),
-
       getItem(
         <Link to={Routes.BOOK_LIST.path}>{t('menu.book')}</Link>,
         '72',
@@ -97,21 +92,20 @@ const AdminLayout = () => {
       ),
       getItem(
         <Link to={Routes.COURSE.path}>{t('menu.courseList')}</Link>,
-        '32',
+        '73',
         <BookOutlined />,
       ),
-
       getItem(
-        <Link to={Routes.COMMENT_LIST.path}>{t('menu.comment')}</Link>,
-        '73',
-        <CommentOutlined />,
+        <Link to={Routes.BOOK_SET_LIST.path}>{t('menu.bookSet')}</Link>,
+        '74',
+        <BookOutlined />,
       ),
     ]),
 
     // 产品管理
     getItem(t('menu.sku'), '8', <BookOutlined />, [
       getItem(
-        <Link to={Routes.BOOK_LIST.path}>{t('menu.skuList')}</Link>,
+        <Link to={Routes.PRODUCT_LIST.path}>{t('menu.skuList')}</Link>,
         '81',
         <BookOutlined />,
       ),
@@ -130,6 +124,11 @@ const AdminLayout = () => {
         </Link>,
         '42',
         <ShoppingOutlined />,
+      ),
+      getItem(
+        <Link to={Routes.COMMENT_LIST.path}>{t('menu.comment')}</Link>,
+        '43',
+        <CommentOutlined />,
       ),
     ]),
 
@@ -221,9 +220,9 @@ const AdminLayout = () => {
       t('menu.book'),
     ),
     getBreadcrumbItem(
-      Routes.COMMENT_LIST.path,
+      Routes.BOOK_SET_LIST.path,
       t('menu.bookManage'),
-      t('menu.comment'),
+      t('menu.bookSetList'),
     ),
 
     getBreadcrumbItem(
@@ -235,6 +234,11 @@ const AdminLayout = () => {
       Routes.CONSUMPTION_LIST.path,
       t('menu.order'),
       t('menu.consumptionList'),
+    ),
+    getBreadcrumbItem(
+      Routes.COMMENT_LIST.path,
+      t('menu.order'),
+      t('menu.comment'),
     ),
 
     getBreadcrumbItem(

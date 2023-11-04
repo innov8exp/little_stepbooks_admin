@@ -2,13 +2,15 @@ import AdminLayout from '@/admin-layout'
 import Advertisement from '@/pages/advertisement'
 import ForgetPassword from '@/pages/auth/forget-password'
 import SignIn from '@/pages/auth/sign-in'
-import Book from '@/pages/book'
 import Chapter from '@/pages/book/chapter'
 import ChapterForm from '@/pages/book/chapter/form'
 import ChapterView from '@/pages/book/chapter/view'
+import Book from '@/pages/book'
 import BookForm from '@/pages/book/form'
 import BookView from '@/pages/book/view'
-// import Category from '@/pages/category'
+import BookSet from '@/pages/book-set'
+import BookSetForm from '@/pages/book-set/form'
+import BookSetView from '@/pages/book-set/view'
 import ComingSoon from '@/pages/coming-soon'
 import Comment from '@/pages/comment'
 import Consumption from '@/pages/consumption'
@@ -19,14 +21,10 @@ import Product from '@/pages/product'
 import Profile from '@/pages/profile'
 import Promotion from '@/pages/promotion'
 import Recommend from '@/pages/recommend'
-// import Tag from '@/pages/tag'
 import User from '@/pages/user'
-import Course from '@/pages/book/course'
-// import CourseCategory from '@/pages/courseCategory'
-import CourseForm from '@/pages/book/course/form'
-import CourseView from '@/pages/book/course/view'
-import ContentList from '@/pages/book/course/content/index'
-import ContentForm from '@/pages/book/course/content/form'
+import Course from '@/pages/course'
+import CourseForm from '@/pages/course/form'
+import CourseView from '@/pages/course/view'
 import Classification from '@/pages/classification'
 
 import { createBrowserRouter } from 'react-router-dom'
@@ -41,11 +39,14 @@ export const Routes = {
     path: '/classification-list',
     element: <Classification />,
   },
-  // TAG_LIST: { path: '/tag-list', element: <Tag /> },
-  // CATEGORY_LIST: { path: '/category-list', element: <Category /> },
   BOOK_LIST: { path: '/book-list', element: <Book /> },
   BOOK_FORM: { path: '/book-form', element: <BookForm /> },
   BOOK_VIEW: { path: '/book-view', element: <BookView /> },
+
+  BOOK_SET_LIST: { path: '/book-set-list', element: <BookSet /> },
+  BOOK_SET_FORM: { path: '/book-set-form', element: <BookSetForm /> },
+  BOOK_SET_VIEW: { path: '/book-set-view', element: <BookSetView /> },
+
   CHAPTER_LIST: { path: '/chapter-list', element: <Chapter /> },
   CHAPTER_FORM: { path: '/chapter-form', element: <ChapterForm /> },
   CHAPTER_VIEW: { path: '/chapter-view', element: <ChapterView /> },
@@ -65,8 +66,6 @@ export const Routes = {
   COURSE: { path: '/course-list', element: <Course /> },
   COURSE_FORM: { path: '/course_form', element: <CourseForm /> },
   COURSE_VIEW: { path: '/course-view', element: <CourseView /> },
-  COURSE_CONTENT_LIST: { path: '/content-list', element: <ContentList /> },
-  COURSE_CONTENT_FORM: { path: '/content-form', element: <ContentForm /> },
 }
 
 export const Router = createBrowserRouter([
@@ -92,10 +91,6 @@ export const Router = createBrowserRouter([
         path: Routes.USER_LIST.path,
         element: Routes.USER_LIST.element,
       },
-      // {
-      //   path: Routes.TAG_LIST.path,
-      //   element: Routes.TAG_LIST.element,
-      // },
       {
         path: Routes.CLASSIFICATION_LIST.path,
         element: Routes.CLASSIFICATION_LIST.element,
@@ -111,6 +106,18 @@ export const Router = createBrowserRouter([
       {
         path: Routes.BOOK_VIEW.path,
         element: Routes.BOOK_VIEW.element,
+      },
+      {
+        path: Routes.BOOK_SET_LIST.path,
+        element: Routes.BOOK_SET_LIST.element,
+      },
+      {
+        path: Routes.BOOK_SET_FORM.path,
+        element: Routes.BOOK_SET_FORM.element,
+      },
+      {
+        path: Routes.BOOK_SET_VIEW.path,
+        element: Routes.BOOK_SET_VIEW.element,
       },
       {
         path: Routes.CHAPTER_LIST.path,
@@ -171,14 +178,6 @@ export const Router = createBrowserRouter([
       {
         path: Routes.COURSE_VIEW.path,
         element: Routes.COURSE_VIEW.element,
-      },
-      {
-        path: Routes.COURSE_CONTENT_LIST.path,
-        element: Routes.COURSE_CONTENT_LIST.element,
-      },
-      {
-        path: Routes.COURSE_CONTENT_FORM.path,
-        element: Routes.COURSE_CONTENT_FORM.element,
       },
       {
         path: '*',

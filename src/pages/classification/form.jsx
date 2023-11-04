@@ -64,7 +64,7 @@ const ClassificationForm = ({ id, visible, onSave, onCancel }) => {
     <Modal
       open={visible}
       width={640}
-      title={t('title.signForm')}
+      title={t('title.classification')}
       okText={t('button.save')}
       cancelText={t('button.cancel')}
       onCancel={onCancel}

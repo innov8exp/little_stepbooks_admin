@@ -1,4 +1,12 @@
 import {
+  ConditionItem,
+  ConditionLeftItem,
+  ContentContainer,
+  QueryBtnWrapper,
+  StyledCondition,
+} from '@/components/styled'
+import { Routes } from '@/libs/router'
+import {
   ExclamationCircleOutlined,
   PlusOutlined,
   SearchOutlined,
@@ -9,32 +17,24 @@ import {
   Card,
   Col,
   Divider,
-  Form,
   Image,
+  Form,
   Input,
-  message,
   Modal,
   Row,
   Table,
   Tooltip,
+  message,
 } from 'antd'
-import { Routes } from '@/libs/router'
 import axios from 'axios'
-import {
-  ConditionItem,
-  ConditionLeftItem,
-  ContentContainer,
-  QueryBtnWrapper,
-  StyledCondition,
-} from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 const { confirm } = Modal
 
-const BookPage = () => {
+const BookSetPage = () => {
   const { t } = useTranslation()
   const [queryForm] = Form.useForm()
   const navigate = useNavigate()
@@ -74,7 +74,7 @@ const BookPage = () => {
 
   const fetchBooks = useCallback(() => {
     setLoading(true)
-    let searchURL = `/api/admin/v1/books?currentPage=${pageNumber}&pageSize=${pageSize}`
+    let searchURL = `/api/admin/v1/book-sets?currentPage=${pageNumber}&pageSize=${pageSize}`
     if (queryCriteria?.bookName) {
       searchURL += `&bookName=${queryCriteria.bookName}`
     }
@@ -242,16 +242,9 @@ const BookPage = () => {
                 (pageNumber - 1) * pageSize + index + 1,
             },
             {
-              title: `${t('title.cover')}`,
-              key: 'coverImg',
-              dataIndex: 'coverImg',
-              render: (text) => <Image width={50} src={text} />,
-            },
-            {
               title: `${t('title.name')}`,
-              key: 'bookName',
-              dataIndex: 'bookName',
-              width: 150,
+              key: 'name',
+              dataIndex: 'name',
               render: (text, record) => (
                 <Button onClick={() => handleViewAction(record.id)} type="link">
                   <Tooltip title={record.introduction} color="#2db7f5">
@@ -261,14 +254,15 @@ const BookPage = () => {
               ),
             },
             {
-              title: `${t('title.author')}`,
-              key: 'author',
-              dataIndex: 'author',
+              title: `${t('title.cover')}`,
+              key: 'coverImg',
+              dataIndex: 'coverImg',
+              render: (text) => <Image width={50} src={text} />,
             },
             {
-              title: `${t('title.classification')}`,
-              key: 'classification',
-              dataIndex: 'classification',
+              title: `${t('title.description')}`,
+              key: 'description',
+              dataIndex: 'description',
             },
             {
               title: `${t('title.operate')}`,
@@ -318,4 +312,4 @@ const BookPage = () => {
   )
 }
 
-export default BookPage
+export default BookSetPage

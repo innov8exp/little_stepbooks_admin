@@ -34,7 +34,7 @@ import { useTranslation } from 'react-i18next'
 
 const { confirm } = Modal
 
-const BookPage = () => {
+const CoursePage = () => {
   const { t } = useTranslation()
   const [queryForm] = Form.useForm()
   const navigate = useNavigate()
@@ -72,9 +72,9 @@ const BookPage = () => {
       )
   }
 
-  const fetchBooks = useCallback(() => {
+  const fetchCourses = useCallback(() => {
     setLoading(true)
-    let searchURL = `/api/admin/v1/books?currentPage=${pageNumber}&pageSize=${pageSize}`
+    let searchURL = `/api/admin/v1/courses`
     if (queryCriteria?.bookName) {
       searchURL += `&bookName=${queryCriteria.bookName}`
     }
@@ -174,8 +174,8 @@ const BookPage = () => {
   // }
 
   useEffect(() => {
-    fetchBooks()
-  }, [fetchBooks, pageNumber, changeTimestamp])
+    fetchCourses()
+  }, [fetchCourses, pageNumber, changeTimestamp])
 
   return (
     <Card title={t('title.course')}>
@@ -192,7 +192,7 @@ const BookPage = () => {
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label={t('title.lecturer')} name="lecturer">
+            <Form.Item label={t('title.lecturer')} name="author">
               <Input placeholder={t('message.placeholder.lecturer')} />
             </Form.Item>
           </Col>
@@ -242,9 +242,15 @@ const BookPage = () => {
                 (pageNumber - 1) * pageSize + index + 1,
             },
             {
+              title: `${t('title.cover')}`,
+              key: 'coverImgUrl',
+              dataIndex: 'coverImgUrl',
+              render: (text) => <Image width={50} src={text} />,
+            },
+            {
               title: `${t('title.courseName')}`,
-              key: 'courseName',
-              dataIndex: 'courseName',
+              key: 'name',
+              dataIndex: 'name',
               width: 150,
               render: (text, record) => (
                 <Button onClick={() => handleViewAction(record.id)} type="link">
@@ -256,14 +262,8 @@ const BookPage = () => {
             },
             {
               title: `${t('title.lecturer')}`,
-              key: 'lecturer',
-              dataIndex: 'lecturer',
-            },
-            {
-              title: `${t('title.cover')}`,
-              key: 'coverImg',
-              dataIndex: 'coverImg',
-              render: (text) => <Image width={50} src={text} />,
+              key: 'author',
+              dataIndex: 'author',
             },
             {
               title: `${t('title.operate')}`,
@@ -330,4 +330,4 @@ const BookPage = () => {
   )
 }
 
-export default BookPage
+export default CoursePage

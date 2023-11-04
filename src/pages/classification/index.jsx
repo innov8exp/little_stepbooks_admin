@@ -48,7 +48,7 @@ const ClassificationPage = () => {
   }
 
   return (
-    <Card title={t('title.classification')}>
+    <Card title={t('menu.classificationManagement')}>
       <ButtonWrapper>
         <Button
           type="primary"

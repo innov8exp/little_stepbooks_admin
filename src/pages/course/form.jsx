@@ -1,3 +1,5 @@
+import useQuery from '@/hooks/useQuery'
+import { Routes } from '@/libs/router'
 import {
   LeftCircleOutlined,
   LoadingOutlined,
@@ -6,24 +8,22 @@ import {
 import {
   Button,
   Card,
-  Checkbox,
   Col,
   Empty,
   Form,
   Input,
-  message,
+  InputNumber,
+  Radio,
   Row,
   Skeleton,
   Upload,
+  message,
 } from 'antd'
-import { Routes } from '@/libs/router'
-import useFetch from '@/hooks/useFetch'
 import axios from 'axios'
-import useQuery from '@/hooks/useQuery'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 const { TextArea } = Input
 
@@ -45,7 +45,7 @@ const beforeUpload = (file) => {
   return isJpgOrPng && isLt2M
 }
 
-const BookForm = () => {
+const CourseForm = () => {
   const { t } = useTranslation()
   const query = useQuery()
   const queryId = query.get('id')
@@ -60,30 +60,6 @@ const BookForm = () => {
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
   const [uploading, setUploading] = useState(false)
   const [imageUrl, setImageUrl] = useState()
-
-  const categoryDict = useFetch('/api/admin/v1/categories', [])
-  // const selectedCategories = useFetch(
-  //     `/api/admin/v1/books/${queryId}/categories`,
-  //     [queryId],
-  // );
-
-  const selectedCategoryList = (bookId) => {
-    return new Promise((resolve, reject) => {
-      axios
-        .get(`/api/admin/v1/books/${bookId}/categories`)
-        .then((res) => {
-          if (res.status === HttpStatus.OK) {
-            resolve(res.data)
-          }
-        })
-        .catch((err) => {
-          message.error(
-            `${t('message.error.failureReason')}${err.response?.data?.message}`,
-          )
-          reject(err)
-        })
-    })
-  }
 
   const initData = useCallback(() => {
     if (!queryId) {
@@ -110,11 +86,6 @@ const BookForm = () => {
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
-    selectedCategoryList(queryId).then((selected) => {
-      form.setFieldsValue({
-        categories: Array.from(new Set(selected.flatMap((mData) => mData.id))),
-      })
-    })
   }, [form, queryId])
 
   const createData = (book) => {
@@ -255,7 +226,7 @@ const BookForm = () => {
             }}
           >
             <Form.Item
-              name="courseName"
+              name="name"
               label={t('title.courseName')}
               rules={[
                 {
@@ -270,48 +241,7 @@ const BookForm = () => {
               />
             </Form.Item>
             <Form.Item
-              name="lecturer"
-              label={t('title.lecturer')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.lecturer')}`,
-                },
-              ]}
-            >
-              <Input placeholder={t('message.check.lecturer')} maxLength={20} />
-            </Form.Item>
-            <Form.Item
-              name="categories"
-              label={t('title.classification')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.selectClassification')}`,
-                },
-              ]}
-            >
-              <Checkbox.Group
-                placeholder={t('message.check.selectClassification')}
-              >
-                {categoryDict.fetchedData?.map((cate) => {
-                  return (
-                    <Checkbox value={cate.id} key={cate.id}>
-                      {cate.categoryName}
-                    </Checkbox>
-                  )
-                })}
-              </Checkbox.Group>
-            </Form.Item>
-            {/* <Form.Item name="keywords" label={t('title.keyword')}>
-              <Select
-                mode="tags"
-                style={{ width: '100%' }}
-                placeholder={t('message.check.searchKeywords')}
-              />
-            </Form.Item> */}
-            <Form.Item
-              name="introduction"
+              name="description"
               label={t('title.courseIntroduction')}
               rules={[
                 {
@@ -327,12 +257,75 @@ const BookForm = () => {
               />
             </Form.Item>
             <Form.Item
-              name="coverImg"
+              name="author"
+              label={t('title.lecturer')}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.lecturer')}`,
+                },
+              ]}
+            >
+              <Input placeholder={t('message.check.lecturer')} maxLength={20} />
+            </Form.Item>
+            <Form.Item
+              name="authorIntroduction"
+              label={t('title.authorIntroduction')}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.authorIntroduction')}`,
+                },
+              ]}
+            >
+              <TextArea
+                rows={2}
+                style={{ resize: 'none' }}
+                placeholder={t('message.check.authorIntroduction')}
+              />
+            </Form.Item>
+            <Form.Item name="duration" label={t('title.duration')}>
+              <InputNumber placeholder={t('message.check.duration')} />
+            </Form.Item>
+            <Form.Item name="trail" label={t('title.trail')}>
+              <Radio.Group>
+                <Radio value={true}>{t('yes')}</Radio>
+                <Radio value={false}>{t('no')}</Radio>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item
+              name="coverImgId"
               label={t('title.cover')}
               rules={[
                 {
                   required: true,
                   message: `${t('message.check.uploadCoverImage')}`,
+                },
+              ]}
+            >
+              <Upload
+                name="file"
+                listType="picture-card"
+                style={{ width: 240, height: 320 }}
+                showUploadList={false}
+                customRequest={handleUpload}
+                beforeUpload={beforeUpload}
+                onChange={handleUploadChange}
+              >
+                {imageUrl ? (
+                  <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
+                ) : (
+                  uploadButton
+                )}
+              </Upload>
+            </Form.Item>
+            <Form.Item
+              name="videoId"
+              label={t('title.video')}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.uploadVideo')}`,
                 },
               ]}
             >
@@ -377,4 +370,4 @@ const BookForm = () => {
   )
 }
 
-export default BookForm
+export default CourseForm
