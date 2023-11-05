@@ -2,7 +2,6 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import StatusCodes from 'http-status-codes'
 import Config from '@/libs/config'
-import { asyncRefreshToken } from './http'
 
 // Axios default config
 // axios.defaults.baseURL = process.env.PUBLIC_URL;//TODO:
@@ -22,8 +21,10 @@ const interceptor = axios.interceptors.response.use(
     const originalRequest = error.config
     axios.interceptors.response.eject(interceptor)
 
+    console.log(error)
     // use refresh token retry
-    return asyncRefreshToken
+    return axios
+      .post('/api/admin/auth/refresh')
       .then((res) => {
         if (res.status === StatusCodes.OK) {
           return axios(originalRequest)

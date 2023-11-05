@@ -17,6 +17,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import Header from './components/main-header'
 import { Routes } from './libs/router'
+
 const { Sider, Content } = Layout
 
 const ContentHeader = styled.div`
@@ -116,13 +117,6 @@ const AdminLayout = () => {
       getItem(
         <Link to={Routes.ORDER_LIST.path}>{t('menu.orderList')}</Link>,
         '41',
-        <ShoppingOutlined />,
-      ),
-      getItem(
-        <Link to={Routes.CONSUMPTION_LIST.path}>
-          {t('menu.consumptionList')}
-        </Link>,
-        '42',
         <ShoppingOutlined />,
       ),
       getItem(
@@ -229,11 +223,6 @@ const AdminLayout = () => {
       Routes.ORDER_LIST.path,
       t('menu.order'),
       t('menu.orderList'),
-    ),
-    getBreadcrumbItem(
-      Routes.CONSUMPTION_LIST.path,
-      t('menu.order'),
-      t('menu.consumptionList'),
     ),
     getBreadcrumbItem(
       Routes.COMMENT_LIST.path,

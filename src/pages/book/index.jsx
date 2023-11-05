@@ -13,7 +13,7 @@ import {
   Image,
   Input,
   message,
-  Modal,
+  App,
   Row,
   Table,
   Tooltip,
@@ -32,9 +32,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
-const { confirm } = Modal
-
 const BookPage = () => {
+  const { modal } = App.useApp()
   const { t } = useTranslation()
   const [queryForm] = Form.useForm()
   const navigate = useNavigate()
@@ -45,7 +44,6 @@ const BookPage = () => {
   const [total, setTotal] = useState(0)
   const [queryCriteria, setQueryCriteria] = useState()
   const [loading, setLoading] = useState(false)
-  const [chapterCount, setChapterCount] = useState()
 
   const paginationProps = {
     pageSize,
@@ -54,22 +52,6 @@ const BookPage = () => {
     onChange: (current) => {
       setPageNumber(current)
     },
-  }
-
-  const loadChapterCountByBook = (bookIds) => {
-    axios
-      .get(`/api/admin/v1/books/${bookIds}/chapter-count`)
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          const bookAndChapterCount = res.data
-          setChapterCount(bookAndChapterCount)
-        }
-      })
-      .catch((err) =>
-        message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
-        ),
-      )
   }
 
   const fetchBooks = useCallback(() => {
@@ -88,11 +70,6 @@ const BookPage = () => {
           const responseObject = res.data
           setBooksData(responseObject.records)
           setTotal(responseObject.total)
-          if (responseObject.records && responseObject.records.length > 0) {
-            loadChapterCountByBook(
-              responseObject.records.flatMap((book) => book.id),
-            )
-          }
         }
       })
       .catch((err) =>
@@ -101,10 +78,10 @@ const BookPage = () => {
         ),
       )
       .finally(() => setLoading(false))
-  }, [pageNumber, pageSize, queryCriteria?.author, queryCriteria?.bookName])
+  }, [pageNumber, pageSize, queryCriteria?.author, queryCriteria?.bookName, t])
 
   const handleDeleteAction = (id) => {
-    confirm({
+    modal.confirm({
       title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,
@@ -158,20 +135,9 @@ const BookPage = () => {
     navigate(`${Routes.CHAPTER_LIST.path}?id=${id}&name=${bookName}`)
   }
 
-  // const handleStatusChange = (id, status) => {
-  //   const cCount = chapterCount?.find((cc) => cc.bookId === id)?.chapterCount
-  //   if (!cCount) {
-  //     message.error(`${t('message.error.noBookChapters')}`)
-  //     return
-  //   }
-  //   axios.put(`/api/admin/v1/books/${id}/status/${status}`).then((res) => {
-  //     if (res.status === HttpStatus.OK) {
-  //       const timestamp = new Date().getTime()
-  //       setChangeTimestamp(timestamp)
-  //       message.success(t('message.successInfo'))
-  //     }
-  //   })
-  // }
+  const handleLinkToCourseAction = (id, bookName) => {
+    navigate(`${Routes.COURSE.path}?id=${id}&name=${bookName}`)
+  }
 
   useEffect(() => {
     fetchBooks()
@@ -267,8 +233,10 @@ const BookPage = () => {
             },
             {
               title: `${t('title.classification')}`,
-              key: 'classification',
-              dataIndex: 'classification',
+              key: 'classifications',
+              render: (text, record) => {
+                return <span>{record.classifications.join(', ')}</span>
+              },
             },
             {
               title: `${t('title.operate')}`,
@@ -282,10 +250,15 @@ const BookPage = () => {
                       }
                       type="link"
                     >
-                      {t('button.Chapter')}(
-                      {chapterCount?.find((cc) => cc.bookId === record.id)
-                        ?.chapterCount || 0}
-                      )
+                      {t('button.Chapter')}({record.chapterCount})
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        handleLinkToCourseAction(record.id, record.bookName)
+                      }
+                      type="link"
+                    >
+                      {t('button.course')}({record.courseCount})
                     </Button>
                     <Divider type="vertical" />
                     <Button

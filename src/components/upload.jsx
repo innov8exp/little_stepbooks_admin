@@ -64,7 +64,7 @@ const UploadForm = ({ buttonName, fileType }) => {
       })
   }
   const beforeUpload = (file) => {
-    if (fileType === 'video') {
+    if (fileType === 'audio') {
       checkFileVideoType(file)
     }
 

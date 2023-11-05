@@ -26,7 +26,7 @@ const EnvFlag = () => {
   }
   return (
     <Space>
-      <Tag color="#f50">{developMode}</Tag>
+      <Tag color="#A30FF2">{developMode}</Tag>
     </Space>
   )
 }

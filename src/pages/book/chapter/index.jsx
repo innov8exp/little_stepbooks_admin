@@ -1,68 +1,48 @@
 import {
-  ExclamationCircleOutlined,
-  LeftCircleOutlined,
-  SearchOutlined,
-} from '@ant-design/icons'
-import { Button, Card, Divider, message, Modal,Table } from 'antd'
-import { Routes } from '@/libs/router'
-import axios from 'axios'
-import useQuery from '@/hooks/useQuery'
-import {
   ConditionItem,
   ConditionLeftItem,
   ContentContainer,
   QueryBtnWrapper,
   StyledCondition,
 } from '@/components/styled'
+import useQuery from '@/hooks/useQuery'
+import { Routes } from '@/libs/router'
+import {
+  ExclamationCircleOutlined,
+  LeftCircleOutlined,
+  SearchOutlined,
+} from '@ant-design/icons'
+import { Button, Card, Divider, Table, message, App, Image } from 'antd'
+import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-
-const { confirm } = Modal
+import { useNavigate } from 'react-router-dom'
 
 const ChapterPage = () => {
   const { t } = useTranslation()
+  const { modal } = App.useApp()
   const navigate = useNavigate()
   const query = useQuery()
   const queryId = query.get('id')
   const queryName = query.get('name')
   const [changeTimestamp, setChangeTimestamp] = useState()
   const [chaptersData, setChaptersData] = useState()
-  const [pageNumber, setPageNumber] = useState(1)
-  const [pageSize] = useState(10)
-  const [total, setTotal] = useState(0)
   // const [queryCriteria, setQueryCriteria] = useState<BookQuery>();
   const [loading, setLoading] = useState(false)
 
   const [setChapterViewVisible] = useState(false)
   const [setChapterId] = useState()
 
-  const paginationProps = {
-    pageSize,
-    current: pageNumber,
-    total,
-    onChange: (current) => {
-      setPageNumber(current)
-    },
-  }
-
-  const fetchProducts = useCallback(() => {
+  const fetchChapters = useCallback(() => {
     setLoading(true)
-    const searchURL = `/api/admin/v1/chapters?bookId=${queryId}&currentPage=${pageNumber}&pageSize=${pageSize}`
-    // if (queryCriteria?.bookName) {
-    //     searchURL += `&bookName=${queryCriteria.bookName}`;
-    // }
-    // if (queryCriteria?.author) {
-    //     searchURL += `&author=${queryCriteria.author}`;
-    // }
+    const searchURL = `/api/admin/v1/books/${queryId}/chapters`
     axios
       .get(searchURL)
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
-          setChaptersData(responseObject.records)
-          setTotal(responseObject.total)
+          setChaptersData(responseObject)
         }
       })
       .catch((err) =>
@@ -71,10 +51,10 @@ const ChapterPage = () => {
         ),
       )
       .finally(() => setLoading(false))
-  }, [pageNumber, pageSize, queryId])
+  }, [queryId, t])
 
   const handleDeleteAction = (id) => {
-    confirm({
+    modal.confirm({
       title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,
@@ -120,8 +100,8 @@ const ChapterPage = () => {
   }
 
   useEffect(() => {
-    fetchProducts()
-  }, [fetchProducts, pageNumber, changeTimestamp])
+    fetchChapters()
+  }, [fetchChapters, changeTimestamp])
 
   return (
     <Card
@@ -131,7 +111,7 @@ const ChapterPage = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate.goBack()}
+            onClick={() => navigate(Routes.BOOK_LIST.path)}
           />
           《{queryName}》- {t('title.content')}
         </>
@@ -163,8 +143,12 @@ const ChapterPage = () => {
             {
               title: '#',
               key: 'number',
-              render: (text, record, index) =>
-                (pageNumber - 1) * pageSize + index + 1,
+              render: (text, record, index) => index + 1,
+            },
+            {
+              title: `${t('title.chapterNo')}`,
+              key: 'chapterNo',
+              dataIndex: 'chapterNo',
             },
             {
               title: `${t('title.chapterName')}`,
@@ -172,9 +156,15 @@ const ChapterPage = () => {
               dataIndex: 'chapterName',
             },
             {
+              title: `${t('title.cover')}`,
+              key: 'img',
+              dataIndex: 'img',
+              render: (text) => <Image width={100} alt="image" src={text} />,
+            },
+            {
               title: `${t('title.chapterIntroduction')}`,
-              key: 'introduction',
-              dataIndex: 'introduction',
+              key: 'description',
+              dataIndex: 'description',
             },
             {
               title: `${t('title.operate')}`,
@@ -208,9 +198,9 @@ const ChapterPage = () => {
             },
           ]}
           rowKey={(record) => record.id}
+          pagination={false}
           dataSource={chaptersData}
           loading={loading}
-          pagination={paginationProps}
         />
       </ContentContainer>
     </Card>

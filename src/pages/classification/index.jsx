@@ -1,16 +1,15 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, Card, message, Modal, Table } from 'antd'
-import useFetch from '@/hooks/useFetch'
-import Axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
+import useFetch from '@/hooks/useFetch'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { App, Button, Card, message, Table } from 'antd'
+import Axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
-import ClassificationForm from './form'
 import { useTranslation } from 'react-i18next'
-
-const { confirm } = Modal
+import ClassificationForm from './form'
 
 const ClassificationPage = () => {
+  const { modal } = App.useApp()
   const { t } = useTranslation()
   const [changeTime, setChangeTime] = useState(Date.now())
   const { loading, fetchedData } = useFetch(`/api/admin/v1/classifications`, [
@@ -25,7 +24,7 @@ const ClassificationPage = () => {
   }
 
   const handleDeleteAction = (id) => {
-    confirm({
+    modal.confirm({
       title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,
@@ -102,6 +101,7 @@ const ClassificationPage = () => {
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
+                    danger
                     type="link"
                   >
                     {t('button.delete')}

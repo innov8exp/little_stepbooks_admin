@@ -45,7 +45,7 @@ const beforeUpload = (file) => {
   return isJpgOrPng && isLt2M
 }
 
-const BookForm = () => {
+const BookSetForm = () => {
   const { t } = useTranslation()
   const query = useQuery()
   const queryId = query.get('id')
@@ -238,7 +238,7 @@ const BookForm = () => {
             icon={<LeftCircleOutlined />}
             onClick={() => navigate(Routes.BOOK_LIST.path)}
           />
-          {t('button.bookEditing')}
+          {t('button.bookSetEditing')}
         </>
       }
     >
@@ -253,8 +253,8 @@ const BookForm = () => {
             }}
           >
             <Form.Item
-              name="bookName"
-              label={t('title.bookName')}
+              name="name"
+              label={t('title.name')}
               rules={[
                 {
                   required: true,
@@ -368,4 +368,4 @@ const BookForm = () => {
   )
 }
 
-export default BookForm
+export default BookSetForm

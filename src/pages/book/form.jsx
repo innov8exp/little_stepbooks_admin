@@ -61,25 +61,30 @@ const BookForm = () => {
   const [uploading, setUploading] = useState(false)
   const [imageUrl, setImageUrl] = useState()
 
-  const categoryDict = useFetch('/api/admin/v1/classifications', [])
+  const classifications = useFetch('/api/admin/v1/classifications', [])
 
-  const selectedCategoryList = (bookId) => {
-    return new Promise((resolve, reject) => {
-      axios
-        .get(`/api/admin/v1/books/${bookId}/classifications`)
-        .then((res) => {
-          if (res.status === HttpStatus.OK) {
-            resolve(res.data)
-          }
-        })
-        .catch((err) => {
-          message.error(
-            `${t('message.error.failureReason')}${err.response?.data?.message}`,
-          )
-          reject(err)
-        })
-    })
-  }
+  const selectedClassifications = useCallback(
+    (bookId) => {
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`/api/admin/v1/books/${bookId}/classifications`)
+          .then((res) => {
+            if (res.status === HttpStatus.OK) {
+              resolve(res.data)
+            }
+          })
+          .catch((err) => {
+            message.error(
+              `${t('message.error.failureReason')}${
+                err.response?.data?.message
+              }`,
+            )
+            reject(err)
+          })
+      })
+    },
+    [t],
+  )
 
   const initData = useCallback(() => {
     if (!queryId) {
@@ -106,14 +111,14 @@ const BookForm = () => {
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
-    selectedCategoryList(queryId).then((selected) => {
+    selectedClassifications(queryId).then((selected) => {
       form.setFieldsValue({
         classifications: Array.from(
           new Set(selected.flatMap((mData) => mData.id)),
         ),
       })
     })
-  }, [form, queryId])
+  }, [form, queryId, selectedClassifications, t])
 
   const createData = (book) => {
     setSaveLoading(true)
@@ -209,7 +214,10 @@ const BookForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           onSuccess()
-          form.setFieldsValue({ coverImg: res.data })
+          form.setFieldsValue({
+            coverImgId: res.data.id,
+            coverImgUrl: res.data.object_url,
+          })
           message.success(`${t('message.tips.uploadSuccess')}`)
         }
       })
@@ -292,7 +300,7 @@ const BookForm = () => {
               <Checkbox.Group
                 placeholder={t('message.check.selectClassification')}
               >
-                {categoryDict.fetchedData?.map((cate) => {
+                {classifications.fetchedData?.map((cate) => {
                   return (
                     <Checkbox value={cate.id} key={cate.id}>
                       {cate.classificationName}
@@ -301,16 +309,7 @@ const BookForm = () => {
                 })}
               </Checkbox.Group>
             </Form.Item>
-            <Form.Item
-              name="introduction"
-              label={t('title.describe')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.placeholder.describe')}`,
-                },
-              ]}
-            >
+            <Form.Item name="description" label={t('title.describe')}>
               <TextArea
                 rows={3}
                 style={{ resize: 'none' }}

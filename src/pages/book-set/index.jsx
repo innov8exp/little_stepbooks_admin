@@ -143,15 +143,15 @@ const BookSetPage = () => {
   }
 
   const handleCreateAction = () => {
-    navigate(Routes.BOOK_FORM.path)
+    navigate(Routes.BOOK_SET_FORM.path)
   }
 
   const handleEditAction = (id) => {
-    navigate(`${Routes.BOOK_FORM.path}?id=${id}`)
+    navigate(`${Routes.BOOK_SET_FORM.path}?id=${id}`)
   }
 
   const handleViewAction = (id) => {
-    navigate(`${Routes.BOOK_VIEW.path}?id=${id}`)
+    navigate(`${Routes.BOOK_VIEW_VIEW.path}?id=${id}`)
   }
 
   const handleLinkToChapterAction = (id, bookName) => {
@@ -178,7 +178,7 @@ const BookSetPage = () => {
   }, [fetchBooks, pageNumber, changeTimestamp])
 
   return (
-    <Card title={t('title.book')}>
+    <Card title={t('title.bookSet')}>
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}

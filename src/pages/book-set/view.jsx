@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
-const BookView = () => {
+const BookSetView = () => {
   const { t } = useTranslation()
   const query = useQuery()
   const queryId = query.get('id')
@@ -167,4 +167,4 @@ const BookView = () => {
   )
 }
 
-export default BookView
+export default BookSetView

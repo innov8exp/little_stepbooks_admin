@@ -1,4 +1,3 @@
-import { asyncLogin, asyncUserInfo } from '@/libs/http'
 import { Routes } from '@/libs/router'
 import useUserInfoStore from '@/stores/useUserInfoStore'
 import { message } from 'antd'
@@ -13,7 +12,7 @@ const useSession = () => {
   const navigate = useNavigate()
   const refreshUserInfo = async () => {
     try {
-      const resp = await asyncUserInfo
+      const resp = await axios.get('/api/admin/auth/user-info')
       setUserInfo(resp.data)
     } catch (err) {
       console.log(err)
@@ -30,7 +29,7 @@ const useSession = () => {
 
   const login = async (values) => {
     try {
-      const resp = await asyncLogin(values)
+      const resp = await axios.post('/api/admin/auth/login', { ...values })
       if (resp.status === HttpStatus.OK) {
         window.location.href = Routes.DASHBOARD.path
         // navigate(Routes.DASHBOARD.path, { replace: true })

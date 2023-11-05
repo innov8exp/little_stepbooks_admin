@@ -82,14 +82,9 @@ const UserPage = () => {
             dataIndex: 'email',
           },
           {
-            title: 'GoogleID',
-            key: 'googleId',
-            dataIndex: 'googleId',
-          },
-          {
-            title: 'FacebookID',
-            key: 'facebookId',
-            dataIndex: 'facebookId',
+            title: 'WechatID',
+            key: 'wechatId',
+            dataIndex: 'wechatId',
           },
           {
             title: `${t('title.phone')}`,
@@ -135,6 +130,7 @@ const UserPage = () => {
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
+                    danger
                     type="link"
                   >
                     {t('button.disable')}

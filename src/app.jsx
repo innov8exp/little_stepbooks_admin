@@ -1,5 +1,5 @@
 import { Router } from '@/libs/router'
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, App as AntdApp } from 'antd'
 import en_US from 'antd/locale/en_US'
 import zh_CN from 'antd/locale/zh_CN'
 import { RouterProvider } from 'react-router-dom'
@@ -15,11 +15,14 @@ const App = () => {
           // Seed Token，影响范围大
           colorPrimary: '#F54A74',
           colorLink: '#F54A74',
+          colorError: '#A30FF2',
           // 派生变量，影响范围小
         },
       }}
     >
-      <RouterProvider router={Router} />
+      <AntdApp style={{ height: '100%' }}>
+        <RouterProvider router={Router} />
+      </AntdApp>
     </ConfigProvider>
   )
 }

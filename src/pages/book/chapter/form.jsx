@@ -10,6 +10,7 @@ import {
   Empty,
   Form,
   Input,
+  InputNumber,
   message,
   Row,
   Skeleton,
@@ -60,13 +61,11 @@ const ChapterForm = () => {
 
   const initData = useCallback(() => {
     if (!queryId) {
-      axios
-        .get(`/api/admin/v1/chapters/max-chapter-number?bookId=${bookId}`)
-        .then((res) => {
-          if (res.status === HttpStatus.OK) {
-            form.setFieldsValue({ chapterNumber: res.data + 1 })
-          }
-        })
+      axios.get(`/api/admin/v1/books/${bookId}/max-chapter-no`).then((res) => {
+        if (res.status === HttpStatus.OK) {
+          form.setFieldsValue({ chapterNo: res.data + 1 })
+        }
+      })
       return
     }
     form.setFieldsValue({ content: `${t('message.tips.loading')}` })
@@ -95,12 +94,12 @@ const ChapterForm = () => {
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
-  }, [bookId, form, queryId])
+  }, [bookId, form, queryId, t])
 
   const createData = (book) => {
     setSaveLoading(true)
     axios
-      .post('/api/admin/v1/chapters', {
+      .post(`/api/admin/v1/books/${bookId}/chapters`, {
         ...book,
       })
       .then((res) => {
@@ -232,57 +231,54 @@ const ChapterForm = () => {
             }}
           >
             <Form.Item
-              name="chapterName"
-              label={t('title.chapterName')}
+              name="chapterNo"
+              label={t('title.chapterNo')}
               rules={[
                 {
                   required: true,
-                  message: `${t('message.placeholder.chapterName')}`,
+                  message: `${t('message.placeholder.chapterNo')}`,
                 },
               ]}
             >
+              <InputNumber placeholder={t('message.placeholder.chapterNo')} />
+            </Form.Item>
+            <Form.Item name="chapterName" label={t('title.chapterName')}>
               <Input
                 placeholder={t('message.placeholder.chapterName')}
-                maxLength={20}
+                maxLength={50}
               />
             </Form.Item>
             <Form.Item
               wrapperCol={{ span: 16 }}
               name="content"
               label={t('title.briefIntroduction')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.placeholder.briefIntroduction')}`,
-                },
-              ]}
             >
               <TextArea
-                rows={8}
+                rows={3}
                 style={{ resize: 'none' }}
                 maxLength={300}
                 placeholder={t('message.placeholder.briefIntroduction')}
               />
             </Form.Item>
             <Form.Item
-              name="audioFrequency"
+              name="audio"
               label={t('title.audioFrequency')}
               rules={[
                 {
-                  required: true,
+                  required: false,
                   message: `${t('message.check.audioFrequency')}`,
                 },
               ]}
             >
               <UploadComponent
                 name="file"
-                showUploadList={true}
+                showUploadList={false}
                 buttonName={t('title.audioFrequencyUpload')}
-                fileType={'video'}
-              ></UploadComponent>
+                fileType={'audio'}
+              />
             </Form.Item>
             <Form.Item
-              name="coverImg"
+              name="image"
               label={t('title.image')}
               rules={[
                 {
