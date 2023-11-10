@@ -112,6 +112,15 @@ const AdminLayout = () => {
       ),
     ]),
 
+    // 库存管理
+    getItem(t('menu.inventory'), '9', <ShoppingOutlined />, [
+      getItem(
+        <Link to={Routes.INVENTORY_LIST.path}>{t('menu.inventoryList')}</Link>,
+        '91',
+        <ShoppingOutlined />,
+      ),
+    ]),
+
     // 订单中心
     getItem(t('menu.order'), '5', <ShoppingOutlined />, [
       getItem(

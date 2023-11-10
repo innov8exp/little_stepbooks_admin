@@ -5,16 +5,15 @@ import {
   UndoOutlined,
 } from '@ant-design/icons'
 import {
+  App,
   Button,
   Card,
   Col,
   Divider,
   Form,
   Input,
-  App,
   Row,
   Table,
-  Tag,
   message,
 } from 'antd'
 import axios from 'axios'
@@ -30,13 +29,13 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
-const OrderPage = () => {
+const InventoryPage = () => {
   const { t } = useTranslation()
   const { modal } = App.useApp()
   const [queryForm] = Form.useForm()
   // const history = useHistory();
   const [changeTimestamp, setChangeTimestamp] = useState()
-  const [ordersData, setOrdersData] = useState()
+  const [inventoriesData, setInventoriesData] = useState()
   const [pageNumber, setPageNumber] = useState(1)
   const [pageSize] = useState(10)
   const [total, setTotal] = useState(0)
@@ -55,19 +54,19 @@ const OrderPage = () => {
 
   const fetchOrders = useCallback(() => {
     setLoading(true)
-    let searchURL = `/api/admin/v1/orders/search?currentPage=${pageNumber}&pageSize=${pageSize}`
-    if (queryCriteria?.orderNo) {
-      searchURL += `&orderNo=${queryCriteria.orderNo}`
+    let searchURL = `/api/admin/v1/inventories?currentPage=${pageNumber}&pageSize=${pageSize}`
+    if (queryCriteria?.skuCode) {
+      searchURL += `&skuCode=${queryCriteria.skuCode}`
     }
-    if (queryCriteria?.username) {
-      searchURL += `&username=${queryCriteria.username}`
-    }
+    // if (queryCriteria?.username) {
+    //   searchURL += `&username=${queryCriteria.username}`
+    // }
     axios
       .get(searchURL)
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
-          setOrdersData(responseObject.records)
+          setInventoriesData(responseObject.records)
           setTotal(responseObject.total)
         }
       })
@@ -77,7 +76,7 @@ const OrderPage = () => {
         ),
       )
       .finally(() => setLoading(false))
-  }, [pageNumber, pageSize, queryCriteria?.orderNo, queryCriteria?.username, t])
+  }, [pageNumber, pageSize, queryCriteria?.skuCode, t])
 
   const handleCloseAction = (id) => {
     modal.confirm({
@@ -131,7 +130,7 @@ const OrderPage = () => {
   }, [fetchOrders, pageNumber, changeTimestamp])
 
   return (
-    <Card title={t('title.label.orderManagement')}>
+    <Card title={t('menu.inventory')}>
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}
@@ -140,13 +139,13 @@ const OrderPage = () => {
       >
         <Row>
           <Col span={6}>
-            <Form.Item label={t('title.label.orderNumber')} name="orderNo">
-              <Input placeholder={t('message.placeholder.orderNumber')} />
+            <Form.Item label={t('title.label.skuCode')} name="skuCode">
+              <Input placeholder={t('message.placeholder.skuCode')} />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label={t('title.label.userName')} name="username">
-              <Input placeholder={t('message.placeholder.enterUserName')} />
+            <Form.Item label={t('title.label.skuName')} name="skuName">
+              <Input placeholder={t('message.placeholder.skuName')} />
             </Form.Item>
           </Col>
         </Row>
@@ -184,9 +183,9 @@ const OrderPage = () => {
                 (pageNumber - 1) * pageSize + index + 1,
             },
             {
-              title: `${t('title.label.orderNumber')}`,
-              key: 'orderCode',
-              dataIndex: 'orderCode',
+              title: `${t('title.label.skuCode')}`,
+              key: 'skuCode',
+              dataIndex: 'skuCode',
               width: 150,
               render: (text, record) => (
                 <Button onClick={() => handleViewAction(record.id)} type="link">
@@ -195,44 +194,19 @@ const OrderPage = () => {
               ),
             },
             {
-              title: `${t('title.label.userNickName')}`,
-              key: 'username',
-              dataIndex: 'username',
+              title: `${t('title.skuName')}`,
+              key: 'skuName',
+              dataIndex: 'skuName',
             },
             {
-              title: `${t('title.userNickname')}`,
-              key: 'nickname',
-              dataIndex: 'nickname',
-            },
-            {
-              title: `${t('title.transactionAmount')}`,
-              key: 'totalAmount',
-              dataIndex: 'totalAmount',
-              render: (text) =>
-                `¥ ${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+              title: `${t('title.inventoryQuantity')}`,
+              key: 'inventoryQuantity',
+              dataIndex: 'inventoryQuantity',
             },
             {
               title: `${t('title.createTime')}`,
               key: 'createdAt',
               dataIndex: 'createdAt',
-            },
-            {
-              title: `${t('title.status')}`,
-              key: 'paymentStatus',
-              dataIndex: 'paymentStatus',
-              render: (text) => {
-                return text === 'PAID' ? (
-                  <Tag color="green">{t('title.paid')}</Tag>
-                ) : (
-                  <Tag color="red">{t('title.unpaid')}</Tag>
-                )
-              },
-            },
-            {
-              title: `${t('title.status')}`,
-              key: 'state',
-              dataIndex: 'state',
-              render: (text) => <Tag color="blue">{text}</Tag>,
             },
             {
               title: `${t('title.operate')}`,
@@ -261,7 +235,7 @@ const OrderPage = () => {
             },
           ]}
           rowKey={(record) => record.id}
-          dataSource={ordersData}
+          dataSource={inventoriesData}
           loading={loading}
           pagination={paginationProps}
         />
@@ -270,4 +244,4 @@ const OrderPage = () => {
   )
 }
 
-export default OrderPage
+export default InventoryPage

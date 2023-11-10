@@ -1,31 +1,62 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, Card, message, Modal, Table } from 'antd'
-import useFetch from '@/hooks/useFetch'
-import axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { App, Button, Card, Table, message } from 'antd'
+import axios from 'axios'
 import HttpStatus from 'http-status-codes'
-import { useState } from 'react'
-import ProductForm from './form'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
-const { confirm } = Modal
 
 const ProductPage = () => {
   const { t } = useTranslation()
+  const { modal } = App.useApp()
   const [changeTime, setChangeTime] = useState(Date.now())
-  const { loading, fetchedData } = useFetch(`/api/admin/v1/products`, [
-    changeTime,
-  ])
-  const [formVisible, setFormVisible] = useState(false)
-  const [selectedId, setSelectedId] = useState()
+  const [productsData, setProductsData] = useState()
+  const [pageNumber, setPageNumber] = useState(1)
+  const [pageSize] = useState(10)
 
-  const handleEditAction = (id) => {
-    setSelectedId(id)
-    setFormVisible(true)
+  const [total, setTotal] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [queryCriteria, setQueryCriteria] = useState()
+
+  const paginationProps = {
+    pageSize,
+    current: pageNumber,
+    total,
+    onChange: (current) => {
+      setPageNumber(current)
+    },
   }
 
+  const fetchProducts = useCallback(() => {
+    setLoading(true)
+    let searchURL = `/api/admin/v1/products?currentPage=${pageNumber}&pageSize=${pageSize}`
+    // if (queryCriteria?.orderNo) {
+    //   searchURL += `&orderNo=${queryCriteria.orderNo}`
+    // }
+    // if (queryCriteria?.username) {
+    //   searchURL += `&username=${queryCriteria.username}`
+    // }
+    axios
+      .get(searchURL)
+      .then((res) => {
+        if (res && res.status === HttpStatus.OK) {
+          const responseObject = res.data
+          setProductsData(responseObject.records)
+          setTotal(responseObject.total)
+        }
+      })
+      .catch((err) =>
+        message.error(
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
+        ),
+      )
+      .finally(() => setLoading(false))
+  }, [pageNumber, pageSize, t])
+
+  const handleEditAction = (id) => {}
+
   const handleDeleteAction = (id) => {
-    confirm({
+    modal.confirm({
       title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,
@@ -48,16 +79,14 @@ const ProductPage = () => {
     })
   }
 
+  useEffect(() => {
+    fetchProducts()
+  }, [pageNumber, changeTime, fetchProducts])
+
   return (
-    <Card title={t('title.label.productPackage')}>
+    <Card title={t('menu.skuList')}>
       <ButtonWrapper>
-        <Button
-          type="primary"
-          onClick={() => {
-            setSelectedId(undefined)
-            setFormVisible(true)
-          }}
-        >
+        <Button type="primary" onClick={() => {}}>
           {t('button.create')}
         </Button>
       </ButtonWrapper>
@@ -70,19 +99,24 @@ const ProductPage = () => {
           },
           {
             title: `${t('title.productNumber')}`,
-            key: 'productNo',
-            dataIndex: 'productNo',
+            key: 'skuCode',
+            dataIndex: 'skuCode',
           },
           {
-            title: `${t('title.bookCurrency')}`,
-            key: 'coinAmount',
-            dataIndex: 'coinAmount',
+            title: `${t('title.productName')}`,
+            key: 'skuName',
+            dataIndex: 'skuName',
+          },
+          {
+            title: `${t('title.description')}`,
+            key: 'description',
+            dataIndex: 'description',
           },
           {
             title: `${t('title.price')}`,
             key: 'price',
             dataIndex: 'price',
-            render: (text) => `$ ${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+            render: (text) => `¥ ${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
           },
           {
             title: `${t('title.label.platform')}`,
@@ -90,9 +124,9 @@ const ProductPage = () => {
             dataIndex: 'platform',
           },
           {
-            title: `${t('title.label.platformProductID')}`,
-            key: 'storeProductId',
-            dataIndex: 'storeProductId',
+            title: `${t('title.label.hasInventory')}`,
+            key: 'hasInventory',
+            dataIndex: 'hasInventory',
           },
           {
             title: `${t('title.operate')}`,
@@ -109,6 +143,7 @@ const ProductPage = () => {
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
+                    danger
                     type="link"
                   >
                     {t('button.delete')}
@@ -119,18 +154,9 @@ const ProductPage = () => {
           },
         ]}
         rowKey={(record) => record.id}
-        dataSource={fetchedData}
-        pagination={false}
+        dataSource={productsData}
+        pagination={paginationProps}
         loading={loading}
-      />
-      <ProductForm
-        visible={formVisible}
-        onCancel={() => setFormVisible(false)}
-        onSave={() => {
-          setFormVisible(false)
-          setChangeTime(Date.now())
-        }}
-        id={selectedId}
       />
     </Card>
   )

@@ -2,30 +2,31 @@ import AdminLayout from '@/admin-layout'
 import Advertisement from '@/pages/advertisement'
 import ForgetPassword from '@/pages/auth/forget-password'
 import SignIn from '@/pages/auth/sign-in'
-import Chapter from '@/pages/book/chapter'
-import ChapterForm from '@/pages/book/chapter/form'
-import ChapterView from '@/pages/book/chapter/view'
 import Book from '@/pages/book'
-import BookForm from '@/pages/book/form'
-import BookView from '@/pages/book/view'
 import BookSet from '@/pages/book-set'
 import BookSetForm from '@/pages/book-set/form'
 import BookSetView from '@/pages/book-set/view'
+import Chapter from '@/pages/book/chapter'
+import ChapterForm from '@/pages/book/chapter/form'
+import ChapterView from '@/pages/book/chapter/view'
+import BookForm from '@/pages/book/form'
+import BookView from '@/pages/book/view'
+import Classification from '@/pages/classification'
 import ComingSoon from '@/pages/coming-soon'
 import Comment from '@/pages/comment'
 import Consumption from '@/pages/consumption'
+import Course from '@/pages/course'
+import CourseForm from '@/pages/course/form'
+import CourseView from '@/pages/course/view'
 import Dashboard from '@/pages/dashboard'
 import Error from '@/pages/error'
+import Inventory from '@/pages/inventory'
 import Order from '@/pages/order'
 import Product from '@/pages/product'
 import Profile from '@/pages/profile'
 import Promotion from '@/pages/promotion'
 import Recommend from '@/pages/recommend'
 import User from '@/pages/user'
-import Course from '@/pages/course'
-import CourseForm from '@/pages/course/form'
-import CourseView from '@/pages/course/view'
-import Classification from '@/pages/classification'
 
 import { createBrowserRouter } from 'react-router-dom'
 
@@ -52,6 +53,9 @@ export const Routes = {
   CHAPTER_VIEW: { path: '/chapter-view', element: <ChapterView /> },
   COMMENT_LIST: { path: '/comment-list', element: <Comment /> },
   ORDER_LIST: { path: '/order-list', element: <Order /> },
+
+  INVENTORY_LIST: { path: '/inventory-list', element: <Inventory /> },
+
   CONSUMPTION_LIST: { path: '/consumption-list', element: <Consumption /> },
   PRODUCT_LIST: { path: '/product-list', element: <Product /> },
   PROMOTION_LIST: { path: '/promotion-list', element: <Promotion /> },
@@ -138,6 +142,10 @@ export const Router = createBrowserRouter([
       {
         path: Routes.ORDER_LIST.path,
         element: Routes.ORDER_LIST.element,
+      },
+      {
+        path: Routes.INVENTORY_LIST.path,
+        element: Routes.INVENTORY_LIST.element,
       },
       {
         path: Routes.CONSUMPTION_LIST.path,
