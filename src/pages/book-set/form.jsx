@@ -1,8 +1,6 @@
-import {
-  LeftCircleOutlined,
-  LoadingOutlined,
-  PlusOutlined,
-} from '@ant-design/icons'
+import useQuery from '@/hooks/useQuery'
+import { Routes } from '@/libs/router'
+import { LeftCircleOutlined } from '@ant-design/icons'
 import {
   Button,
   Card,
@@ -10,40 +8,17 @@ import {
   Empty,
   Form,
   Input,
-  message,
   Row,
   Skeleton,
-  Upload,
-  Checkbox,
+  message,
 } from 'antd'
-import useFetch from '@/hooks/useFetch'
-import { Routes } from '@/libs/router'
 import axios from 'axios'
-import useQuery from '@/hooks/useQuery'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 const { TextArea } = Input
-
-const getBase64 = (img, callback) => {
-  const reader = new FileReader()
-  reader.addEventListener('load', () => callback(reader.result))
-  reader.readAsDataURL(img)
-}
-
-const beforeUpload = (file) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
-  if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!')
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!')
-  }
-  return isJpgOrPng && isLt2M
-}
 
 const BookSetForm = () => {
   const { t } = useTranslation()
@@ -58,28 +33,6 @@ const BookSetForm = () => {
   const [loading, setLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
-  const [uploading, setUploading] = useState(false)
-  const [imageUrl, setImageUrl] = useState()
-
-  const categoryDict = useFetch('/api/admin/v1/classifications', [])
-
-  const selectedCategoryList = (bookId) => {
-    return new Promise((resolve, reject) => {
-      axios
-        .get(`/api/admin/v1/books/${bookId}/classifications`)
-        .then((res) => {
-          if (res.status === HttpStatus.OK) {
-            resolve(res.data)
-          }
-        })
-        .catch((err) => {
-          message.error(
-            `${t('message.error.failureReason')}${err.response?.data?.message}`,
-          )
-          reject(err)
-        })
-    })
-  }
 
   const initData = useCallback(() => {
     if (!queryId) {
@@ -89,11 +42,10 @@ const BookSetForm = () => {
     setIsDisplayForm(true)
 
     axios
-      .get(`/api/admin/v1/books/${queryId}`)
+      .get(`/api/admin/v1/book-sets/${queryId}`)
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
-          setImageUrl(resultData.coverImg)
           setInitFormData({
             ...resultData,
           })
@@ -106,25 +58,18 @@ const BookSetForm = () => {
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
-    selectedCategoryList(queryId).then((selected) => {
-      form.setFieldsValue({
-        classifications: Array.from(
-          new Set(selected.flatMap((mData) => mData.id)),
-        ),
-      })
-    })
-  }, [form, queryId])
+  }, [queryId, t])
 
   const createData = (book) => {
     setSaveLoading(true)
     axios
-      .post('/api/admin/v1/books', {
+      .post('/api/admin/v1/book-sets', {
         ...book,
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(`${t('message.successfullySaved')}`)
-          navigate(Routes.BOOK_LIST.path)
+          navigate(Routes.BOOK_SET_LIST.path)
         }
       })
       .catch((err) => {
@@ -136,16 +81,15 @@ const BookSetForm = () => {
   }
 
   const updateData = (book) => {
-    console.log('classifications:', book.category)
     setSaveLoading(true)
     axios
-      .put(`/api/admin/v1/books/${queryId}`, {
+      .put(`/api/admin/v1/book-sets/${queryId}`, {
         ...book,
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(`${t('message.successfullySaved')}`)
-          navigate(Routes.BOOK_LIST.path)
+          navigate(Routes.BOOK_SET_LIST.path)
         }
       })
       .catch((err) => {
@@ -176,54 +120,6 @@ const BookSetForm = () => {
       .catch()
   }
 
-  const handleUploadChange = (info) => {
-    if (info.file.status === 'uploading') {
-      setUploading(true)
-      return
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, (url) => {
-        setUploading(false)
-        setImageUrl(url)
-      })
-    }
-  }
-
-  const uploadButton = (
-    <div>
-      {uploading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>{t('title.coverUpload')}</div>
-    </div>
-  )
-
-  const handleUpload = (options) => {
-    // setUploading(true);
-    const { onSuccess, onError, file } = options
-    const fmData = new FormData()
-    fmData.append('file', file)
-    axios
-      .post(`/api/admin/v1/books/upload`, fmData, {
-        headers: { 'content-type': 'multipart/form-data' },
-      })
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          onSuccess()
-          form.setFieldsValue({ coverImg: res.data })
-          message.success(`${t('message.tips.uploadSuccess')}`)
-        }
-      })
-      .catch((err) => {
-        onError(err)
-        message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
-        )
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-  }
-
   useEffect(() => {
     initData()
   }, [initData])
@@ -236,7 +132,7 @@ const BookSetForm = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.BOOK_LIST.path)}
+            onClick={() => navigate(Routes.BOOK_SET_LIST.path)}
           />
           {t('button.bookSetEditing')}
         </>
@@ -258,51 +154,14 @@ const BookSetForm = () => {
               rules={[
                 {
                   required: true,
-                  message: `${t('message.check.bookName')}`,
+                  message: `${t('message.check.name')}`,
                 },
               ]}
             >
-              <Input placeholder={t('message.check.bookName')} maxLength={20} />
+              <Input placeholder={t('message.check.name')} maxLength={20} />
             </Form.Item>
             <Form.Item
-              name="author"
-              label={t('title.author')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.enterAuthor')}`,
-                },
-              ]}
-            >
-              <Input
-                placeholder={t('message.check.enterAuthor')}
-                maxLength={20}
-              />
-            </Form.Item>
-            <Form.Item
-              name="classifications"
-              label={t('title.classification')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.selectClassification')}`,
-                },
-              ]}
-            >
-              <Checkbox.Group
-                placeholder={t('message.check.selectClassification')}
-              >
-                {categoryDict.fetchedData?.map((cate) => {
-                  return (
-                    <Checkbox value={cate.id} key={cate.id}>
-                      {cate.classificationName}
-                    </Checkbox>
-                  )
-                })}
-              </Checkbox.Group>
-            </Form.Item>
-            <Form.Item
-              name="introduction"
+              name="description"
               label={t('title.describe')}
               rules={[
                 {
@@ -316,32 +175,6 @@ const BookSetForm = () => {
                 style={{ resize: 'none' }}
                 placeholder={t('message.placeholder.describe')}
               />
-            </Form.Item>
-            <Form.Item
-              name="coverImg"
-              label={t('title.cover')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.uploadCoverImage')}`,
-                },
-              ]}
-            >
-              <Upload
-                name="file"
-                listType="picture-card"
-                style={{ width: 240, height: 320 }}
-                showUploadList={false}
-                customRequest={handleUpload}
-                beforeUpload={beforeUpload}
-                onChange={handleUploadChange}
-              >
-                {imageUrl ? (
-                  <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
-                ) : (
-                  uploadButton
-                )}
-              </Upload>
             </Form.Item>
             <div style={{ marginTop: 10 }} />
             <Row justify="end">

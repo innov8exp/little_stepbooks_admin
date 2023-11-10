@@ -17,13 +17,11 @@ import {
   Card,
   Col,
   Divider,
-  Image,
   Form,
   Input,
   Modal,
   Row,
   Table,
-  Tooltip,
   message,
 } from 'antd'
 import axios from 'axios'
@@ -45,7 +43,6 @@ const BookSetPage = () => {
   const [total, setTotal] = useState(0)
   const [queryCriteria, setQueryCriteria] = useState()
   const [loading, setLoading] = useState(false)
-  const [chapterCount, setChapterCount] = useState()
 
   const paginationProps = {
     pageSize,
@@ -56,30 +53,14 @@ const BookSetPage = () => {
     },
   }
 
-  const loadChapterCountByBook = (bookIds) => {
-    axios
-      .get(`/api/admin/v1/books/${bookIds}/chapter-count`)
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          const bookAndChapterCount = res.data
-          setChapterCount(bookAndChapterCount)
-        }
-      })
-      .catch((err) =>
-        message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
-        ),
-      )
-  }
-
-  const fetchBooks = useCallback(() => {
+  const fetchBookSets = useCallback(() => {
     setLoading(true)
     let searchURL = `/api/admin/v1/book-sets?currentPage=${pageNumber}&pageSize=${pageSize}`
-    if (queryCriteria?.bookName) {
-      searchURL += `&bookName=${queryCriteria.bookName}`
+    if (queryCriteria?.code) {
+      searchURL += `&code=${queryCriteria.code}`
     }
-    if (queryCriteria?.author) {
-      searchURL += `&author=${queryCriteria.author}`
+    if (queryCriteria?.name) {
+      searchURL += `&name=${queryCriteria.name}`
     }
     axios
       .get(searchURL)
@@ -88,11 +69,6 @@ const BookSetPage = () => {
           const responseObject = res.data
           setBooksData(responseObject.records)
           setTotal(responseObject.total)
-          if (responseObject.records && responseObject.records.length > 0) {
-            loadChapterCountByBook(
-              responseObject.records.flatMap((book) => book.id),
-            )
-          }
         }
       })
       .catch((err) =>
@@ -101,7 +77,7 @@ const BookSetPage = () => {
         ),
       )
       .finally(() => setLoading(false))
-  }, [pageNumber, pageSize, queryCriteria?.author, queryCriteria?.bookName])
+  }, [pageNumber, pageSize, queryCriteria?.name, queryCriteria?.code, t])
 
   const handleDeleteAction = (id) => {
     confirm({
@@ -151,11 +127,7 @@ const BookSetPage = () => {
   }
 
   const handleViewAction = (id) => {
-    navigate(`${Routes.BOOK_VIEW_VIEW.path}?id=${id}`)
-  }
-
-  const handleLinkToChapterAction = (id, bookName) => {
-    navigate(`${Routes.CHAPTER_LIST.path}?id=${id}&name=${bookName}`)
+    navigate(`${Routes.BOOK_SET_VIEW.path}?id=${id}`)
   }
 
   // const handleStatusChange = (id, status) => {
@@ -174,8 +146,8 @@ const BookSetPage = () => {
   // }
 
   useEffect(() => {
-    fetchBooks()
-  }, [fetchBooks, pageNumber, changeTimestamp])
+    fetchBookSets()
+  }, [fetchBookSets, pageNumber, changeTimestamp])
 
   return (
     <Card title={t('title.bookSet')}>
@@ -187,13 +159,13 @@ const BookSetPage = () => {
       >
         <Row>
           <Col span={6}>
-            <Form.Item label={t('title.name')} name="bookName">
-              <Input placeholder={t('message.placeholder.name')} />
+            <Form.Item label={t('title.code')} name="code">
+              <Input placeholder={t('message.placeholder.code')} />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label={t('title.author')} name="author">
-              <Input placeholder={t('message.placeholder.bookAuthor')} />
+            <Form.Item label={t('title.name')} name="name">
+              <Input placeholder={t('message.placeholder.name')} />
             </Form.Item>
           </Col>
         </Row>
@@ -242,22 +214,19 @@ const BookSetPage = () => {
                 (pageNumber - 1) * pageSize + index + 1,
             },
             {
-              title: `${t('title.name')}`,
-              key: 'name',
-              dataIndex: 'name',
+              title: `${t('title.code')}`,
+              key: 'code',
+              dataIndex: 'code',
               render: (text, record) => (
                 <Button onClick={() => handleViewAction(record.id)} type="link">
-                  <Tooltip title={record.introduction} color="#2db7f5">
-                    {text}
-                  </Tooltip>
+                  {text}
                 </Button>
               ),
             },
             {
-              title: `${t('title.cover')}`,
-              key: 'coverImg',
-              dataIndex: 'coverImg',
-              render: (text) => <Image width={50} src={text} />,
+              title: `${t('title.name')}`,
+              key: 'name',
+              dataIndex: 'name',
             },
             {
               title: `${t('title.description')}`,
@@ -270,18 +239,6 @@ const BookSetPage = () => {
               render: (text, record) => {
                 return (
                   <div>
-                    <Button
-                      onClick={() =>
-                        handleLinkToChapterAction(record.id, record.bookName)
-                      }
-                      type="link"
-                    >
-                      {t('button.Chapter')}(
-                      {chapterCount?.find((cc) => cc.bookId === record.id)
-                        ?.chapterCount || 0}
-                      )
-                    </Button>
-                    <Divider type="vertical" />
                     <Button
                       type="link"
                       onClick={() => handleEditAction(record.id)}
