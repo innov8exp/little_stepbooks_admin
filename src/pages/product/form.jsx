@@ -385,7 +385,6 @@ const ProductForm = () => {
               <Form.Item name="bookSet" label={t('title.bookSet')}>
                 <DebounceSelect
                   showSearch
-                  mode="multiple"
                   initOptions={initBookOptions}
                   fetchOptions={fetchBookSet}
                   placeholder={t('message.placeholder.enterBookSearch')}
