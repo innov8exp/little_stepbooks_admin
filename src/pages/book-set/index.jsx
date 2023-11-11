@@ -19,7 +19,7 @@ import {
   Divider,
   Form,
   Input,
-  Modal,
+  App,
   Row,
   Table,
   message,
@@ -30,9 +30,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
-const { confirm } = Modal
-
 const BookSetPage = () => {
+  const { modal } = App.useApp()
   const { t } = useTranslation()
   const [queryForm] = Form.useForm()
   const navigate = useNavigate()
@@ -80,7 +79,7 @@ const BookSetPage = () => {
   }, [pageNumber, pageSize, queryCriteria?.name, queryCriteria?.code, t])
 
   const handleDeleteAction = (id) => {
-    confirm({
+    modal.confirm({
       title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,
@@ -88,7 +87,7 @@ const BookSetPage = () => {
       cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
-          .delete(`/api/admin/v1/books/${id}`)
+          .delete(`/api/admin/v1/book-sets/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               const timestamp = new Date().getTime()

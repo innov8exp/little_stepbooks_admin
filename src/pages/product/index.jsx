@@ -1,14 +1,17 @@
 import { ButtonWrapper } from '@/components/styled'
+import { Routes } from '@/libs/router'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { App, Button, Card, Table, message } from 'antd'
+import { App, Button, Card, Image, Table, Tag, Tooltip, message } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 const ProductPage = () => {
   const { t } = useTranslation()
   const { modal } = App.useApp()
+  const navigate = useNavigate()
   const [changeTime, setChangeTime] = useState(Date.now())
   const [productsData, setProductsData] = useState()
   const [pageNumber, setPageNumber] = useState(1)
@@ -16,7 +19,6 @@ const ProductPage = () => {
 
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [queryCriteria, setQueryCriteria] = useState()
 
   const paginationProps = {
     pageSize,
@@ -53,7 +55,9 @@ const ProductPage = () => {
       .finally(() => setLoading(false))
   }, [pageNumber, pageSize, t])
 
-  const handleEditAction = (id) => {}
+  const handleEditAction = (id) => {
+    navigate(`${Routes.PRODUCT_FORM.path}?id=${id}`)
+  }
 
   const handleDeleteAction = (id) => {
     modal.confirm({
@@ -86,7 +90,10 @@ const ProductPage = () => {
   return (
     <Card title={t('menu.skuList')}>
       <ButtonWrapper>
-        <Button type="primary" onClick={() => {}}>
+        <Button
+          type="primary"
+          onClick={() => navigate(Routes.PRODUCT_FORM.path)}
+        >
           {t('button.create')}
         </Button>
       </ButtonWrapper>
@@ -98,19 +105,25 @@ const ProductPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
+            title: `${t('title.cover')}`,
+            key: 'coverImg',
+            dataIndex: 'coverImg',
+            render: (text) => <Image width={50} src={text} />,
+          },
+          {
             title: `${t('title.productNumber')}`,
             key: 'skuCode',
             dataIndex: 'skuCode',
+            render: (text, record) => (
+              <Button onClick={() => handleEditAction(record.id)} type="link">
+                <Tooltip title={record.description}>{text}</Tooltip>
+              </Button>
+            ),
           },
           {
             title: `${t('title.productName')}`,
             key: 'skuName',
             dataIndex: 'skuName',
-          },
-          {
-            title: `${t('title.description')}`,
-            key: 'description',
-            dataIndex: 'description',
           },
           {
             title: `${t('title.price')}`,
@@ -127,6 +140,13 @@ const ProductPage = () => {
             title: `${t('title.label.hasInventory')}`,
             key: 'hasInventory',
             dataIndex: 'hasInventory',
+            render: (text) => {
+              return text ? (
+                <Tag color="blue">{t('title.yes')}</Tag>
+              ) : (
+                <Tag color="red">{t('title.no')}</Tag>
+              )
+            },
           },
           {
             title: `${t('title.operate')}`,

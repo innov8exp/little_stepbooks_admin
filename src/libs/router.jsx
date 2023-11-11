@@ -23,6 +23,7 @@ import Error from '@/pages/error'
 import Inventory from '@/pages/inventory'
 import Order from '@/pages/order'
 import Product from '@/pages/product'
+import ProductForm from '@/pages/product/form'
 import Profile from '@/pages/profile'
 import Promotion from '@/pages/promotion'
 import Recommend from '@/pages/recommend'
@@ -58,6 +59,7 @@ export const Routes = {
 
   CONSUMPTION_LIST: { path: '/consumption-list', element: <Consumption /> },
   PRODUCT_LIST: { path: '/product-list', element: <Product /> },
+  PRODUCT_FORM: { path: '/product-form', element: <ProductForm /> },
   PROMOTION_LIST: { path: '/promotion-list', element: <Promotion /> },
   RECOMMEND_LIST: { path: '/recommend-list', element: <Recommend /> },
   ADVERTISEMENT_LIST: {
@@ -158,6 +160,10 @@ export const Router = createBrowserRouter([
       {
         path: Routes.PRODUCT_LIST.path,
         element: Routes.PRODUCT_LIST.element,
+      },
+      {
+        path: Routes.PRODUCT_FORM.path,
+        element: Routes.PRODUCT_FORM.element,
       },
       {
         path: Routes.PROMOTION_LIST.path,

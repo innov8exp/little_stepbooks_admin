@@ -91,11 +91,11 @@ const AdminLayout = () => {
         '72',
         <BookOutlined />,
       ),
-      getItem(
-        <Link to={Routes.COURSE.path}>{t('menu.courseList')}</Link>,
-        '73',
-        <BookOutlined />,
-      ),
+      // getItem(
+      //   <Link to={Routes.COURSE.path}>{t('menu.courseList')}</Link>,
+      //   '73',
+      //   <BookOutlined />,
+      // ),
       getItem(
         <Link to={Routes.BOOK_SET_LIST.path}>{t('menu.bookSet')}</Link>,
         '74',

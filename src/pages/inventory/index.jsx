@@ -1,11 +1,6 @@
 import { Routes } from '@/libs/router'
+import { SearchOutlined, UndoOutlined } from '@ant-design/icons'
 import {
-  ExclamationCircleOutlined,
-  SearchOutlined,
-  UndoOutlined,
-} from '@ant-design/icons'
-import {
-  App,
   Button,
   Card,
   Col,
@@ -24,14 +19,14 @@ import {
   ContentContainer,
   QueryBtnWrapper,
   StyledRightCondition,
-} from '../../components/styled'
+} from '@/components/styled'
 // import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import InventoryForm from './form'
 
 const InventoryPage = () => {
   const { t } = useTranslation()
-  const { modal } = App.useApp()
   const [queryForm] = Form.useForm()
   // const history = useHistory();
   const [changeTimestamp, setChangeTimestamp] = useState()
@@ -40,6 +35,9 @@ const InventoryPage = () => {
   const [pageSize] = useState(10)
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [formVisible, setFormVisible] = useState(false)
+  const [selectedId, setSelectedId] = useState()
+
   const [queryCriteria, setQueryCriteria] = useState()
   const navigate = useNavigate()
 
@@ -50,6 +48,11 @@ const InventoryPage = () => {
     onChange: (current) => {
       setPageNumber(current)
     },
+  }
+
+  const handleEditAction = (id) => {
+    setSelectedId(id)
+    setFormVisible(true)
   }
 
   const fetchOrders = useCallback(() => {
@@ -78,34 +81,6 @@ const InventoryPage = () => {
       .finally(() => setLoading(false))
   }, [pageNumber, pageSize, queryCriteria?.skuCode, t])
 
-  const handleCloseAction = (id) => {
-    modal.confirm({
-      title: `${t('message.tips.delete')}`,
-      icon: <ExclamationCircleOutlined />,
-      okText: `${t('button.determine')}`,
-      okType: 'primary',
-      cancelText: `${t('button.cancel')}`,
-      onOk() {
-        axios
-          .delete(`/api/admin/v1/orders/${id}`)
-          .then((res) => {
-            if (res.status === HttpStatus.OK) {
-              const timestamp = new Date().getTime()
-              setChangeTimestamp(timestamp)
-              message.success(t('message.successInfo'))
-            }
-          })
-          .catch((err) => {
-            message.error(
-              `${t('message.error.failureReason')}${
-                err.response?.data?.message
-              }`,
-            )
-          })
-      },
-    })
-  }
-
   const handleQuery = () => {
     const timestamp = new Date().getTime()
     setChangeTimestamp(timestamp)
@@ -117,12 +92,8 @@ const InventoryPage = () => {
     queryForm.resetFields()
   }
 
-  const handleEditAction = (id) => {
-    navigate(`${Routes.ORDER_FORM.path}?id=${id}`)
-  }
-
   const handleViewAction = (id) => {
-    navigate(`${Routes.ORDER_VIEW.path}?id=${id}`)
+    navigate(`${Routes.PRODUCT_FORM.path}?id=${id}`)
   }
 
   useEffect(() => {
@@ -130,117 +101,117 @@ const InventoryPage = () => {
   }, [fetchOrders, pageNumber, changeTimestamp])
 
   return (
-    <Card title={t('menu.inventory')}>
-      <Form
-        labelCol={{ span: 10 }}
-        wrapperCol={{ span: 14 }}
-        form={queryForm}
-        initialValues={{ category: '', status: '' }}
-      >
-        <Row>
-          <Col span={6}>
-            <Form.Item label={t('title.label.skuCode')} name="skuCode">
-              <Input placeholder={t('message.placeholder.skuCode')} />
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item label={t('title.label.skuName')} name="skuName">
-              <Input placeholder={t('message.placeholder.skuName')} />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-      <Divider style={{ marginTop: 0, marginBottom: 10 }} dashed />
-      <ContentContainer>
-        <StyledRightCondition>
-          <QueryBtnWrapper>
-            <ConditionLeftItem>
-              <Button
-                icon={<UndoOutlined />}
-                type="default"
-                onClick={handleReset}
-              >
-                {t('button.reset')}
-              </Button>
-            </ConditionLeftItem>
-            <ConditionLeftItem>
-              <Button
-                icon={<SearchOutlined />}
-                type="primary"
-                onClick={handleQuery}
-              >
-                {t('button.search')}
-              </Button>
-            </ConditionLeftItem>
-          </QueryBtnWrapper>
-        </StyledRightCondition>
-        <Table
-          columns={[
-            {
-              title: '#',
-              key: 'number',
-              render: (text, record, index) =>
-                (pageNumber - 1) * pageSize + index + 1,
-            },
-            {
-              title: `${t('title.label.skuCode')}`,
-              key: 'skuCode',
-              dataIndex: 'skuCode',
-              width: 150,
-              render: (text, record) => (
-                <Button onClick={() => handleViewAction(record.id)} type="link">
-                  {text}
+    <>
+      <Card title={t('menu.inventory')}>
+        <Form
+          labelCol={{ span: 10 }}
+          wrapperCol={{ span: 14 }}
+          form={queryForm}
+          initialValues={{ category: '', status: '' }}
+        >
+          <Row>
+            <Col span={6}>
+              <Form.Item label={t('title.label.skuCode')} name="skuCode">
+                <Input placeholder={t('message.placeholder.skuCode')} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label={t('title.label.skuName')} name="skuName">
+                <Input placeholder={t('message.placeholder.skuName')} />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+        <Divider style={{ marginTop: 0, marginBottom: 10 }} dashed />
+        <ContentContainer>
+          <StyledRightCondition>
+            <QueryBtnWrapper>
+              <ConditionLeftItem>
+                <Button
+                  icon={<UndoOutlined />}
+                  type="default"
+                  onClick={handleReset}
+                >
+                  {t('button.reset')}
                 </Button>
-              ),
-            },
-            {
-              title: `${t('title.skuName')}`,
-              key: 'skuName',
-              dataIndex: 'skuName',
-            },
-            {
-              title: `${t('title.inventoryQuantity')}`,
-              key: 'inventoryQuantity',
-              dataIndex: 'inventoryQuantity',
-            },
-            {
-              title: `${t('title.createTime')}`,
-              key: 'createdAt',
-              dataIndex: 'createdAt',
-            },
-            {
-              title: `${t('title.operate')}`,
-              key: 'action',
-              render: (text, record) => {
-                return (
-                  <div>
-                    <Button
-                      type="link"
-                      onClick={() => handleEditAction(record.id)}
-                    >
-                      编辑
-                    </Button>
-
-                    <Divider type="vertical" />
-                    <Button
-                      type="link"
-                      danger
-                      onClick={() => handleCloseAction(record.id)}
-                    >
-                      {t('button.close')}
-                    </Button>
-                  </div>
-                )
+              </ConditionLeftItem>
+              <ConditionLeftItem>
+                <Button
+                  icon={<SearchOutlined />}
+                  type="primary"
+                  onClick={handleQuery}
+                >
+                  {t('button.search')}
+                </Button>
+              </ConditionLeftItem>
+            </QueryBtnWrapper>
+          </StyledRightCondition>
+          <Table
+            columns={[
+              {
+                title: '#',
+                key: 'number',
+                render: (text, record, index) =>
+                  (pageNumber - 1) * pageSize + index + 1,
               },
-            },
-          ]}
-          rowKey={(record) => record.id}
-          dataSource={inventoriesData}
-          loading={loading}
-          pagination={paginationProps}
-        />
-      </ContentContainer>
-    </Card>
+              {
+                title: `${t('title.label.skuCode')}`,
+                key: 'skuCode',
+                dataIndex: 'skuCode',
+                width: 150,
+                render: (text, record) => (
+                  <Button
+                    onClick={() => handleViewAction(record.id)}
+                    type="link"
+                  >
+                    {text}
+                  </Button>
+                ),
+              },
+              {
+                title: `${t('title.skuName')}`,
+                key: 'skuName',
+                dataIndex: 'skuName',
+              },
+              {
+                title: `${t('title.inventoryQuantity')}`,
+                key: 'inventoryQuantity',
+                dataIndex: 'inventoryQuantity',
+              },
+              {
+                title: `${t('title.operate')}`,
+                key: 'action',
+                render: (text, record) => {
+                  return (
+                    <div>
+                      <Button
+                        type="link"
+                        onClick={() => handleEditAction(record.id)}
+                      >
+                        {t('button.edit')}
+                      </Button>
+                    </div>
+                  )
+                },
+              },
+            ]}
+            rowKey={(record) => record.id}
+            dataSource={inventoriesData}
+            loading={loading}
+            pagination={paginationProps}
+          />
+        </ContentContainer>
+      </Card>
+      <InventoryForm
+        visible={formVisible}
+        onCancel={() => setFormVisible(false)}
+        onSave={() => {
+          setFormVisible(false)
+          setChangeTimestamp(Date.now())
+        }}
+        id={selectedId}
+      />
+    </>
   )
 }
 

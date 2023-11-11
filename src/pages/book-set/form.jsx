@@ -17,6 +17,8 @@ import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import _ from 'lodash'
+import DebounceSelect from '@/components/debounce-select'
 
 const { TextArea } = Input
 
@@ -33,6 +35,8 @@ const BookSetForm = () => {
   const [loading, setLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
+  const [initBookOptions, setInitBookOptions] = useState([])
+  const [bookIds, setBookIds] = useState([])
 
   const initData = useCallback(() => {
     if (!queryId) {
@@ -41,11 +45,15 @@ const BookSetForm = () => {
     setLoading(true)
     setIsDisplayForm(true)
 
+    fetchBook().then((res) => setInitBookOptions(res))
+
     axios
       .get(`/api/admin/v1/book-sets/${queryId}`)
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
+          setBookIds(resultData.bookIds)
+          console.log(bookIds)
           setInitFormData({
             ...resultData,
           })
@@ -58,7 +66,7 @@ const BookSetForm = () => {
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
-  }, [queryId, t])
+  }, [bookIds, queryId, t])
 
   const createData = (book) => {
     setSaveLoading(true)
@@ -104,6 +112,11 @@ const BookSetForm = () => {
     form
       .validateFields()
       .then((values) => {
+        const bookIds = []
+        _.forEach(values.bookNames, (item) => {
+          bookIds.push(item.value)
+        })
+        values = { ...values, bookIds }
         console.log('数字：', values)
         if (queryId) {
           updateData({
@@ -118,6 +131,31 @@ const BookSetForm = () => {
         }
       })
       .catch()
+  }
+
+  const fetchBook = async (value) => {
+    return new Promise((resolve, reject) => {
+      let url = `/api/admin/v1/books?bookName=${value}&currentPage=1&pageSize=10`
+      if (!value) {
+        url = `/api/admin/v1/books?currentPage=1&pageSize=10`
+      }
+      axios
+        .get(url)
+        .then((res) => {
+          if (res.status === HttpStatus.OK) {
+            const results = res.data
+            const books = results.records
+            const options = books.map((item) => ({
+              label: item.bookName,
+              value: item.id,
+            }))
+            resolve(options)
+          }
+        })
+        .catch((e) => {
+          reject(e)
+        })
+    })
   }
 
   useEffect(() => {
@@ -160,20 +198,30 @@ const BookSetForm = () => {
             >
               <Input placeholder={t('message.check.name')} maxLength={20} />
             </Form.Item>
-            <Form.Item
-              name="description"
-              label={t('title.describe')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.placeholder.describe')}`,
-                },
-              ]}
-            >
+            <Form.Item name="description" label={t('title.describe')}>
               <TextArea
                 rows={3}
                 style={{ resize: 'none' }}
                 placeholder={t('message.placeholder.describe')}
+              />
+            </Form.Item>
+            <Form.Item
+              name="bookNames"
+              label={t('title.book')}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.book')}`,
+                },
+              ]}
+            >
+              <DebounceSelect
+                showSearch
+                mode="multiple"
+                initOptions={initBookOptions}
+                fetchOptions={fetchBook}
+                value={bookIds}
+                placeholder={t('message.placeholder.enterBookSearch')}
               />
             </Form.Item>
             <div style={{ marginTop: 10 }} />

@@ -4,10 +4,15 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
-const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
+const DebounceSelect = ({
+  initOptions,
+  fetchOptions,
+  debounceTimeout = 800,
+  ...props
+}) => {
   const { t } = useTranslation()
   const [fetching, setFetching] = React.useState(false)
-  const [options, setOptions] = React.useState([])
+  const [options, setOptions] = React.useState(initOptions)
   const fetchRef = React.useRef(0)
 
   const debounceFetcher = React.useMemo(() => {
@@ -35,7 +40,7 @@ const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
     }
 
     return debounce(loadOptions, debounceTimeout)
-  }, [fetchOptions, debounceTimeout])
+  }, [debounceTimeout, fetchOptions, t])
 
   return (
     <Select
@@ -60,6 +65,7 @@ const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
 }
 
 DebounceSelect.propTypes = {
+  initOptions: PropTypes.array,
   fetchOptions: PropTypes.func,
   debounceTimeout: PropTypes.number,
 }
