@@ -22,6 +22,7 @@ import Dashboard from '@/pages/dashboard'
 import Error from '@/pages/error'
 import Inventory from '@/pages/inventory'
 import Order from '@/pages/order'
+import OrderForm from '@/pages/order/form'
 import Product from '@/pages/product'
 import ProductForm from '@/pages/product/form'
 import Profile from '@/pages/profile'
@@ -54,6 +55,7 @@ export const Routes = {
   CHAPTER_VIEW: { path: '/chapter-view', element: <ChapterView /> },
   COMMENT_LIST: { path: '/comment-list', element: <Comment /> },
   ORDER_LIST: { path: '/order-list', element: <Order /> },
+  ORDER_FORM: { path: '/order-form', element: <OrderForm /> },
 
   INVENTORY_LIST: { path: '/inventory-list', element: <Inventory /> },
 
@@ -144,6 +146,10 @@ export const Router = createBrowserRouter([
       {
         path: Routes.ORDER_LIST.path,
         element: Routes.ORDER_LIST.element,
+      },
+      {
+        path: Routes.ORDER_FORM.path,
+        element: Routes.ORDER_FORM.element,
       },
       {
         path: Routes.INVENTORY_LIST.path,

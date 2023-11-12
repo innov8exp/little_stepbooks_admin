@@ -36,7 +36,7 @@ const InventoryPage = () => {
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
-  const [selectedId, setSelectedId] = useState()
+  const [selectedRecord, setSelectedRecord] = useState()
 
   const [queryCriteria, setQueryCriteria] = useState()
   const navigate = useNavigate()
@@ -50,8 +50,8 @@ const InventoryPage = () => {
     },
   }
 
-  const handleEditAction = (id) => {
-    setSelectedId(id)
+  const handleEditAction = (record) => {
+    setSelectedRecord(record)
     setFormVisible(true)
   }
 
@@ -186,7 +186,7 @@ const InventoryPage = () => {
                     <div>
                       <Button
                         type="link"
-                        onClick={() => handleEditAction(record.id)}
+                        onClick={() => handleEditAction(record)}
                       >
                         {t('button.edit')}
                       </Button>
@@ -209,7 +209,7 @@ const InventoryPage = () => {
           setFormVisible(false)
           setChangeTimestamp(Date.now())
         }}
-        id={selectedId}
+        record={selectedRecord}
       />
     </>
   )

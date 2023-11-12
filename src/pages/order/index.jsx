@@ -1,17 +1,18 @@
 import { Routes } from '@/libs/router'
 import {
+  CopyOutlined,
   ExclamationCircleOutlined,
   SearchOutlined,
   UndoOutlined,
 } from '@ant-design/icons'
 import {
+  App,
   Button,
   Card,
   Col,
   Divider,
   Form,
   Input,
-  App,
   Row,
   Table,
   Tag,
@@ -29,6 +30,8 @@ import {
 // import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import ShipForm from './ship-form'
+import RefundApproveForm from './refund-approve-form'
 
 const OrderPage = () => {
   const { t } = useTranslation()
@@ -42,6 +45,11 @@ const OrderPage = () => {
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const [queryCriteria, setQueryCriteria] = useState()
+  const [formVisible, setFormVisible] = useState(false)
+  const [refundApproveFormVisible, setRefundApproveFormVisible] =
+    useState(false)
+  const [selectedId, setSelectedId] = useState()
+
   const navigate = useNavigate()
 
   const paginationProps = {
@@ -81,7 +89,7 @@ const OrderPage = () => {
 
   const handleCloseAction = (id) => {
     modal.confirm({
-      title: `${t('message.tips.delete')}`,
+      title: `${t('message.tips.close')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,
       okType: 'primary',
@@ -122,8 +130,51 @@ const OrderPage = () => {
     navigate(`${Routes.ORDER_FORM.path}?id=${id}`)
   }
 
+  const handleShipAction = (id) => {
+    setSelectedId(id)
+    setFormVisible(true)
+  }
+
+  const handleSignAction = (id) => {
+    modal.confirm({
+      title: `${t('message.tips.sign')}`,
+      icon: <ExclamationCircleOutlined />,
+      okText: `${t('button.determine')}`,
+      okType: 'primary',
+      cancelText: `${t('button.cancel')}`,
+      onOk() {
+        axios
+          .put(`/api/admin/v1/orders/${id}/sign`)
+          .then((res) => {
+            if (res.status === HttpStatus.OK) {
+              const timestamp = new Date().getTime()
+              setChangeTimestamp(timestamp)
+              message.success(t('message.successInfo'))
+            }
+          })
+          .catch((err) => {
+            message.error(
+              `${t('message.error.failureReason')}${
+                err.response?.data?.message
+              }`,
+            )
+          })
+      },
+    })
+  }
+
   const handleViewAction = (id) => {
-    navigate(`${Routes.ORDER_VIEW.path}?id=${id}`)
+    navigate(`${Routes.ORDER_FORM.path}?id=${id}`)
+  }
+
+  const handleCopyAction = (orderCode) => {
+    navigator.clipboard.writeText(orderCode)
+    message.success(t('message.copySuccess'))
+  }
+
+  const handleApproveRefundRequest = (id) => {
+    setRefundApproveFormVisible(true)
+    setSelectedId(id)
   }
 
   useEffect(() => {
@@ -131,142 +182,220 @@ const OrderPage = () => {
   }, [fetchOrders, pageNumber, changeTimestamp])
 
   return (
-    <Card title={t('title.label.orderManagement')}>
-      <Form
-        labelCol={{ span: 10 }}
-        wrapperCol={{ span: 14 }}
-        form={queryForm}
-        initialValues={{ category: '', status: '' }}
-      >
-        <Row>
-          <Col span={6}>
-            <Form.Item label={t('title.label.orderNumber')} name="orderNo">
-              <Input placeholder={t('message.placeholder.orderNumber')} />
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item label={t('title.label.userName')} name="username">
-              <Input placeholder={t('message.placeholder.enterUserName')} />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-      <Divider style={{ marginTop: 0, marginBottom: 10 }} dashed />
-      <ContentContainer>
-        <StyledRightCondition>
-          <QueryBtnWrapper>
-            <ConditionLeftItem>
-              <Button
-                icon={<UndoOutlined />}
-                type="default"
-                onClick={handleReset}
-              >
-                {t('button.reset')}
-              </Button>
-            </ConditionLeftItem>
-            <ConditionLeftItem>
-              <Button
-                icon={<SearchOutlined />}
-                type="primary"
-                onClick={handleQuery}
-              >
-                {t('button.search')}
-              </Button>
-            </ConditionLeftItem>
-          </QueryBtnWrapper>
-        </StyledRightCondition>
-        <Table
-          columns={[
-            {
-              title: '#',
-              key: 'number',
-              render: (text, record, index) =>
-                (pageNumber - 1) * pageSize + index + 1,
-            },
-            {
-              title: `${t('title.label.orderNumber')}`,
-              key: 'orderCode',
-              dataIndex: 'orderCode',
-              width: 150,
-              render: (text, record) => (
-                <Button onClick={() => handleViewAction(record.id)} type="link">
-                  {text}
+    <>
+      <Card title={t('title.label.orderManagement')}>
+        <Form
+          labelCol={{ span: 10 }}
+          wrapperCol={{ span: 14 }}
+          form={queryForm}
+          initialValues={{ category: '', status: '' }}
+        >
+          <Row>
+            <Col span={6}>
+              <Form.Item label={t('title.label.orderNumber')} name="orderNo">
+                <Input placeholder={t('message.placeholder.orderNumber')} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label={t('title.label.userName')} name="username">
+                <Input placeholder={t('message.placeholder.enterUserName')} />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+        <Divider style={{ marginTop: 0, marginBottom: 10 }} dashed />
+        <ContentContainer>
+          <StyledRightCondition>
+            <QueryBtnWrapper>
+              <ConditionLeftItem>
+                <Button
+                  icon={<UndoOutlined />}
+                  type="default"
+                  onClick={handleReset}
+                >
+                  {t('button.reset')}
                 </Button>
-              ),
-            },
-            {
-              title: `${t('title.label.userNickName')}`,
-              key: 'username',
-              dataIndex: 'username',
-            },
-            {
-              title: `${t('title.userNickname')}`,
-              key: 'nickname',
-              dataIndex: 'nickname',
-            },
-            {
-              title: `${t('title.transactionAmount')}`,
-              key: 'totalAmount',
-              dataIndex: 'totalAmount',
-              render: (text) =>
-                `¥ ${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
-            },
-            {
-              title: `${t('title.createTime')}`,
-              key: 'createdAt',
-              dataIndex: 'createdAt',
-            },
-            {
-              title: `${t('title.status')}`,
-              key: 'paymentStatus',
-              dataIndex: 'paymentStatus',
-              render: (text) => {
-                return text === 'PAID' ? (
-                  <Tag color="green">{t('title.paid')}</Tag>
-                ) : (
-                  <Tag color="red">{t('title.unpaid')}</Tag>
-                )
+              </ConditionLeftItem>
+              <ConditionLeftItem>
+                <Button
+                  icon={<SearchOutlined />}
+                  type="primary"
+                  onClick={handleQuery}
+                >
+                  {t('button.search')}
+                </Button>
+              </ConditionLeftItem>
+            </QueryBtnWrapper>
+          </StyledRightCondition>
+          <Table
+            columns={[
+              {
+                title: '#',
+                key: 'number',
+                render: (text, record, index) =>
+                  (pageNumber - 1) * pageSize + index + 1,
               },
-            },
-            {
-              title: `${t('title.status')}`,
-              key: 'state',
-              dataIndex: 'state',
-              render: (text) => <Tag color="blue">{text}</Tag>,
-            },
-            {
-              title: `${t('title.operate')}`,
-              key: 'action',
-              render: (text, record) => {
-                return (
-                  <div>
+              {
+                title: `${t('title.label.orderNumber')}`,
+                key: 'orderCode',
+                dataIndex: 'orderCode',
+                render: (text, record) => (
+                  <>
                     <Button
+                      style={{ paddingRight: 0 }}
                       type="link"
-                      onClick={() => handleEditAction(record.id)}
+                      onClick={() => handleCopyAction(text)}
                     >
-                      编辑
+                      <CopyOutlined />
                     </Button>
+                    <Button
+                      onClick={() => handleViewAction(record.id)}
+                      type="link"
+                    >
+                      {text}
+                    </Button>
+                  </>
+                ),
+              },
+              {
+                title: `${t('title.label.userNickName')}`,
+                key: 'username',
+                dataIndex: 'username',
+              },
+              {
+                title: `${t('title.userNickname')}`,
+                key: 'nickname',
+                dataIndex: 'nickname',
+              },
+              {
+                title: `${t('title.recipientPhone')}`,
+                key: 'recipientPhone',
+                dataIndex: 'recipientPhone',
+              },
+              {
+                title: `${t('title.transactionAmount')}`,
+                key: 'totalAmount',
+                dataIndex: 'totalAmount',
+                render: (text) =>
+                  `¥ ${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+              },
+              {
+                title: `${t('title.createTime')}`,
+                key: 'createdAt',
+                dataIndex: 'createdAt',
+              },
+              {
+                title: `${t('title.paymentStatus')}`,
+                key: 'paymentStatus',
+                dataIndex: 'paymentStatus',
+                render: (text) => {
+                  return text === 'PAID' ? (
+                    <Tag color="green">{t('title.paid')}</Tag>
+                  ) : (
+                    <Tag color="red">{t('title.unpaid')}</Tag>
+                  )
+                },
+              },
+              {
+                title: `${t('title.status')}`,
+                key: 'state',
+                dataIndex: 'state',
+                render: (text) => <Tag color="blue">{text}</Tag>,
+              },
+              {
+                title: `${t('title.operate')}`,
+                key: 'action',
+                render: (text, record) => {
+                  return (
+                    <div>
+                      <Button
+                        type="link"
+                        onClick={() => handleEditAction(record.id)}
+                      >
+                        {t('button.edit')}
+                      </Button>
+                      {record.state === 'PAID' && (
+                        <>
+                          <Divider type="vertical" />
+                          <Button
+                            type="link"
+                            onClick={() => handleShipAction(record.id)}
+                          >
+                            {t('button.ship')}
+                          </Button>
+                        </>
+                      )}
 
-                    <Divider type="vertical" />
-                    <Button
-                      type="link"
-                      danger
-                      onClick={() => handleCloseAction(record.id)}
-                    >
-                      {t('button.close')}
-                    </Button>
-                  </div>
-                )
+                      {record.state === 'SHIPPED' && (
+                        <>
+                          <Divider type="vertical" />
+                          <Button
+                            type="link"
+                            onClick={() => handleSignAction(record.id)}
+                          >
+                            {t('button.sign')}
+                          </Button>
+                        </>
+                      )}
+
+                      {record.refundRequestStatus === 'REFUND_REQUEST' && (
+                        <>
+                          <Divider type="vertical" />
+                          <Button
+                            type="link"
+                            onClick={() =>
+                              handleApproveRefundRequest(record.id)
+                            }
+                          >
+                            {t('button.refundApprove')}
+                          </Button>
+                        </>
+                      )}
+
+                      {record.state !== 'CLOSED' &&
+                        record.state !== 'FINISHED' && (
+                          <>
+                            <Divider type="vertical" />
+                            <Button
+                              type="link"
+                              danger
+                              onClick={() => handleCloseAction(record.id)}
+                            >
+                              {t('button.close')}
+                            </Button>
+                          </>
+                        )}
+                    </div>
+                  )
+                },
               },
-            },
-          ]}
-          rowKey={(record) => record.id}
-          dataSource={ordersData}
-          loading={loading}
-          pagination={paginationProps}
-        />
-      </ContentContainer>
-    </Card>
+            ]}
+            rowKey={(record) => record.id}
+            dataSource={ordersData}
+            loading={loading}
+            pagination={paginationProps}
+          />
+        </ContentContainer>
+      </Card>
+      <ShipForm
+        visible={formVisible}
+        onCancel={() => setFormVisible(false)}
+        onSave={() => {
+          setFormVisible(false)
+          setChangeTimestamp(Date.now())
+        }}
+        id={selectedId}
+      />
+      <RefundApproveForm
+        visible={refundApproveFormVisible}
+        onCancel={() => setRefundApproveFormVisible(false)}
+        onSave={() => {
+          setRefundApproveFormVisible(false)
+          setChangeTimestamp(Date.now())
+        }}
+        id={selectedId}
+      />
+    </>
   )
 }
 

@@ -51,10 +51,7 @@ const BookForm = () => {
   const queryId = query.get('id')
   const navigate = useNavigate()
   const [form] = Form.useForm()
-  const [initFormData, setInitFormData] = useState({
-    isSerialized: false,
-    hasEnding: true,
-  })
+  const [initFormData, setInitFormData] = useState({})
   const [loading, setLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
