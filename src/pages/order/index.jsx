@@ -314,17 +314,18 @@ const OrderPage = () => {
                       >
                         {t('button.edit')}
                       </Button>
-                      {record.state === 'PAID' && (
-                        <>
-                          <Divider type="vertical" />
-                          <Button
-                            type="link"
-                            onClick={() => handleShipAction(record.id)}
-                          >
-                            {t('button.ship')}
-                          </Button>
-                        </>
-                      )}
+                      {record.state === 'PAID' &&
+                        record.productNature === 'PHYSICAL' && (
+                          <>
+                            <Divider type="vertical" />
+                            <Button
+                              type="link"
+                              onClick={() => handleShipAction(record.id)}
+                            >
+                              {t('button.ship')}
+                            </Button>
+                          </>
+                        )}
 
                       {record.state === 'SHIPPED' && (
                         <>

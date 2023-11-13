@@ -34,6 +34,7 @@ const OrderForm = () => {
   const [saveLoading, setSaveLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
   const [productsData, setProductsData] = useState([])
+  const [productNature, setProductNature] = useState()
 
   const { fetchedData } = useFetch(
     `/api/admin/v1/orders/${queryId}/event-logs`,
@@ -56,6 +57,7 @@ const OrderForm = () => {
           setInitFormData({
             ...resultData,
           })
+          setProductNature(resultData?.productNature)
           const productId = resultData?.productId
           if (!productId) {
             setProductLoading(false)
@@ -273,26 +275,21 @@ const OrderForm = () => {
                           `¥ ${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
                       },
                       {
-                        title: `${t('title.label.platform')}`,
-                        key: 'platform',
-                        dataIndex: 'platform',
+                        title: `${t('title.label.productNature')}`,
+                        key: 'productNature',
+                        dataIndex: 'productNature',
+                        render: (text) => <Tag color="blue">{t(text)}</Tag>,
                       },
                       {
-                        title: `${t('title.label.hasInventory')}`,
-                        key: 'hasInventory',
-                        dataIndex: 'hasInventory',
-                        render: (text) => {
-                          return text ? (
-                            <Tag color="blue">{t('title.yes')}</Tag>
-                          ) : (
-                            <Tag color="red">{t('title.no')}</Tag>
-                          )
-                        },
+                        title: `${t('title.label.quantity')}`,
+                        key: 'quantity',
+                        dataIndex: 'quantity',
                       },
                     ]}
                     rowKey={(record) => record.id}
                     dataSource={productsData}
                     loading={productLoading}
+                    pagination={false}
                   />
                 </Card>
 
@@ -361,85 +358,86 @@ const OrderForm = () => {
                     rowKey={(record) => record.id}
                     dataSource={productsData}
                     loading={productLoading}
+                    pagination={false}
                   />
                 </Card>
+                {productNature === 'PHYSICAL' && (
+                  <Card
+                    style={{
+                      marginTop: 16,
+                    }}
+                    type="inner"
+                    title={t('title.deliveryInformation')}
+                  >
+                    <Row gutter={8}>
+                      <Col span={12}>
+                        <Form.Item
+                          name="deliveryMethod"
+                          label={t('title.deliveryMethod')}
+                        >
+                          <Input readOnly />
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item
+                          name="deliveryStatus"
+                          label={t('title.deliveryStatus')}
+                        >
+                          <Input readOnly />
+                        </Form.Item>
+                      </Col>
+                    </Row>
 
-                <Card
-                  style={{
-                    marginTop: 16,
-                  }}
-                  type="inner"
-                  title={t('title.deliveryInformation')}
-                >
-                  <Row gutter={8}>
-                    <Col span={12}>
-                      <Form.Item
-                        name="deliveryMethod"
-                        label={t('title.deliveryMethod')}
-                      >
-                        <Input readOnly />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        name="deliveryStatus"
-                        label={t('title.deliveryStatus')}
-                      >
-                        <Input readOnly />
-                      </Form.Item>
-                    </Col>
-                  </Row>
+                    <Row gutter={8}>
+                      <Col span={12}>
+                        <Form.Item
+                          name="deliveryCompany"
+                          label={t('title.deliveryCompany')}
+                        >
+                          <Input readOnly />
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item
+                          name="deliveryCode"
+                          label={t('title.deliveryCode')}
+                        >
+                          <Input readOnly />
+                        </Form.Item>
+                      </Col>
+                    </Row>
 
-                  <Row gutter={8}>
-                    <Col span={12}>
-                      <Form.Item
-                        name="deliveryCompany"
-                        label={t('title.deliveryCompany')}
-                      >
-                        <Input readOnly />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      {' '}
-                      <Form.Item
-                        name="deliveryCode"
-                        label={t('title.deliveryCode')}
-                      >
-                        <Input readOnly />
-                      </Form.Item>
-                    </Col>
-                  </Row>
+                    <Row gutter={8}>
+                      <Col span={12}>
+                        <Form.Item
+                          name="recipientName"
+                          label={t('title.recipientName')}
+                        >
+                          <Input readOnly />
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item
+                          name="recipientPhone"
+                          label={t('title.recipientPhone')}
+                        >
+                          <Input readOnly />
+                        </Form.Item>
+                      </Col>
+                    </Row>
 
-                  <Row gutter={8}>
-                    <Col span={12}>
-                      <Form.Item
-                        name="recipientName"
-                        label={t('title.recipientName')}
-                      >
-                        <Input readOnly />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        name="recipientPhone"
-                        label={t('title.recipientPhone')}
-                      >
-                        <Input readOnly />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-
-                  <Row gutter={8}>
-                    <Col span={12}>
-                      <Form.Item
-                        name="recipientAddress"
-                        label={t('title.recipientAddress')}
-                      >
-                        <Input readOnly />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Card>
+                    <Row gutter={8}>
+                      <Col span={12}>
+                        <Form.Item
+                          name="recipientAddress"
+                          label={t('title.recipientAddress')}
+                        >
+                          <Input readOnly />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Card>
+                )}
               </Col>
               <Col span={8}>
                 <Card type="inner" title={t('title.eventLogInformation')}>
