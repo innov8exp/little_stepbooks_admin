@@ -2,7 +2,7 @@ import { Breadcrumb, Layout, Menu } from 'antd'
 
 import {
   BookOutlined,
-  CommentOutlined,
+  // CommentOutlined,
   DashboardOutlined,
   FundProjectionScreenOutlined,
   MailOutlined,
@@ -119,6 +119,14 @@ const AdminLayout = () => {
         '91',
         <ShoppingOutlined />,
       ),
+
+      getItem(
+        <Link to={Routes.ORDER_INVENTORY_LOG_LIST.path}>
+          {t('menu.orderInventoryLogList')}
+        </Link>,
+        '92',
+        <ShoppingOutlined />,
+      ),
     ]),
 
     // 订单中心
@@ -128,20 +136,20 @@ const AdminLayout = () => {
         '41',
         <ShoppingOutlined />,
       ),
-      getItem(
-        <Link to={Routes.COMMENT_LIST.path}>{t('menu.comment')}</Link>,
-        '43',
-        <CommentOutlined />,
-      ),
+      // getItem(
+      //   <Link to={Routes.COMMENT_LIST.path}>{t('menu.comment')}</Link>,
+      //   '43',
+      //   <CommentOutlined />,
+      // ),
     ]),
 
     // 运营管理
     getItem(t('menu.operation'), '6', <FundProjectionScreenOutlined />, [
-      getItem(
-        <Link to={Routes.PROMOTION_LIST.path}>{t('menu.promotionList')}</Link>,
-        '52',
-        <FundProjectionScreenOutlined />,
-      ),
+      // getItem(
+      //   <Link to={Routes.PROMOTION_LIST.path}>{t('menu.promotionList')}</Link>,
+      //   '52',
+      //   <FundProjectionScreenOutlined />,
+      // ),
       getItem(
         <Link to={Routes.RECOMMEND_LIST.path}>{t('menu.recommend')}</Link>,
         '53',

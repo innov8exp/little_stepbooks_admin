@@ -137,14 +137,14 @@ const ProductPage = () => {
             dataIndex: 'platform',
           },
           {
-            title: `${t('title.label.hasInventory')}`,
-            key: 'hasInventory',
-            dataIndex: 'hasInventory',
+            title: `${t('title.label.productNature')}`,
+            key: 'productNature',
+            dataIndex: 'productNature',
             render: (text) => {
-              return text ? (
-                <Tag color="blue">{t('title.yes')}</Tag>
+              return text === 'PHYSICAL' ? (
+                <Tag color="blue">{t(text)}</Tag>
               ) : (
-                <Tag color="red">{t('title.no')}</Tag>
+                <Tag color="magenta">{t(text)}</Tag>
               )
             },
           },

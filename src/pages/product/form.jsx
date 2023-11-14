@@ -15,7 +15,7 @@ import {
   Form,
   Input,
   InputNumber,
-  Radio,
+  Select,
   Row,
   Skeleton,
   Upload,
@@ -368,19 +368,29 @@ const ProductForm = () => {
                 </Checkbox.Group>
               </Form.Item>
               <Form.Item
-                name="hasInventory"
-                label={t('title.hasInventory')}
+                name="productNature"
+                label={t('title.productNature')}
                 rules={[
                   {
                     required: true,
-                    message: `${t('message.check.hasInventory')}`,
+                    message: `${t('message.check.productNature')}`,
                   },
                 ]}
               >
-                <Radio.Group>
-                  <Radio value={true}>{t('title.yes')}</Radio>
-                  <Radio value={false}>{t('title.no')}</Radio>
-                </Radio.Group>
+                {' '}
+                <Select
+                  defaultValue="PHYSICAL"
+                  options={[
+                    {
+                      value: 'PHYSICAL',
+                      label: t('PHYSICAL'),
+                    },
+                    {
+                      value: 'VIRTUAL',
+                      label: t('VIRTUAL'),
+                    },
+                  ]}
+                />
               </Form.Item>
               <Form.Item name="bookSet" label={t('title.bookSet')}>
                 <DebounceSelect

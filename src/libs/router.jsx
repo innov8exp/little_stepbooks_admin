@@ -6,9 +6,9 @@ import Book from '@/pages/book'
 import BookSet from '@/pages/book-set'
 import BookSetForm from '@/pages/book-set/form'
 import BookSetView from '@/pages/book-set/view'
-import Chapter from '@/pages/book/chapter'
-import ChapterForm from '@/pages/book/chapter/form'
-import ChapterView from '@/pages/book/chapter/view'
+import Chapter from '@/pages/chapter'
+import ChapterForm from '@/pages/chapter/form'
+import ChapterView from '@/pages/chapter/view'
 import BookForm from '@/pages/book/form'
 import BookView from '@/pages/book/view'
 import Classification from '@/pages/classification'
@@ -22,6 +22,7 @@ import Dashboard from '@/pages/dashboard'
 import Error from '@/pages/error'
 import Inventory from '@/pages/inventory'
 import Order from '@/pages/order'
+import OrderInventoryLog from '@/pages/order-inventory-log'
 import OrderForm from '@/pages/order/form'
 import Product from '@/pages/product'
 import ProductForm from '@/pages/product/form'
@@ -58,6 +59,10 @@ export const Routes = {
   ORDER_FORM: { path: '/order-form', element: <OrderForm /> },
 
   INVENTORY_LIST: { path: '/inventory-list', element: <Inventory /> },
+  ORDER_INVENTORY_LOG_LIST: {
+    path: '/order-inventory-log-list',
+    element: <OrderInventoryLog />,
+  },
 
   CONSUMPTION_LIST: { path: '/consumption-list', element: <Consumption /> },
   PRODUCT_LIST: { path: '/product-list', element: <Product /> },
@@ -154,6 +159,10 @@ export const Router = createBrowserRouter([
       {
         path: Routes.INVENTORY_LIST.path,
         element: Routes.INVENTORY_LIST.element,
+      },
+      {
+        path: Routes.ORDER_INVENTORY_LOG_LIST.path,
+        element: Routes.ORDER_INVENTORY_LOG_LIST.element,
       },
       {
         path: Routes.CONSUMPTION_LIST.path,
