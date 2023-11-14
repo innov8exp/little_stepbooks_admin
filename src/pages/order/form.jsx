@@ -1,7 +1,9 @@
+import ViewItem from '@/components/view-item'
 import useFetch from '@/hooks/useFetch'
 import useQuery from '@/hooks/useQuery'
 import { Routes } from '@/libs/router'
 import { LeftCircleOutlined } from '@ant-design/icons'
+import { formatMoney } from '@/libs/util'
 import {
   Button,
   Card,
@@ -35,6 +37,7 @@ const OrderForm = () => {
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
   const [productsData, setProductsData] = useState([])
   const [productNature, setProductNature] = useState()
+  const [orderData, setOrderData] = useState()
 
   const { fetchedData } = useFetch(
     `/api/admin/v1/orders/${queryId}/event-logs`,
@@ -57,6 +60,7 @@ const OrderForm = () => {
           setInitFormData({
             ...resultData,
           })
+          setOrderData(resultData)
           setProductNature(resultData?.productNature)
           const productId = resultData?.productId
           if (!productId) {
@@ -182,50 +186,44 @@ const OrderForm = () => {
                 <Card type="inner" title={t('title.basicInformation')}>
                   <Row gutter={8}>
                     <Col span={12}>
-                      <Form.Item name="orderCode" label={t('title.orderCode')}>
-                        <Input readOnly />
-                      </Form.Item>
+                      <ViewItem
+                        label={t('title.orderCode')}
+                        value={orderData?.orderCode}
+                      />
                     </Col>
                     <Col span={12}>
-                      <Form.Item
-                        name="createdAt"
+                      <ViewItem
                         label={t('title.orderDateTime')}
-                      >
-                        <Input readOnly />
-                      </Form.Item>
+                        value={orderData?.createdAt}
+                      />
                     </Col>
                   </Row>
                   <Row gutter={8}>
                     <Col span={12}>
-                      <Form.Item
-                        name="recipientPhone"
+                      <ViewItem
                         label={t('title.recipientPhone')}
-                      >
-                        <Input readOnly />
-                      </Form.Item>
+                        value={orderData?.recipientPhone}
+                      />
                     </Col>
                     <Col span={12}>
-                      <Form.Item
-                        name="totalAmount"
+                      <ViewItem
                         label={t('title.totalAmount')}
-                      >
-                        <Input readOnly />
-                      </Form.Item>
+                        value={formatMoney(orderData?.totalAmount)}
+                      />
                     </Col>
                   </Row>
                   <Row gutter={8}>
                     <Col span={12}>
-                      <Form.Item
-                        name="paymentStatus"
+                      <ViewItem
                         label={t('title.paymentStatus')}
-                      >
-                        <Input readOnly />
-                      </Form.Item>
+                        value={t(orderData?.paymentStatus)}
+                      />
                     </Col>
                     <Col span={12}>
-                      <Form.Item name="state" label={t('title.state')}>
-                        <Input readOnly />
-                      </Form.Item>
+                      <ViewItem
+                        label={t('title.state')}
+                        value={t(orderData?.state)}
+                      />
                     </Col>
                   </Row>
                 </Card>
@@ -271,8 +269,7 @@ const OrderForm = () => {
                         title: `${t('title.price')}`,
                         key: 'price',
                         dataIndex: 'price',
-                        render: (text) =>
-                          `¥ ${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+                        render: (text) => formatMoney(text),
                       },
                       {
                         title: `${t('title.label.productNature')}`,

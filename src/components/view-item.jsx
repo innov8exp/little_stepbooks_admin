@@ -1,20 +1,20 @@
-import { Col, Row } from 'antd'
+import { Col, Row, Typography } from 'antd'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
   margin-bottom: 24px;
 `
-const ViewItem = ({ label, value }) => {
+const { Text } = Typography
+
+const ViewItem = ({ label, value, labelSpan, valueSpan }) => {
   return (
     <Wrapper>
-      <Row>
-        <Col span={4} style={{ textAlign: 'right' }}>
-          <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>
-            {label}:&nbsp;&nbsp;
-          </span>
+      <Row key={label}>
+        <Col span={labelSpan ? labelSpan : 8} style={{ textAlign: 'right' }}>
+          <Text type="secondary">{label}</Text>:&nbsp;&nbsp;
         </Col>
-        <Col span={8}>{value}</Col>
+        <Col span={valueSpan ? valueSpan : 16}>{value}</Col>
       </Row>
     </Wrapper>
   )
@@ -23,6 +23,8 @@ const ViewItem = ({ label, value }) => {
 ViewItem.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.any,
+  labelSpan: PropTypes.number,
+  valueSpan: PropTypes.number,
 }
 
 export default ViewItem

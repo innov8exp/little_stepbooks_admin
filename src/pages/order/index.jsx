@@ -28,10 +28,11 @@ import {
   StyledRightCondition,
 } from '../../components/styled'
 // import { useHistory } from 'react-router-dom';
+import { formatMoney } from '@/libs/util'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import ShipForm from './ship-form'
 import RefundApproveForm from './refund-approve-form'
+import ShipForm from './ship-form'
 
 const OrderPage = () => {
   const { t } = useTranslation()
@@ -276,8 +277,7 @@ const OrderPage = () => {
                 title: `${t('title.transactionAmount')}`,
                 key: 'totalAmount',
                 dataIndex: 'totalAmount',
-                render: (text) =>
-                  `¥ ${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+                render: (text) => formatMoney(text),
               },
               {
                 title: `${t('title.createTime')}`,
@@ -300,7 +300,7 @@ const OrderPage = () => {
                 title: `${t('title.status')}`,
                 key: 'state',
                 dataIndex: 'state',
-                render: (text) => <Tag color="blue">{text}</Tag>,
+                render: (text) => <Tag color="blue">{t(text)}</Tag>,
               },
               {
                 title: `${t('title.operate')}`,
@@ -308,12 +308,6 @@ const OrderPage = () => {
                 render: (text, record) => {
                   return (
                     <div>
-                      <Button
-                        type="link"
-                        onClick={() => handleEditAction(record.id)}
-                      >
-                        {t('button.edit')}
-                      </Button>
                       {record.state === 'PAID' &&
                         record.productNature === 'PHYSICAL' && (
                           <>
