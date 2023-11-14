@@ -15,12 +15,12 @@ import {
   Form,
   Input,
   InputNumber,
-  Select,
+  Modal,
   Row,
+  Select,
   Skeleton,
   Upload,
   message,
-  Modal,
 } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
@@ -63,7 +63,7 @@ const ProductForm = () => {
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
   const [uploading, setUploading] = useState(false)
   const [imageUrl, setImageUrl] = useState()
-  const [initBookOptions, setInitBookOptions] = useState([])
+  const [initBookSetOptions, setInitBookSetOptions] = useState([])
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
   const [previewTitle, setPreviewTitle] = useState('')
@@ -107,13 +107,12 @@ const ProductForm = () => {
   ])
 
   const initData = useCallback(() => {
+    fetchBookSet().then((res) => setInitBookSetOptions(res))
     if (!queryId) {
       return
     }
     setLoading(true)
     setIsDisplayForm(true)
-
-    fetchBookSet().then((res) => setInitBookOptions(res))
 
     axios
       .get(`/api/admin/v1/products/${queryId}`)
@@ -135,16 +134,18 @@ const ProductForm = () => {
       .finally(() => setLoading(false))
   }, [queryId, t])
 
-  const createData = (book) => {
+  const createData = (createdData) => {
     setSaveLoading(true)
     axios
       .post('/api/admin/v1/products', {
-        ...book,
+        ...createdData,
+        salesPlatform: createdData?.salesPlatform?.join(','),
+        resources: createdData?.resources?.join(','),
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(`${t('message.successfullySaved')}`)
-          navigate(Routes.BOOK_LIST.path)
+          navigate(Routes.PRODUCT_LIST.path)
         }
       })
       .catch((err) => {
@@ -155,16 +156,18 @@ const ProductForm = () => {
       .finally(() => setSaveLoading(false))
   }
 
-  const updateData = (book) => {
+  const updateData = (updateData) => {
     setSaveLoading(true)
     axios
       .put(`/api/admin/v1/products/${queryId}`, {
-        ...book,
+        ...updateData,
+        salesPlatform: updateData?.salesPlatform?.join(','),
+        resources: updateData?.resources?.join(','),
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(`${t('message.successfullySaved')}`)
-          navigate(Routes.BOOK_LIST.path)
+          navigate(Routes.PRODUCT_LIST.path)
         }
       })
       .catch((err) => {
@@ -183,12 +186,10 @@ const ProductForm = () => {
         if (queryId) {
           updateData({
             ...values,
-            salesPlatform: Array.from(new Set(values.classifications)),
           })
         } else {
           createData({
             ...values,
-            salesPlatform: Array.from(new Set(values.classifications)),
           })
         }
       })
@@ -257,9 +258,9 @@ const ProductForm = () => {
         .then((res) => {
           if (res.status === HttpStatus.OK) {
             const results = res.data
-            const books = results.records
-            const options = books.map((item) => ({
-              label: item.bookName,
+            const bookSets = results.records
+            const options = bookSets.map((item) => ({
+              label: item.name,
               value: item.id,
             }))
             resolve(options)
@@ -324,10 +325,15 @@ const ProductForm = () => {
               form={form}
               initialValues={{
                 ...initFormData,
+                salesPlatform: initFormData?.salesPlatform?.split(','),
+                resources: initFormData?.resources?.split(','),
               }}
             >
+              <Form.Item name="skuCode" label={t('title.skuCode')}>
+                <Input readOnly />
+              </Form.Item>
               <Form.Item
-                name="name"
+                name="skuName"
                 label={t('title.name')}
                 rules={[
                   {
@@ -392,12 +398,12 @@ const ProductForm = () => {
                   ]}
                 />
               </Form.Item>
-              <Form.Item name="bookSet" label={t('title.bookSet')}>
+              <Form.Item name="bookSetId" label={t('title.bookSet')}>
                 <DebounceSelect
                   showSearch
-                  initOptions={initBookOptions}
+                  initOptions={initBookSetOptions}
                   fetchOptions={fetchBookSet}
-                  placeholder={t('message.placeholder.enterBookSearch')}
+                  placeholder={t('message.placeholder.enterBookSetSearch')}
                 />
               </Form.Item>
               <Form.Item name="resources" label={t('title.resources')}>
@@ -423,7 +429,15 @@ const ProductForm = () => {
                   },
                 ]}
               >
-                <InputNumber placeholder={t('message.check.price')} />
+                <InputNumber
+                  style={{ width: 200 }}
+                  placeholder={t('message.check.price')}
+                  prefix="￥"
+                  formatter={(value) =>
+                    value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                  }
+                  precision={2}
+                />
               </Form.Item>
               <Form.Item
                 name="coverImg"

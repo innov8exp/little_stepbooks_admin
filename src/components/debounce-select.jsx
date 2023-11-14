@@ -1,7 +1,7 @@
 import { Empty, message, Select, Space, Spin } from 'antd'
 import debounce from 'lodash/debounce'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const DebounceSelect = ({
@@ -42,9 +42,12 @@ const DebounceSelect = ({
     return debounce(loadOptions, debounceTimeout)
   }, [debounceTimeout, fetchOptions, t])
 
+  useEffect(() => {
+    setOptions(initOptions)
+  }, [initOptions])
+
   return (
     <Select
-      labelInValue
       filterOption={false}
       onSearch={debounceFetcher}
       notFoundContent={

@@ -1,3 +1,4 @@
+import DebounceSelect from '@/components/debounce-select'
 import useQuery from '@/hooks/useQuery'
 import { Routes } from '@/libs/router'
 import { LeftCircleOutlined } from '@ant-design/icons'
@@ -14,11 +15,10 @@ import {
 } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
+import _ from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import _ from 'lodash'
-import DebounceSelect from '@/components/debounce-select'
 
 const { TextArea } = Input
 
@@ -39,13 +39,14 @@ const BookSetForm = () => {
   const [bookIds, setBookIds] = useState([])
 
   const initData = useCallback(() => {
+    fetchBook().then((res) => {
+      setInitBookOptions(res)
+    })
     if (!queryId) {
       return
     }
     setLoading(true)
     setIsDisplayForm(true)
-
-    fetchBook().then((res) => setInitBookOptions(res))
 
     axios
       .get(`/api/admin/v1/book-sets/${queryId}`)
@@ -53,7 +54,7 @@ const BookSetForm = () => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
           setBookIds(resultData.bookIds)
-          console.log(bookIds)
+          console.log(resultData.bookIds)
           setInitFormData({
             ...resultData,
           })
@@ -66,7 +67,7 @@ const BookSetForm = () => {
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
-  }, [bookIds, queryId, t])
+  }, [queryId, t])
 
   const createData = (book) => {
     setSaveLoading(true)
@@ -88,11 +89,11 @@ const BookSetForm = () => {
       .finally(() => setSaveLoading(false))
   }
 
-  const updateData = (book) => {
+  const updateData = (updateData) => {
     setSaveLoading(true)
     axios
       .put(`/api/admin/v1/book-sets/${queryId}`, {
-        ...book,
+        ...updateData,
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
@@ -112,21 +113,17 @@ const BookSetForm = () => {
     form
       .validateFields()
       .then((values) => {
-        const bookIds = []
         _.forEach(values.bookNames, (item) => {
           bookIds.push(item.value)
         })
-        values = { ...values, bookIds }
         console.log('数字：', values)
         if (queryId) {
           updateData({
             ...values,
-            classifications: Array.from(new Set(values.classifications)),
           })
         } else {
           createData({
             ...values,
-            classifications: Array.from(new Set(values.classifications)),
           })
         }
       })
@@ -146,8 +143,8 @@ const BookSetForm = () => {
             const results = res.data
             const books = results.records
             const options = books.map((item) => ({
-              label: item.bookName,
               value: item.id,
+              label: item.bookName,
             }))
             resolve(options)
           }
@@ -186,6 +183,9 @@ const BookSetForm = () => {
               ...initFormData,
             }}
           >
+            <Form.Item name="code" label={t('title.code')}>
+              <Input disabled />
+            </Form.Item>
             <Form.Item
               name="name"
               label={t('title.name')}
@@ -206,7 +206,7 @@ const BookSetForm = () => {
               />
             </Form.Item>
             <Form.Item
-              name="bookNames"
+              name="bookIds"
               label={t('title.book')}
               rules={[
                 {
@@ -220,7 +220,6 @@ const BookSetForm = () => {
                 mode="multiple"
                 initOptions={initBookOptions}
                 fetchOptions={fetchBook}
-                value={bookIds}
                 placeholder={t('message.placeholder.enterBookSearch')}
               />
             </Form.Item>

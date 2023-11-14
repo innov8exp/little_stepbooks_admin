@@ -6,15 +6,14 @@ import Book from '@/pages/book'
 import BookSet from '@/pages/book-set'
 import BookSetForm from '@/pages/book-set/form'
 import BookSetView from '@/pages/book-set/view'
+import BookForm from '@/pages/book/form'
+import BookView from '@/pages/book/view'
 import Chapter from '@/pages/chapter'
 import ChapterForm from '@/pages/chapter/form'
 import ChapterView from '@/pages/chapter/view'
-import BookForm from '@/pages/book/form'
-import BookView from '@/pages/book/view'
 import Classification from '@/pages/classification'
 import ComingSoon from '@/pages/coming-soon'
 import Comment from '@/pages/comment'
-import Consumption from '@/pages/consumption'
 import Course from '@/pages/course'
 import CourseForm from '@/pages/course/form'
 import CourseView from '@/pages/course/view'
@@ -26,6 +25,7 @@ import OrderInventoryLog from '@/pages/order-inventory-log'
 import OrderForm from '@/pages/order/form'
 import Product from '@/pages/product'
 import ProductForm from '@/pages/product/form'
+import ProductView from '@/pages/product/view'
 import Profile from '@/pages/profile'
 import Promotion from '@/pages/promotion'
 import Recommend from '@/pages/recommend'
@@ -64,9 +64,10 @@ export const Routes = {
     element: <OrderInventoryLog />,
   },
 
-  CONSUMPTION_LIST: { path: '/consumption-list', element: <Consumption /> },
   PRODUCT_LIST: { path: '/product-list', element: <Product /> },
   PRODUCT_FORM: { path: '/product-form', element: <ProductForm /> },
+  PRODUCT_VIEW: { path: '/product-view', element: <ProductView /> },
+
   PROMOTION_LIST: { path: '/promotion-list', element: <Promotion /> },
   RECOMMEND_LIST: { path: '/recommend-list', element: <Recommend /> },
   ADVERTISEMENT_LIST: {
@@ -165,10 +166,6 @@ export const Router = createBrowserRouter([
         element: Routes.ORDER_INVENTORY_LOG_LIST.element,
       },
       {
-        path: Routes.CONSUMPTION_LIST.path,
-        element: Routes.CONSUMPTION_LIST.element,
-      },
-      {
         path: Routes.COMING_SOON.path,
         element: Routes.COMING_SOON.element,
       },
@@ -179,6 +176,10 @@ export const Router = createBrowserRouter([
       {
         path: Routes.PRODUCT_FORM.path,
         element: Routes.PRODUCT_FORM.element,
+      },
+      {
+        path: Routes.PRODUCT_VIEW.path,
+        element: Routes.PRODUCT_VIEW.element,
       },
       {
         path: Routes.PROMOTION_LIST.path,
