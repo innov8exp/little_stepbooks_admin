@@ -226,8 +226,8 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
           ]}
         >
           <Select placeholder={t('message.check.selectAdvertisingType')}>
-            <Option value="RECOMMEND">{t('radio.label.RECOMMEND')}</Option>
             <Option value="CAROUSEL">{t('radio.label.CAROUSEL')}</Option>
+            <Option value="RECOMMEND">{t('radio.label.RECOMMEND')}</Option>
           </Select>
         </Form.Item>
         <Form.Item name="adsImg" label={t('title.cover')}>
