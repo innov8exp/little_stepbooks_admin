@@ -1,48 +1,107 @@
-import { useEffect, useState } from 'react'
+import ViewItem from '@/components/view-item'
+import useFetch from '@/hooks/useFetch'
+import { LeftCircleOutlined } from '@ant-design/icons'
+import { Button, Card, Col, Empty, Image, Row, Skeleton, message } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
-import { Modal, Spin } from 'antd'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate, useParams } from 'react-router-dom'
 
-const ChapterViewPage = (id, visible, onClose) => {
+const ChapterView = () => {
   const { t } = useTranslation()
-  const [content, setContent] = useState()
+  const params = useParams()
+  const queryId = params?.id
+  const bookId = params?.bookId
+  const navigate = useNavigate()
+  const [initFormData, setInitFormData] = useState({})
   const [loading, setLoading] = useState(false)
-  useEffect(() => {
-    if (!id) {
+  const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
+
+  const { fetchedData } = useFetch(`/api/admin/v1/books/${bookId}`, [])
+
+  const initData = useCallback(() => {
+    if (!queryId) {
       return
     }
     setLoading(true)
+    setIsDisplayForm(true)
+
     axios
-      .get(`/api/admin/v1/chapters/${id}/content`)
+      .get(`/api/admin/v1/chapters/${queryId}`)
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          setContent(res.data)
+          const resultData = res.data
+          setInitFormData({
+            ...resultData,
+          })
         }
       })
+      .catch((err) => {
+        message.error(
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
+        )
+        setIsDisplayForm(false)
+      })
       .finally(() => setLoading(false))
-  }, [id, visible])
+  }, [queryId, t])
+
+  useEffect(() => {
+    initData()
+  }, [initData])
 
   return (
-    <Modal
-      open={visible}
-      title={t('title.preview')}
-      onCancel={() => {
-        setContent('')
-        onClose()
-      }}
-      footer={false}
-      width={800}
-      mask
-      style={{ position: 'relative' }}
+    <Card
+      title={
+        <>
+          <Button
+            type="link"
+            size="large"
+            icon={<LeftCircleOutlined />}
+            onClick={() => navigate(-1)}
+          />
+          《{fetchedData?.bookName}》- {t('title.content.view')}
+        </>
+      }
     >
-      <Spin spinning={loading}>
-        <div style={{ whiteSpace: 'pre-line', overflowY: 'auto' }}>
-          {content}
-        </div>
-      </Spin>
-    </Modal>
+      {isDisplayForm ? (
+        <Skeleton loading={loading} active>
+          <Row>
+            <Col span={12}>
+              <ViewItem
+                label={t('title.chapterNo')}
+                value={initFormData?.chapterNo}
+              />
+              <ViewItem
+                label={t('title.chapterName')}
+                value={initFormData?.chapterName}
+              />
+              <ViewItem
+                label={t('title.description')}
+                value={initFormData?.description}
+              />
+              <ViewItem
+                label={t('title.audio')}
+                value={initFormData?.audioId}
+              />
+              <ViewItem
+                label={t('title.image')}
+                value={
+                  <Image
+                    src={initFormData?.coverImgUrl}
+                    alt="coverImg"
+                    style={{ height: 200 }}
+                  />
+                }
+              />
+            </Col>
+          </Row>
+        </Skeleton>
+      ) : (
+        <Empty description={<span>{t('message.error.failure')}</span>} />
+      )}
+    </Card>
   )
 }
 
-export default ChapterViewPage
+export default ChapterView

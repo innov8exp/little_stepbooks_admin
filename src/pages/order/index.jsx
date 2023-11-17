@@ -127,9 +127,9 @@ const OrderPage = () => {
     queryForm.resetFields()
   }
 
-  const handleEditAction = (id) => {
-    navigate(`${Routes.ORDER_FORM.path}?id=${id}`)
-  }
+  // const handleEditAction = (id) => {
+  //   navigate(`${Routes.ORDER_FORM.path}?id=${id}`)
+  // }
 
   const handleShipAction = (id) => {
     setSelectedId(id)

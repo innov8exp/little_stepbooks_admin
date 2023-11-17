@@ -69,9 +69,9 @@ const AdvertisementPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: `${t('title.label.books')}`,
-            key: 'bookName',
-            dataIndex: 'bookName',
+            title: `${t('title.label.skuName')}`,
+            key: 'skuName',
+            dataIndex: 'skuName',
           },
           {
             title: `${t('title.promotionalImages')}`,

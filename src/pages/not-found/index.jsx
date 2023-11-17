@@ -2,7 +2,7 @@ import { Button, Result } from 'antd'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
-const ComingSoonPage = () => {
+const NotFoundPage = () => {
   const { t } = useTranslation()
   return (
     <Result
@@ -17,4 +17,4 @@ const ComingSoonPage = () => {
     />
   )
 }
-export default ComingSoonPage
+export default NotFoundPage

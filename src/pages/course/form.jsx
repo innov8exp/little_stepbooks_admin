@@ -1,5 +1,3 @@
-import useQuery from '@/hooks/useQuery'
-import { Routes } from '@/libs/router'
 import {
   LeftCircleOutlined,
   LoadingOutlined,
@@ -23,7 +21,7 @@ import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const { TextArea } = Input
 
@@ -47,29 +45,27 @@ const beforeUpload = (file) => {
 
 const CourseForm = () => {
   const { t } = useTranslation()
-  const query = useQuery()
-  const queryId = query.get('id')
+  const params = useParams()
+  const bookId = params?.bookId
+  const id = params?.id
   const navigate = useNavigate()
   const [form] = Form.useForm()
-  const [initFormData, setInitFormData] = useState({
-    isSerialized: false,
-    hasEnding: true,
-  })
+  const [initFormData, setInitFormData] = useState({})
   const [loading, setLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
-  const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
+  const [isDisplayForm, setIsDisplayForm] = useState(!bookId)
   const [uploading, setUploading] = useState(false)
   const [imageUrl, setImageUrl] = useState()
 
   const initData = useCallback(() => {
-    if (!queryId) {
+    if (!id) {
       return
     }
     setLoading(true)
     setIsDisplayForm(true)
 
     axios
-      .get(`/api/admin/v1/books/${queryId}`)
+      .get(`/api/admin/v1/courses/${id}`)
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
@@ -86,18 +82,18 @@ const CourseForm = () => {
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
-  }, [form, queryId])
+  }, [id, t])
 
-  const createData = (book) => {
+  const createData = (data) => {
     setSaveLoading(true)
     axios
-      .post('/api/admin/v1/books', {
-        ...book,
+      .post(`/api/admin/v1/books/${bookId}/courses`, {
+        ...data,
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success('保存成功!')
-          navigate(Routes.BOOK_LIST.path)
+          navigate(-1)
         }
       })
       .catch((err) => {
@@ -108,17 +104,16 @@ const CourseForm = () => {
       .finally(() => setSaveLoading(false))
   }
 
-  const updateData = (book) => {
-    console.log('categories:', book.category)
+  const updateData = (data) => {
     setSaveLoading(true)
     axios
-      .put(`/api/admin/v1/books/${queryId}`, {
-        ...book,
+      .put(`/api/admin/v1/courses/${id}`, {
+        ...data,
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success('保存成功!')
-          navigate(Routes.BOOK_LIST.path)
+          navigate(-1)
         }
       })
       .catch((err) => {
@@ -134,15 +129,13 @@ const CourseForm = () => {
       .validateFields()
       .then((values) => {
         console.log('数字：', values)
-        if (queryId) {
+        if (bookId) {
           updateData({
             ...values,
-            categories: Array.from(new Set(values.categories)),
           })
         } else {
           createData({
             ...values,
-            categories: Array.from(new Set(values.categories)),
           })
         }
       })
@@ -209,7 +202,7 @@ const CourseForm = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.COURSE.path)}
+            onClick={() => navigate(-1)}
           />
           {t('button.courseEditing')}
         </>
@@ -240,16 +233,7 @@ const CourseForm = () => {
                 maxLength={30}
               />
             </Form.Item>
-            <Form.Item
-              name="description"
-              label={t('title.courseIntroduction')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.courseIntroduction')}`,
-                },
-              ]}
-            >
+            <Form.Item name="description" label={t('title.courseIntroduction')}>
               <TextArea
                 rows={2}
                 style={{ resize: 'none' }}
@@ -271,12 +255,6 @@ const CourseForm = () => {
             <Form.Item
               name="authorIntroduction"
               label={t('title.authorIntroduction')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.authorIntroduction')}`,
-                },
-              ]}
             >
               <TextArea
                 rows={2}
@@ -284,24 +262,42 @@ const CourseForm = () => {
                 placeholder={t('message.check.authorIntroduction')}
               />
             </Form.Item>
-            <Form.Item name="duration" label={t('title.duration')}>
+            <Form.Item
+              name="duration"
+              label={t('title.duration')}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.duration')}`,
+                },
+              ]}
+            >
               <InputNumber placeholder={t('message.check.duration')} />
             </Form.Item>
-            <Form.Item name="trail" label={t('title.trail')}>
+            <Form.Item
+              name="courseNature"
+              label={t('title.courseNature')}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.courseNature')}`,
+                },
+              ]}
+            >
               <Radio.Group>
-                <Radio value={true}>{t('yes')}</Radio>
-                <Radio value={false}>{t('no')}</Radio>
+                <Radio value={'PAID'}>{t('title.PAID')}</Radio>
+                <Radio value={'TRIAL'}>{t('title.TRIAL')}</Radio>
               </Radio.Group>
             </Form.Item>
             <Form.Item
               name="coverImgId"
               label={t('title.cover')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.uploadCoverImage')}`,
-                },
-              ]}
+              // rules={[
+              //   {
+              //     required: true,
+              //     message: `${t('message.check.uploadCoverImage')}`,
+              //   },
+              // ]}
             >
               <Upload
                 name="file"
@@ -320,14 +316,14 @@ const CourseForm = () => {
               </Upload>
             </Form.Item>
             <Form.Item
-              name="videoId"
+              name="video"
               label={t('title.video')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.uploadVideo')}`,
-                },
-              ]}
+              // rules={[
+              //   {
+              //     required: true,
+              //     message: `${t('message.check.uploadVideo')}`,
+              //   },
+              // ]}
             >
               <Upload
                 name="file"

@@ -5,8 +5,7 @@ import {
   QueryBtnWrapper,
   StyledCondition,
 } from '@/components/styled'
-import useQuery from '@/hooks/useQuery'
-import { Routes } from '@/libs/router'
+import useFetch from '@/hooks/useFetch'
 import {
   ExclamationCircleOutlined,
   LeftCircleOutlined,
@@ -25,44 +24,33 @@ import {
   Modal,
   Row,
   Table,
-  Tooltip,
+  Tag,
   message,
 } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const { confirm } = Modal
 
 const CoursePage = () => {
   const { t } = useTranslation()
   const [queryForm] = Form.useForm()
-  const query = useQuery()
-  const queryId = query.get('id')
-  const queryName = query.get('name')
+  const params = useParams()
+  const bookId = params?.bookId
   const navigate = useNavigate()
   const [changeTimestamp, setChangeTimestamp] = useState()
-  const [booksData, setBooksData] = useState()
-  const [pageNumber, setPageNumber] = useState(1)
-  const [pageSize] = useState(10)
-  const [total, setTotal] = useState(0)
+  const [courses, setCourses] = useState()
   const [queryCriteria, setQueryCriteria] = useState()
   const [loading, setLoading] = useState(false)
 
-  const paginationProps = {
-    pageSize,
-    current: pageNumber,
-    total,
-    onChange: (current) => {
-      setPageNumber(current)
-    },
-  }
+  const { fetchedData } = useFetch(`/api/admin/v1/books/${bookId}`, [])
 
   const fetchCourses = useCallback(() => {
     setLoading(true)
-    let searchURL = `/api/admin/v1/books/${queryId}/courses`
+    let searchURL = `/api/admin/v1/books/${bookId}/courses`
     if (queryCriteria?.bookName) {
       searchURL += `&bookName=${queryCriteria.bookName}`
     }
@@ -74,8 +62,7 @@ const CoursePage = () => {
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
-          setBooksData(responseObject.records)
-          setTotal(responseObject.total)
+          setCourses([...responseObject])
         }
       })
       .catch((err) =>
@@ -84,7 +71,7 @@ const CoursePage = () => {
         ),
       )
       .finally(() => setLoading(false))
-  }, [queryCriteria?.author, queryCriteria?.bookName, t, queryId])
+  }, [queryCriteria?.author, queryCriteria?.bookName, t, bookId])
 
   const handleDeleteAction = (id) => {
     confirm({
@@ -95,7 +82,7 @@ const CoursePage = () => {
       cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
-          .delete(`/api/admin/v1/books/${id}`)
+          .delete(`/api/admin/v1/courses/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               const timestamp = new Date().getTime()
@@ -126,35 +113,20 @@ const CoursePage = () => {
   }
 
   const handleCreateAction = () => {
-    navigate(Routes.COURSE_FORM.path)
+    navigate(`/books/${bookId}/courses/form`)
   }
 
   const handleEditAction = (id) => {
-    navigate(`${Routes.COURSE_FORM.path}?id=${id}`)
+    navigate(`/books/${bookId}/courses/${id}/form`)
   }
 
   const handleViewAction = (id) => {
-    navigate(`${Routes.BOOK_VIEW.path}?id=${id}`)
+    navigate(`/books/${bookId}/courses/${id}/view`)
   }
-
-  // const handleStatusChange = (id, status) => {
-  //   const cCount = chapterCount?.find((cc) => cc.bookId === id)?.chapterCount
-  //   if (!cCount) {
-  //     message.error(`${t('message.error.noBookChapters')}`)
-  //     return
-  //   }
-  //   axios.put(`/api/admin/v1/books/${id}/status/${status}`).then((res) => {
-  //     if (res.status === HttpStatus.OK) {
-  //       const timestamp = new Date().getTime()
-  //       setChangeTimestamp(timestamp)
-  //       message.success(t('message.successInfo'))
-  //     }
-  //   })
-  // }
 
   useEffect(() => {
     fetchCourses()
-  }, [fetchCourses, pageNumber, changeTimestamp])
+  }, [fetchCourses, changeTimestamp])
 
   return (
     <Card
@@ -164,9 +136,9 @@ const CoursePage = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.BOOK_LIST.path)}
+            onClick={() => navigate(-1)}
           />
-          《{queryName}》- {t('title.course')}
+          《{fetchedData?.bookName}》- {t('title.course')}
         </>
       }
     >
@@ -229,8 +201,7 @@ const CoursePage = () => {
             {
               title: '#',
               key: 'number',
-              render: (text, record, index) =>
-                (pageNumber - 1) * pageSize + index + 1,
+              render: (text, record, index) => index + 1,
             },
             {
               title: `${t('title.cover')}`,
@@ -242,14 +213,6 @@ const CoursePage = () => {
               title: `${t('title.courseName')}`,
               key: 'name',
               dataIndex: 'name',
-              width: 150,
-              render: (text, record) => (
-                <Button onClick={() => handleViewAction(record.id)} type="link">
-                  <Tooltip title={record.introduction} color="#2db7f5">
-                    {text}
-                  </Tooltip>
-                </Button>
-              ),
             },
             {
               title: `${t('title.lecturer')}`,
@@ -257,28 +220,28 @@ const CoursePage = () => {
               dataIndex: 'author',
             },
             {
+              title: `${t('title.courseNature')}`,
+              key: 'courseNature',
+              dataIndex: 'courseNature',
+              render: (text) =>
+                text === 'TRIAL' ? (
+                  <Tag color="blue">{t('title.trial')}</Tag>
+                ) : (
+                  <Tag color="blue">{t('title.needToPay')}</Tag>
+                ),
+            },
+            {
               title: `${t('title.operate')}`,
               key: 'action',
               render: (text, record) => {
                 return (
                   <div>
-                    {/* {record.status === 'ONLINE' ? (
-                      <Button
-                        onClick={() => handleStatusChange(record.id, 'OFFLINE')}
-                        type="link"
-                      >
-                        {t('button.OffShelf')}
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => handleStatusChange(record.id, 'ONLINE')}
-                        type="link"
-                      >
-                        {t('button.grounding')}
-                      </Button>
-                    )}
-
-                    <Divider type="vertical" /> */}
+                    <Button
+                      onClick={() => handleViewAction(record.id)}
+                      type="link"
+                    >
+                      {t('button.preview')}
+                    </Button>
                     <Divider type="vertical" />
                     <Button
                       type="link"
@@ -301,9 +264,9 @@ const CoursePage = () => {
             },
           ]}
           rowKey={(record) => record.id}
-          dataSource={booksData}
+          dataSource={courses}
           loading={loading}
-          pagination={paginationProps}
+          pagination={false}
         />
       </ContentContainer>
     </Card>

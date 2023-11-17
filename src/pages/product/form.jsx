@@ -139,8 +139,6 @@ const ProductForm = () => {
     axios
       .post('/api/admin/v1/products', {
         ...createdData,
-        salesPlatform: createdData?.salesPlatform?.join(','),
-        resources: createdData?.resources?.join(','),
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
@@ -161,8 +159,6 @@ const ProductForm = () => {
     axios
       .put(`/api/admin/v1/products/${queryId}`, {
         ...updateData,
-        salesPlatform: updateData?.salesPlatform?.join(','),
-        resources: updateData?.resources?.join(','),
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
@@ -193,7 +189,9 @@ const ProductForm = () => {
           })
         }
       })
-      .catch()
+      .catch(() => {
+        message.error(`${t('message.error.validateFields')}`)
+      })
   }
 
   const handleUploadChange = (info) => {
@@ -325,8 +323,6 @@ const ProductForm = () => {
               form={form}
               initialValues={{
                 ...initFormData,
-                salesPlatform: initFormData?.salesPlatform?.split(','),
-                resources: initFormData?.resources?.split(','),
               }}
             >
               <Form.Item name="skuCode" label={t('title.skuCode')}>
@@ -352,24 +348,21 @@ const ProductForm = () => {
                 />
               </Form.Item>
               <Form.Item
-                name="salesPlatform"
-                label={t('title.salesPlatform')}
+                name="parsedSalesPlatforms"
+                label={t('title.salesPlatforms')}
                 rules={[
                   {
                     required: true,
-                    message: `${t('message.check.salesPlatform')}`,
+                    message: `${t('message.check.salesPlatforms')}`,
                   },
                 ]}
               >
-                <Checkbox.Group placeholder={t('message.check.salesPlatform')}>
+                <Checkbox.Group placeholder={t('message.check.salesPlatforms')}>
                   <Checkbox value="MINI_PROGRAM" key="MINI_PROGRAM">
-                    MINI_PROGRAM
+                    {t('MINI_PROGRAM')}
                   </Checkbox>
-                  <Checkbox value="ANDROID" key="ANDROID">
-                    ANDROID
-                  </Checkbox>
-                  <Checkbox value="IOS" key="IOS">
-                    IOS
+                  <Checkbox value="APP" key="APP">
+                    {t('APP')}
                   </Checkbox>
                 </Checkbox.Group>
               </Form.Item>
@@ -406,16 +399,16 @@ const ProductForm = () => {
                   placeholder={t('message.placeholder.enterBookSetSearch')}
                 />
               </Form.Item>
-              <Form.Item name="resources" label={t('title.resources')}>
-                <Checkbox.Group placeholder={t('message.check.resources')}>
+              <Form.Item name="parsedMaterials" label={t('title.materials')}>
+                <Checkbox.Group placeholder={t('message.check.materials')}>
                   <Checkbox value="AUDIO" key="AUDIO">
-                    AUDIO
+                    {t('AUDIO')}
                   </Checkbox>
                   <Checkbox value="COURSE" key="COURSE">
-                    COURSE
+                    {t('COURSE')}
                   </Checkbox>
                   <Checkbox value="EXERCISE" key="EXERCISE">
-                    EXERCISE
+                    {t('EXERCISE')}
                   </Checkbox>
                 </Checkbox.Group>
               </Form.Item>
@@ -442,12 +435,12 @@ const ProductForm = () => {
               <Form.Item
                 name="coverImg"
                 label={t('title.cover')}
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('message.check.uploadCoverImage')}`,
-                  },
-                ]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: `${t('message.check.uploadCoverImage')}`,
+                //   },
+                // ]}
               >
                 <Upload
                   name="file"
@@ -472,12 +465,12 @@ const ProductForm = () => {
               <Form.Item
                 name="media"
                 label={t('title.media')}
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('message.check.media')}`,
-                  },
-                ]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: `${t('message.check.media')}`,
+                //   },
+                // ]}
               >
                 <Upload
                   action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"

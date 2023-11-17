@@ -87,7 +87,7 @@ const UploadForm = (bookId, visible, onCancel) => {
     } else {
       setTipText(`${t('message.tips.uploading')}`)
     }
-  }, [uploadingPercent])
+  }, [t, uploadingPercent])
 
   return (
     <Modal

@@ -1,3 +1,5 @@
+import useFetch from '@/hooks/useFetch'
+import { Routes } from '@/libs/router'
 import {
   LeftCircleOutlined,
   LoadingOutlined,
@@ -6,24 +8,21 @@ import {
 import {
   Button,
   Card,
+  Checkbox,
   Col,
   Empty,
   Form,
   Input,
-  message,
   Row,
   Skeleton,
   Upload,
-  Checkbox,
+  message,
 } from 'antd'
-import useFetch from '@/hooks/useFetch'
-import { Routes } from '@/libs/router'
 import axios from 'axios'
-import useQuery from '@/hooks/useQuery'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const { TextArea } = Input
 
@@ -47,8 +46,8 @@ const beforeUpload = (file) => {
 
 const BookForm = () => {
   const { t } = useTranslation()
-  const query = useQuery()
-  const queryId = query.get('id')
+  const params = useParams()
+  const queryId = params?.id
   const navigate = useNavigate()
   const [form] = Form.useForm()
   const [initFormData, setInitFormData] = useState({})
@@ -241,7 +240,7 @@ const BookForm = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.BOOK_LIST.path)}
+            onClick={() => navigate(-1)}
           />
           {t('button.bookEditing')}
         </>

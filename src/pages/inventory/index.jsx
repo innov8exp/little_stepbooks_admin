@@ -107,7 +107,6 @@ const InventoryPage = () => {
           labelCol={{ span: 10 }}
           wrapperCol={{ span: 14 }}
           form={queryForm}
-          initialValues={{ category: '', status: '' }}
         >
           <Row>
             <Col span={6}>

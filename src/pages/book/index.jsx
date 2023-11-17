@@ -1,10 +1,18 @@
 import {
+  ConditionItem,
+  ConditionLeftItem,
+  ContentContainer,
+  QueryBtnWrapper,
+  StyledCondition,
+} from '@/components/styled'
+import {
   ExclamationCircleOutlined,
   PlusOutlined,
   SearchOutlined,
   UndoOutlined,
 } from '@ant-design/icons'
 import {
+  App,
   Button,
   Card,
   Col,
@@ -12,25 +20,16 @@ import {
   Form,
   Image,
   Input,
-  message,
-  App,
   Row,
   Table,
   Tooltip,
+  message,
 } from 'antd'
-import { Routes } from '@/libs/router'
 import axios from 'axios'
-import {
-  ConditionItem,
-  ConditionLeftItem,
-  ContentContainer,
-  QueryBtnWrapper,
-  StyledCondition,
-} from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 const BookPage = () => {
   const { modal } = App.useApp()
@@ -120,23 +119,23 @@ const BookPage = () => {
   }
 
   const handleCreateAction = () => {
-    navigate(Routes.BOOK_FORM.path)
+    navigate('/books/form')
   }
 
   const handleEditAction = (id) => {
-    navigate(`${Routes.BOOK_FORM.path}?id=${id}`)
+    navigate(`/books/${id}/form`)
   }
 
   const handleViewAction = (id) => {
-    navigate(`${Routes.BOOK_VIEW.path}?id=${id}`)
+    navigate(`/books/${id}/view`)
   }
 
-  const handleLinkToChapterAction = (id, bookName) => {
-    navigate(`${Routes.CHAPTER_LIST.path}?id=${id}&name=${bookName}`)
+  const handleLinkToChapterAction = (book) => {
+    navigate(`/books/${book.id}/chapters`)
   }
 
-  const handleLinkToCourseAction = (id, bookName) => {
-    navigate(`${Routes.COURSE.path}?id=${id}&name=${bookName}`)
+  const handleLinkToCourseAction = (book) => {
+    navigate(`/books/${book.id}/courses`)
   }
 
   useEffect(() => {
@@ -245,17 +244,13 @@ const BookPage = () => {
                 return (
                   <div>
                     <Button
-                      onClick={() =>
-                        handleLinkToChapterAction(record.id, record.bookName)
-                      }
+                      onClick={() => handleLinkToChapterAction(record)}
                       type="link"
                     >
                       {t('button.Chapter')}({record.chapterCount})
                     </Button>
                     <Button
-                      onClick={() =>
-                        handleLinkToCourseAction(record.id, record.bookName)
-                      }
+                      onClick={() => handleLinkToCourseAction(record)}
                       type="link"
                     >
                       {t('button.course')}({record.courseCount})
@@ -267,15 +262,18 @@ const BookPage = () => {
                     >
                       {t('button.edit')}
                     </Button>
-
-                    <Divider type="vertical" />
-                    <Button
-                      type="link"
-                      danger
-                      onClick={() => handleDeleteAction(record.id)}
-                    >
-                      {t('button.delete')}
-                    </Button>
+                    {record.chapterCount === 0 && record.courseCount === 0 && (
+                      <>
+                        <Divider type="vertical" />
+                        <Button
+                          type="link"
+                          danger
+                          onClick={() => handleDeleteAction(record.id)}
+                        >
+                          {t('button.delete')}
+                        </Button>
+                      </>
+                    )}
                   </div>
                 )
               },

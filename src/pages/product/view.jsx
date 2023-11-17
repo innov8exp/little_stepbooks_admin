@@ -80,7 +80,7 @@ const ProductView = () => {
             />
             <ViewItem
               label={t('title.salesPlatform')}
-              value={initFormData?.salesPlatform}
+              value={initFormData?.salesPlatforms?.map((item) => item)}
             />
             <ViewItem
               label={t('title.productNature')}
@@ -91,8 +91,8 @@ const ProductView = () => {
               value={t(initFormData?.bookSetName)}
             />
             <ViewItem
-              label={t('title.resources')}
-              value={t(initFormData?.resources)}
+              label={t('title.material')}
+              value={t(initFormData?.materials?.map((item) => item))}
             />
             <ViewItem
               label={t('title.price')}

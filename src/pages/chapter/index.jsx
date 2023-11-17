@@ -5,38 +5,35 @@ import {
   QueryBtnWrapper,
   StyledCondition,
 } from '@/components/styled'
-import useQuery from '@/hooks/useQuery'
-import { Routes } from '@/libs/router'
+import useFetch from '@/hooks/useFetch'
 import {
   ExclamationCircleOutlined,
   LeftCircleOutlined,
   SearchOutlined,
 } from '@ant-design/icons'
-import { Button, Card, Divider, Table, message, App, Image } from 'antd'
+import { App, Button, Card, Divider, Image, Table, message } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const ChapterPage = () => {
   const { t } = useTranslation()
   const { modal } = App.useApp()
   const navigate = useNavigate()
-  const query = useQuery()
-  const queryId = query.get('id')
-  const queryName = query.get('name')
+  const params = useParams()
+  const bookId = params?.bookId
   const [changeTimestamp, setChangeTimestamp] = useState()
   const [chaptersData, setChaptersData] = useState()
   // const [queryCriteria, setQueryCriteria] = useState<BookQuery>();
   const [loading, setLoading] = useState(false)
 
-  const [setChapterViewVisible] = useState(false)
-  const [setChapterId] = useState()
+  const { fetchedData } = useFetch(`/api/admin/v1/books/${bookId}`, [])
 
   const fetchChapters = useCallback(() => {
     setLoading(true)
-    const searchURL = `/api/admin/v1/books/${queryId}/chapters`
+    const searchURL = `/api/admin/v1/books/${bookId}/chapters`
     axios
       .get(searchURL)
       .then((res) => {
@@ -51,7 +48,7 @@ const ChapterPage = () => {
         ),
       )
       .finally(() => setLoading(false))
-  }, [queryId, t])
+  }, [bookId, t])
 
   const handleDeleteAction = (id) => {
     modal.confirm({
@@ -87,16 +84,15 @@ const ChapterPage = () => {
   }
 
   const handleCreateAction = () => {
-    navigate(`${Routes.CHAPTER_FORM.path}?bookId=${queryId}`)
+    navigate(`/books/${bookId}/chapters/form`)
   }
 
   const handleEditAction = (id) => {
-    navigate(`${Routes.CHAPTER_FORM.path}?bookId=${queryId}&id=${id}`)
+    navigate(`/books/${bookId}/chapters/${id}/form`)
   }
 
   const handleViewAction = (id) => {
-    setChapterId(id)
-    setChapterViewVisible(true)
+    navigate(`/books/${bookId}/chapters/${id}/view`)
   }
 
   useEffect(() => {
@@ -111,9 +107,9 @@ const ChapterPage = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.BOOK_LIST.path)}
+            onClick={() => navigate(-1)}
           />
-          《{queryName}》- {t('title.content')}
+          《{fetchedData?.bookName}》- {t('title.content')}
         </>
       }
     >

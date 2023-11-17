@@ -16,12 +16,11 @@ import {
   Skeleton,
   Upload,
 } from 'antd'
-import { Routes } from '@/libs/router'
+import useFetch from '@/hooks/useFetch'
 import axios from 'axios'
-import useQuery from '@/hooks/useQuery'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import UploadComponent from '@/components/upload'
 
@@ -29,9 +28,9 @@ const { TextArea } = Input
 
 const ChapterForm = () => {
   const { t } = useTranslation()
-  const query = useQuery()
-  const queryId = query.get('id')
-  const bookId = query.get('bookId')
+  const params = useParams()
+  const queryId = params?.id
+  const bookId = params?.bookId
   const navigate = useNavigate()
   const [form] = Form.useForm()
   const [initFormData, setInitFormData] = useState()
@@ -40,6 +39,8 @@ const ChapterForm = () => {
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
   const [uploading, setUploading] = useState(false)
   const [imageUrl, setImageUrl] = useState()
+
+  const { fetchedData } = useFetch(`/api/admin/v1/books/${bookId}`, [])
 
   const getBase64 = (img, callback) => {
     const reader = new FileReader()
@@ -71,11 +72,6 @@ const ChapterForm = () => {
     form.setFieldsValue({ content: `${t('message.tips.loading')}` })
     setLoading(true)
     setIsDisplayForm(true)
-    axios.get(`/api/admin/v1/chapters/${queryId}/content`).then((res) => {
-      if (res.status === HttpStatus.OK) {
-        form.setFieldsValue({ content: res.data })
-      }
-    })
 
     axios
       .get(`/api/admin/v1/chapters/${queryId}`)
@@ -105,7 +101,7 @@ const ChapterForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(`${t('message.successfullySaved')}`)
-          navigate(Routes.BOOK_LIST.path)
+          navigate(-1)
         }
       })
       .catch((err) => {
@@ -214,9 +210,9 @@ const ChapterForm = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.CHAPTER_LIST.path)}
+            onClick={() => navigate(-1)}
           />
-          {t('title.content.create')}
+          《{fetchedData?.bookName}》- {t('title.content.create')}
         </>
       }
     >
@@ -250,14 +246,14 @@ const ChapterForm = () => {
             </Form.Item>
             <Form.Item
               wrapperCol={{ span: 16 }}
-              name="content"
-              label={t('title.briefIntroduction')}
+              name="description"
+              label={t('title.description')}
             >
               <TextArea
                 rows={3}
                 style={{ resize: 'none' }}
                 maxLength={300}
-                placeholder={t('message.placeholder.briefIntroduction')}
+                placeholder={t('message.placeholder.description')}
               />
             </Form.Item>
             <Form.Item

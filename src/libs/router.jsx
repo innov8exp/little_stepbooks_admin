@@ -12,7 +12,6 @@ import Chapter from '@/pages/chapter'
 import ChapterForm from '@/pages/chapter/form'
 import ChapterView from '@/pages/chapter/view'
 import Classification from '@/pages/classification'
-import ComingSoon from '@/pages/coming-soon'
 import Comment from '@/pages/comment'
 import Course from '@/pages/course'
 import CourseForm from '@/pages/course/form'
@@ -20,6 +19,7 @@ import CourseView from '@/pages/course/view'
 import Dashboard from '@/pages/dashboard'
 import Error from '@/pages/error'
 import Inventory from '@/pages/inventory'
+import ComingSoon from '@/pages/not-found'
 import Order from '@/pages/order'
 import OrderInventoryLog from '@/pages/order-inventory-log'
 import OrderForm from '@/pages/order/form'
@@ -43,17 +43,11 @@ export const Routes = {
     path: '/classification-list',
     element: <Classification />,
   },
-  BOOK_LIST: { path: '/book-list', element: <Book /> },
-  BOOK_FORM: { path: '/book-form', element: <BookForm /> },
-  BOOK_VIEW: { path: '/book-view', element: <BookView /> },
 
   BOOK_SET_LIST: { path: '/book-set-list', element: <BookSet /> },
   BOOK_SET_FORM: { path: '/book-set-form', element: <BookSetForm /> },
   BOOK_SET_VIEW: { path: '/book-set-view', element: <BookSetView /> },
 
-  CHAPTER_LIST: { path: '/chapter-list', element: <Chapter /> },
-  CHAPTER_FORM: { path: '/chapter-form', element: <ChapterForm /> },
-  CHAPTER_VIEW: { path: '/chapter-view', element: <ChapterView /> },
   COMMENT_LIST: { path: '/comment-list', element: <Comment /> },
   ORDER_LIST: { path: '/order-list', element: <Order /> },
   ORDER_FORM: { path: '/order-form', element: <OrderForm /> },
@@ -76,10 +70,7 @@ export const Routes = {
   },
   SIGN_IN: { path: '/sign-in', element: <SignIn /> },
   FORGET_PASSWORD: { path: '/forget-password', element: <ForgetPassword /> },
-  COMING_SOON: { path: '/coming-soon', element: <ComingSoon /> },
-  COURSE: { path: '/course-list', element: <Course /> },
-  COURSE_FORM: { path: '/course_form', element: <CourseForm /> },
-  COURSE_VIEW: { path: '/course-view', element: <CourseView /> },
+  NOT_FOUND: { path: '/not-found', element: <ComingSoon /> },
 }
 
 export const Router = createBrowserRouter([
@@ -110,16 +101,52 @@ export const Router = createBrowserRouter([
         element: Routes.CLASSIFICATION_LIST.element,
       },
       {
-        path: Routes.BOOK_LIST.path,
-        element: Routes.BOOK_LIST.element,
+        path: '/books',
+        element: <Book />,
       },
       {
-        path: Routes.BOOK_FORM.path,
-        element: Routes.BOOK_FORM.element,
+        path: '/books/form',
+        element: <BookForm />,
       },
       {
-        path: Routes.BOOK_VIEW.path,
-        element: Routes.BOOK_VIEW.element,
+        path: '/books/:id/form',
+        element: <BookForm />,
+      },
+      {
+        path: '/books/:id/view',
+        element: <BookView />,
+      },
+      {
+        path: '/books/:bookId/chapters',
+        element: <Chapter />,
+      },
+      {
+        path: '/books/:bookId/chapters/form',
+        element: <ChapterForm />,
+      },
+      {
+        path: '/books/:bookId/chapters/:id/form',
+        element: <ChapterForm />,
+      },
+      {
+        path: '/books/:bookId/chapters/:id/view',
+        element: <ChapterView />,
+      },
+      {
+        path: '/books/:bookId/courses',
+        element: <Course />,
+      },
+      {
+        path: '/books/:bookId/courses/form',
+        element: <CourseForm />,
+      },
+      {
+        path: '/books/:bookId/courses/:id/form',
+        element: <CourseForm />,
+      },
+      {
+        path: '/books/:bookId/courses/:id/view',
+        element: <CourseView />,
       },
       {
         path: Routes.BOOK_SET_LIST.path,
@@ -133,18 +160,7 @@ export const Router = createBrowserRouter([
         path: Routes.BOOK_SET_VIEW.path,
         element: Routes.BOOK_SET_VIEW.element,
       },
-      {
-        path: Routes.CHAPTER_LIST.path,
-        element: Routes.CHAPTER_LIST.element,
-      },
-      {
-        path: Routes.CHAPTER_FORM.path,
-        element: Routes.CHAPTER_FORM.element,
-      },
-      {
-        path: Routes.CHAPTER_VIEW.path,
-        element: Routes.CHAPTER_VIEW.element,
-      },
+
       {
         path: Routes.COMMENT_LIST.path,
         element: Routes.COMMENT_LIST.element,
@@ -166,8 +182,8 @@ export const Router = createBrowserRouter([
         element: Routes.ORDER_INVENTORY_LOG_LIST.element,
       },
       {
-        path: Routes.COMING_SOON.path,
-        element: Routes.COMING_SOON.element,
+        path: Routes.NOT_FOUND.path,
+        element: Routes.NOT_FOUND.element,
       },
       {
         path: Routes.PRODUCT_LIST.path,
@@ -197,18 +213,7 @@ export const Router = createBrowserRouter([
         path: Routes.PROFILE.path,
         element: Routes.PROFILE.element,
       },
-      {
-        path: Routes.COURSE.path,
-        element: Routes.COURSE.element,
-      },
-      {
-        path: Routes.COURSE_FORM.path,
-        element: Routes.COURSE_FORM.element,
-      },
-      {
-        path: Routes.COURSE_VIEW.path,
-        element: Routes.COURSE_VIEW.element,
-      },
+
       {
         path: '*',
         element: <ComingSoon />,

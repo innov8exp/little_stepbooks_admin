@@ -1,18 +1,16 @@
 import ViewItem from '@/components/view-item'
-import useQuery from '@/hooks/useQuery'
-import { Routes } from '@/libs/router'
 import { LeftCircleOutlined } from '@ant-design/icons'
 import { Button, Card, Empty, message, Skeleton } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const BookView = () => {
   const { t } = useTranslation()
-  const query = useQuery()
-  const queryId = query.get('id')
+  const params = useParams()
+  const queryId = params?.id
   const navigate = useNavigate()
   const [initFormData, setInitFormData] = useState({
     isSerialized: false,
@@ -61,7 +59,7 @@ const BookView = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.BOOK_LIST.path)}
+            onClick={() => navigate(-1)}
           />
           {t('title.bookViewing')}
         </>

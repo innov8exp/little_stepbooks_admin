@@ -87,7 +87,7 @@ const AdminLayout = () => {
         <BookOutlined />,
       ),
       getItem(
-        <Link to={Routes.BOOK_LIST.path}>{t('menu.book')}</Link>,
+        <Link to="/books">{t('menu.book')}</Link>,
         '72',
         <BookOutlined />,
       ),
@@ -151,8 +151,10 @@ const AdminLayout = () => {
       //   <FundProjectionScreenOutlined />,
       // ),
       getItem(
-        <Link to={Routes.RECOMMEND_LIST.path}>{t('menu.recommend')}</Link>,
-        '53',
+        <Link to={Routes.ADVERTISEMENT_LIST.path}>
+          {t('menu.advertisement')}
+        </Link>,
+        '54',
         <FundProjectionScreenOutlined />,
       ),
       getItem(
@@ -219,17 +221,8 @@ const AdminLayout = () => {
       t('menu.classificationManagement'),
     ),
 
-    getBreadcrumbItem(
-      Routes.COURSE.path,
-      t('menu.course'),
-      t('menu.courseList'),
-    ),
+    getBreadcrumbItem('/books', t('menu.bookManage'), t('menu.book')),
 
-    getBreadcrumbItem(
-      Routes.BOOK_LIST.path,
-      t('menu.bookManage'),
-      t('menu.book'),
-    ),
     getBreadcrumbItem(
       Routes.BOOK_SET_LIST.path,
       t('menu.bookManage'),

@@ -33,6 +33,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
   const [form] = Form.useForm()
   const [uploading, setUploading] = useState(false)
   const [imageUrl, setImageUrl] = useState()
+  const [initBookOptions, setInitBookOptions] = useState([])
 
   useEffect(() => {
     if (id) {
@@ -40,13 +41,9 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
         .get(`/api/admin/v1/advertisements/${id}`)
         .then((res) => {
           if (res.status === HttpStatus.OK) {
-            setImageUrl(res.data.adsImg)
+            setImageUrl(res.data?.adsImg)
             form.setFieldsValue({
               ...res.data,
-              bookName: {
-                label: res.data.bookName,
-                value: res.data.bookId,
-              },
             })
           }
         })
@@ -58,7 +55,6 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
     axios
       .post(`/api/admin/v1/advertisements`, {
         ...values,
-        bookName: values.label,
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
@@ -75,7 +71,6 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
     axios
       .put(`/api/admin/v1/advertisements/${id}`, {
         ...values,
-        bookName: values.label,
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
@@ -99,27 +94,6 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
         }
       })
       .catch()
-  }
-
-  const fetchBook = async (value) => {
-    return new Promise((resolve, reject) => {
-      axios
-        .get(`/api/admin/v1/books?bookName=${value}&currentPage=1&pageSize=10`)
-        .then((res) => {
-          if (res.status === HttpStatus.OK) {
-            const results = res.data
-            const books = results.records
-            const options = books.map((item) => ({
-              label: item.bookName,
-              value: item.id,
-            }))
-            resolve(options)
-          }
-        })
-        .catch((e) => {
-          reject(e)
-        })
-    })
   }
 
   const handleSelectChangeAction = (optionValue) => {
@@ -172,6 +146,39 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
         )
       })
   }
+
+  const fetchProduct = async (value) => {
+    return new Promise((resolve, reject) => {
+      let url = `/api/admin/v1/products?skuName=${value}&currentPage=1&pageSize=10`
+      if (!value) {
+        url = `/api/admin/v1/products?currentPage=1&pageSize=10`
+      }
+      axios
+        .get(url)
+        .then((res) => {
+          if (res.status === HttpStatus.OK) {
+            const results = res.data
+            const products = results.records
+            const options = products.map((item) => ({
+              value: item.id,
+              label: item.skuName,
+            }))
+            resolve(options)
+          }
+        })
+        .catch((e) => {
+          reject(e)
+        })
+    })
+  }
+
+  useEffect(() => {
+    if (visible) {
+      fetchProduct().then((res) => {
+        setInitBookOptions(res)
+      })
+    }
+  }, [visible])
   return (
     <Modal
       open={visible}
@@ -190,23 +197,21 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
         form={form}
         name="form_in_modal"
       >
-        <Form.Item name="bookId" hidden>
-          <Input />
-        </Form.Item>
         <Form.Item
-          name="bookName"
-          label={t('title.label.books')}
+          name="productId"
+          label={t('title.label.product')}
           rules={[
             {
               required: true,
-              message: `${t('message.check.selectBook')}`,
+              message: `${t('message.check.selectProduct')}`,
             },
           ]}
         >
           <DebounceSelect
             showSearch
-            fetchOptions={fetchBook}
-            placeholder={t('message.placeholder.enterBookSearch')}
+            initOptions={initBookOptions}
+            fetchOptions={fetchProduct}
+            placeholder={t('message.placeholder.enterProductSearch')}
             onChange={({ value }) => handleSelectChangeAction(value)}
           />
         </Form.Item>
@@ -226,7 +231,6 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
           </Select>
         </Form.Item>
         <Form.Item name="adsImg" label={t('title.cover')}>
-          <Input hidden />
           <Upload
             name="file"
             listType="picture-card"
