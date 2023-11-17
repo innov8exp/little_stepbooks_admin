@@ -1,4 +1,5 @@
 import AdminLayout from '@/admin-layout'
+import AdminUserPage from '@/pages/admin-user'
 import Advertisement from '@/pages/advertisement'
 import ForgetPassword from '@/pages/auth/forget-password'
 import SignIn from '@/pages/auth/sign-in'
@@ -23,6 +24,7 @@ import ComingSoon from '@/pages/not-found'
 import Order from '@/pages/order'
 import OrderInventoryLog from '@/pages/order-inventory-log'
 import OrderForm from '@/pages/order/form'
+import RefundRequest from '@/pages/order/refund-request'
 import Product from '@/pages/product'
 import ProductForm from '@/pages/product/form'
 import ProductView from '@/pages/product/view'
@@ -51,6 +53,7 @@ export const Routes = {
   COMMENT_LIST: { path: '/comment-list', element: <Comment /> },
   ORDER_LIST: { path: '/order-list', element: <Order /> },
   ORDER_FORM: { path: '/order-form', element: <OrderForm /> },
+  REFUND_REQUEST: { path: '/refund-request', element: <RefundRequest /> },
 
   INVENTORY_LIST: { path: '/inventory-list', element: <Inventory /> },
   ORDER_INVENTORY_LOG_LIST: {
@@ -174,6 +177,10 @@ export const Router = createBrowserRouter([
         element: Routes.ORDER_FORM.element,
       },
       {
+        path: Routes.REFUND_REQUEST.path,
+        element: Routes.REFUND_REQUEST.element,
+      },
+      {
         path: Routes.INVENTORY_LIST.path,
         element: Routes.INVENTORY_LIST.element,
       },
@@ -212,6 +219,10 @@ export const Router = createBrowserRouter([
       {
         path: Routes.PROFILE.path,
         element: Routes.PROFILE.element,
+      },
+      {
+        path: '/admin-user',
+        element: <AdminUserPage />,
       },
 
       {

@@ -1,25 +1,26 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { App, Form, InputNumber, Modal, message } from 'antd'
+import { App, Form, Modal, message } from 'antd'
+import TextArea from 'antd/es/input/TextArea'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 
-const RefundApproveForm = ({ id, data, visible, onSave, onCancel }) => {
+const RefundRejectForm = ({ id, visible, onSave, onCancel }) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
   const { modal } = App.useApp()
 
   const createData = (values) => {
     modal.confirm({
-      title: `${t('message.tips.approve')}`,
+      title: `${t('message.tips.reject')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,
       okType: 'primary',
       cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
-          .put(`/api/admin/v1/refund-requests/${id}/approve`, { ...values })
+          .put(`/api/admin/v1/refund-requests/${id}/reject`, { ...values })
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success(t('message.successInfo'))
@@ -61,36 +62,28 @@ const RefundApproveForm = ({ id, data, visible, onSave, onCancel }) => {
         layout="horizontal"
         form={form}
         name="form_in_modal"
-        initialValues={{ refundAmount: data?.refundAmount }}
       >
         <Form.Item
-          name="refundAmount"
-          label={t('title.refundAmount')}
+          name="rejectReason"
+          label={t('title.rejectReason')}
           rules={[
             {
               required: true,
-              message: t('message.check.refundAmount'),
+              message: t('message.check.rejectReason'),
             },
           ]}
         >
-          <InputNumber
-            style={{ width: 250 }}
-            placeholder={t('message.check.refundAmount')}
-            prefix="￥"
-            formatter={(value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            precision={2}
-          />
+          <TextArea rows={2} placeholder={t('message.check.rejectReason')} />
         </Form.Item>
       </Form>
     </Modal>
   )
 }
-RefundApproveForm.propTypes = {
+RefundRejectForm.propTypes = {
   id: PropTypes.string,
-  data: PropTypes.object,
   visible: PropTypes.bool,
   onSave: PropTypes.func,
   onCancel: PropTypes.func,
 }
 
-export default RefundApproveForm
+export default RefundRejectForm

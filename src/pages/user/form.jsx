@@ -103,7 +103,7 @@ const UserForm = ({ id, visible, onSave, onCancel }) => {
         >
           <Input placeholder={t('message.check.userNickName')} maxLength={20} />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           name="email"
           label={t('title.email')}
           rules={[
@@ -118,8 +118,8 @@ const UserForm = ({ id, visible, onSave, onCancel }) => {
           ]}
         >
           <Input placeholder={t('message.check.email')} />
-        </Form.Item>
-        <Form.Item name="googleID" label={'GoogleID'}>
+        </Form.Item> */}
+        {/* <Form.Item name="googleID" label={'GoogleID'}>
           <Input
             placeholder={t('message.placeholder.enterGooleID')}
             maxLength={20}
@@ -130,7 +130,7 @@ const UserForm = ({ id, visible, onSave, onCancel }) => {
             placeholder={t('message.placeholder.enterFacebookID')}
             maxLength={20}
           />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item name="phone" label={t('title.phone')}>
           <Input
             placeholder={t('message.placeholder.enterPhone')}

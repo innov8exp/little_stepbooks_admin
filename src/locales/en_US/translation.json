@@ -41,6 +41,7 @@
   "menu.bookSet": "Book Set List",
   "menu.comment": "Comment Management",
   "menu.order": "Order",
+  "menu.refundRequest": "Refund Request",
   "menu.orderList": "Order Details",
   "menu.orderInventoryLogList": "Order Inventory Log",
   "menu.inventory": "Inventory",

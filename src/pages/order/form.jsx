@@ -2,8 +2,8 @@ import ViewItem from '@/components/view-item'
 import useFetch from '@/hooks/useFetch'
 import useQuery from '@/hooks/useQuery'
 import { Routes } from '@/libs/router'
-import { LeftCircleOutlined } from '@ant-design/icons'
 import { formatMoney } from '@/libs/util'
+import { LeftCircleOutlined } from '@ant-design/icons'
 import {
   Button,
   Card,
@@ -12,6 +12,7 @@ import {
   Form,
   Input,
   Row,
+  Select,
   Skeleton,
   Table,
   Tag,
@@ -32,15 +33,33 @@ const OrderForm = () => {
   const [form] = Form.useForm()
   const [initFormData, setInitFormData] = useState({})
   const [loading, setLoading] = useState(false)
-  const [productLoading, setProductLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
-  const [productsData, setProductsData] = useState([])
   const [productNature, setProductNature] = useState()
   const [orderData, setOrderData] = useState()
 
-  const { fetchedData } = useFetch(
+  const deliveryCompanyResponse = useFetch(
+    '/api/admin/v1/orders/ship-companies',
+    [],
+  )
+
+  const eventLogsResponse = useFetch(
     `/api/admin/v1/orders/${queryId}/event-logs`,
+    [queryId, t],
+  )
+
+  const paymentsResponse = useFetch(
+    `/api/admin/v1/orders/${queryId}/payments`,
+    [queryId, t],
+  )
+
+  const productsResponse = useFetch(
+    `/api/admin/v1/orders/${queryId}/products`,
+    [queryId, t],
+  )
+
+  const deliveryResponse = useFetch(
+    `/api/admin/v1/orders/${queryId}/delivery`,
     [queryId, t],
   )
 
@@ -50,7 +69,6 @@ const OrderForm = () => {
     }
     setLoading(true)
     setIsDisplayForm(true)
-    setProductLoading(true)
 
     axios
       .get(`/api/admin/v1/orders/${queryId}`)
@@ -62,11 +80,6 @@ const OrderForm = () => {
           })
           setOrderData(resultData)
           setProductNature(resultData?.productNature)
-          const productId = resultData?.productId
-          if (!productId) {
-            setProductLoading(false)
-            return
-          }
         }
       })
       .catch((err) => {
@@ -76,21 +89,6 @@ const OrderForm = () => {
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
-
-    axios
-      .get(`/api/admin/v1/orders/${queryId}/products`)
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          const product = res.data
-          setProductsData(product)
-        }
-      })
-      .catch((err) => {
-        message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
-        )
-      })
-      .finally(() => setProductLoading(false))
   }, [queryId, t])
 
   const createData = (book) => {
@@ -179,6 +177,7 @@ const OrderForm = () => {
             form={form}
             initialValues={{
               ...initFormData,
+              ...deliveryResponse?.fetchedData,
             }}
           >
             <Row gutter={8}>
@@ -284,8 +283,8 @@ const OrderForm = () => {
                       },
                     ]}
                     rowKey={(record) => record.id}
-                    dataSource={productsData}
-                    loading={productLoading}
+                    dataSource={productsResponse?.fetchedData}
+                    loading={productsResponse?.loading}
                     pagination={false}
                   />
                 </Card>
@@ -305,56 +304,36 @@ const OrderForm = () => {
                         render: (text, record, index) => index + 1,
                       },
                       {
-                        title: `${t('title.label.skuCode')}`,
-                        key: 'skuCode',
-                        dataIndex: 'skuCode',
-                        width: 260,
-                        render: (text, record) => (
-                          <Button
-                            onClick={() =>
-                              navigate(
-                                `${Routes.PRODUCT_VIEW.path}?id=${record.id}`,
-                              )
-                            }
-                            type="link"
-                          >
-                            {text}
-                          </Button>
-                        ),
+                        title: `${t('title.label.paymentType')}`,
+                        key: 'paymentType',
+                        dataIndex: 'paymentType',
                       },
                       {
-                        title: `${t('title.label.skuName')}`,
-                        key: 'skuName',
-                        dataIndex: 'skuName',
+                        title: `${t('title.label.paymentMethod')}`,
+                        key: 'paymentMethod',
+                        dataIndex: 'paymentMethod',
                       },
                       {
-                        title: `${t('title.price')}`,
-                        key: 'price',
-                        dataIndex: 'price',
-                        render: (text) =>
-                          `¥ ${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+                        title: `${t('title.transactionAmount')}`,
+                        key: 'transactionAmount',
+                        dataIndex: 'transactionAmount',
+                        render: (text) => formatMoney(text),
                       },
                       {
-                        title: `${t('title.label.platform')}`,
-                        key: 'platform',
-                        dataIndex: 'platform',
+                        title: `${t('title.label.vendorPaymentNo')}`,
+                        key: 'vendorPaymentNo',
+                        dataIndex: 'vendorPaymentNo',
                       },
                       {
-                        title: `${t('title.label.hasInventory')}`,
-                        key: 'hasInventory',
-                        dataIndex: 'hasInventory',
-                        render: (text) => {
-                          return text ? (
-                            <Tag color="blue">{t('title.yes')}</Tag>
-                          ) : (
-                            <Tag color="red">{t('title.no')}</Tag>
-                          )
-                        },
+                        title: `${t('title.label.transactionStatus')}`,
+                        key: 'transactionStatus',
+                        dataIndex: 'transactionStatus',
+                        render: (text) => <Tag color="blue">{t(text)}</Tag>,
                       },
                     ]}
                     rowKey={(record) => record.id}
-                    dataSource={productsData}
-                    loading={productLoading}
+                    dataSource={paymentsResponse?.fetchedData}
+                    loading={paymentsResponse?.loading}
                     pagination={false}
                   />
                 </Card>
@@ -368,20 +347,16 @@ const OrderForm = () => {
                   >
                     <Row gutter={8}>
                       <Col span={12}>
-                        <Form.Item
-                          name="deliveryMethod"
+                        <ViewItem
                           label={t('title.deliveryMethod')}
-                        >
-                          <Input readOnly />
-                        </Form.Item>
+                          value={deliveryResponse?.fetchedData?.deliveryMethod}
+                        />
                       </Col>
                       <Col span={12}>
-                        <Form.Item
-                          name="deliveryStatus"
+                        <ViewItem
                           label={t('title.deliveryStatus')}
-                        >
-                          <Input readOnly />
-                        </Form.Item>
+                          value={deliveryResponse?.fetchedData?.deliveryStatus}
+                        />
                       </Col>
                     </Row>
 
@@ -391,7 +366,19 @@ const OrderForm = () => {
                           name="deliveryCompany"
                           label={t('title.deliveryCompany')}
                         >
-                          <Input readOnly />
+                          <Select
+                            placeholder={t(
+                              'message.placeholder.selectDeliveryCompany',
+                            )}
+                          >
+                            {deliveryCompanyResponse?.fetchedData?.map(
+                              ({ code, name }) => (
+                                <Select.Option key={code} value={code}>
+                                  {name}
+                                </Select.Option>
+                              ),
+                            )}
+                          </Select>
                         </Form.Item>
                       </Col>
                       <Col span={12}>
@@ -399,7 +386,7 @@ const OrderForm = () => {
                           name="deliveryCode"
                           label={t('title.deliveryCode')}
                         >
-                          <Input readOnly />
+                          <Input />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -410,7 +397,7 @@ const OrderForm = () => {
                           name="recipientName"
                           label={t('title.recipientName')}
                         >
-                          <Input readOnly />
+                          <Input />
                         </Form.Item>
                       </Col>
                       <Col span={12}>
@@ -418,7 +405,7 @@ const OrderForm = () => {
                           name="recipientPhone"
                           label={t('title.recipientPhone')}
                         >
-                          <Input readOnly />
+                          <Input />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -429,7 +416,7 @@ const OrderForm = () => {
                           name="recipientAddress"
                           label={t('title.recipientAddress')}
                         >
-                          <Input readOnly />
+                          <Input />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -440,7 +427,7 @@ const OrderForm = () => {
                 <Card type="inner" title={t('title.eventLogInformation')}>
                   <Timeline
                     mode="left"
-                    items={fetchedData?.map((item) => {
+                    items={eventLogsResponse?.fetchedData?.map((item) => {
                       return {
                         children:
                           item.eventTime +

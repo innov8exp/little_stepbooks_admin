@@ -75,7 +75,7 @@ const BookSetView = () => {
   }, [queryId, t])
 
   const handleBookViewAction = (bookId) => {
-    navigate(`${Routes.BOOK_VIEW.path}?id=${bookId}`)
+    navigate(`/books/${bookId}/view`)
   }
 
   useEffect(() => {

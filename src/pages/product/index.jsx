@@ -221,13 +221,14 @@ const ProductPage = () => {
             {
               title: '#',
               key: 'number',
-              render: (text, record, index) => index + 1,
+              render: (text, record, index) =>
+                (pageNumber - 1) * pageSize + index + 1,
             },
             {
               title: `${t('title.cover')}`,
               key: 'coverImg',
               dataIndex: 'coverImg',
-              render: (text) => <Image width={50} src={text} />,
+              render: (text) => <Image width={100} src={text} />,
             },
             {
               title: `${t('title.productNumber')}`,

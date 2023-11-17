@@ -1,9 +1,10 @@
 import { Routes } from '@/libs/router'
+import { formatMoney } from '@/libs/util'
 import {
-  CopyOutlined,
   ExclamationCircleOutlined,
   SearchOutlined,
   UndoOutlined,
+  CopyOutlined,
 } from '@ant-design/icons'
 import {
   App,
@@ -21,35 +22,34 @@ import {
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import {
   ConditionLeftItem,
   ContentContainer,
   QueryBtnWrapper,
   StyledRightCondition,
-} from '../../components/styled'
-// import { useHistory } from 'react-router-dom';
-import { formatMoney } from '@/libs/util'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+} from '@/components/styled'
 import RefundRejectForm from './refund-reject-form'
-import ShipForm from './ship-form'
+import RefundApproveForm from './refund-approve-form'
 
-const OrderPage = () => {
+const RefundRequestPage = () => {
   const { t } = useTranslation()
   const { modal } = App.useApp()
   const [queryForm] = Form.useForm()
   // const history = useHistory();
   const [changeTimestamp, setChangeTimestamp] = useState()
-  const [ordersData, setOrdersData] = useState()
+  const [requestsData, setRequestsData] = useState()
   const [pageNumber, setPageNumber] = useState(1)
   const [pageSize] = useState(10)
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const [queryCriteria, setQueryCriteria] = useState()
-  const [formVisible, setFormVisible] = useState(false)
+  const [refundRejectFormVisible, setRefundRejectFormVisible] = useState(false)
   const [refundApproveFormVisible, setRefundApproveFormVisible] =
     useState(false)
   const [selectedId, setSelectedId] = useState()
+  const [selectedData, setSelectedData] = useState()
 
   const navigate = useNavigate()
 
@@ -64,7 +64,7 @@ const OrderPage = () => {
 
   const fetchOrders = useCallback(() => {
     setLoading(true)
-    let searchURL = `/api/admin/v1/orders/search?currentPage=${pageNumber}&pageSize=${pageSize}`
+    let searchURL = `/api/admin/v1/refund-requests/search?currentPage=${pageNumber}&pageSize=${pageSize}`
     if (queryCriteria?.orderCode) {
       searchURL += `&orderCode=${queryCriteria.orderCode}`
     }
@@ -76,7 +76,7 @@ const OrderPage = () => {
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
-          setOrdersData(responseObject.records)
+          setRequestsData(responseObject.records)
           setTotal(responseObject.total)
         }
       })
@@ -94,34 +94,6 @@ const OrderPage = () => {
     t,
   ])
 
-  const handleCloseAction = (id) => {
-    modal.confirm({
-      title: `${t('message.tips.close')}`,
-      icon: <ExclamationCircleOutlined />,
-      okText: `${t('button.determine')}`,
-      okType: 'primary',
-      cancelText: `${t('button.cancel')}`,
-      onOk() {
-        axios
-          .delete(`/api/admin/v1/orders/${id}`)
-          .then((res) => {
-            if (res.status === HttpStatus.OK) {
-              const timestamp = new Date().getTime()
-              setChangeTimestamp(timestamp)
-              message.success(t('message.successInfo'))
-            }
-          })
-          .catch((err) => {
-            message.error(
-              `${t('message.error.failureReason')}${
-                err.response?.data?.message
-              }`,
-            )
-          })
-      },
-    })
-  }
-
   const handleQuery = () => {
     const timestamp = new Date().getTime()
     setChangeTimestamp(timestamp)
@@ -137,21 +109,21 @@ const OrderPage = () => {
   //   navigate(`${Routes.ORDER_FORM.path}?id=${id}`)
   // }
 
-  const handleShipAction = (id) => {
+  const handleRejectAction = (id) => {
     setSelectedId(id)
-    setFormVisible(true)
+    setRefundRejectFormVisible(true)
   }
 
   const handleSignAction = (id) => {
     modal.confirm({
-      title: `${t('message.tips.sign')}`,
+      title: `${t('message.tips.returnSign')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,
       okType: 'primary',
       cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
-          .put(`/api/admin/v1/orders/${id}/sign`)
+          .put(`/api/admin/v1/refund-requests/${id}/return-delivery-sign`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               const timestamp = new Date().getTime()
@@ -170,18 +142,23 @@ const OrderPage = () => {
     })
   }
 
-  const handleViewAction = (id) => {
+  const handleApproveAction = (id) => {
+    setSelectedId(id)
+    setSelectedData(requestsData?.find((item) => item.id === id))
+    setRefundApproveFormVisible(true)
+  }
+
+  const handleOrderViewAction = (id) => {
     navigate(`${Routes.ORDER_FORM.path}?id=${id}`)
   }
 
-  const handleCopyAction = (orderCode) => {
-    navigator.clipboard.writeText(orderCode)
-    message.success(t('message.copySuccess'))
+  const handleViewAction = (id) => {
+    navigate(`${Routes.REFUND_REQUEST_VIEW.path}?id=${id}`)
   }
 
-  const handleApproveRefundRequest = (id) => {
-    setRefundApproveFormVisible(true)
-    setSelectedId(id)
+  const handleCopyAction = (code) => {
+    navigator.clipboard.writeText(code)
+    message.success(t('message.copySuccess'))
   }
 
   useEffect(() => {
@@ -190,7 +167,7 @@ const OrderPage = () => {
 
   return (
     <>
-      <Card title={t('title.label.orderManagement')}>
+      <Card title={t('menu.refundRequest')}>
         <Form
           labelCol={{ span: 10 }}
           wrapperCol={{ span: 14 }}
@@ -243,9 +220,9 @@ const OrderPage = () => {
                   (pageNumber - 1) * pageSize + index + 1,
               },
               {
-                title: `${t('title.label.orderNumber')}`,
-                key: 'orderCode',
-                dataIndex: 'orderCode',
+                title: `${t('title.label.code')}`,
+                key: 'id',
+                dataIndex: 'id',
                 render: (text, record) => (
                   <>
                     <Button
@@ -265,25 +242,43 @@ const OrderPage = () => {
                 ),
               },
               {
-                title: `${t('title.label.userNickName')}`,
+                title: `${t('title.label.orderNumber')}`,
+                key: 'orderCode',
+                dataIndex: 'orderCode',
+                render: (text, record) => (
+                  <Button
+                    onClick={() => handleOrderViewAction(record.orderId)}
+                    type="link"
+                  >
+                    {text}
+                  </Button>
+                ),
+              },
+              {
+                title: `${t('title.userName')}`,
                 key: 'username',
                 dataIndex: 'username',
               },
               {
-                title: `${t('title.userNickname')}`,
-                key: 'nickname',
-                dataIndex: 'nickname',
+                title: `${t('title.userPhone')}`,
+                key: 'phone',
+                dataIndex: 'phone',
               },
               {
-                title: `${t('title.recipientPhone')}`,
-                key: 'recipientPhone',
-                dataIndex: 'recipientPhone',
-              },
-              {
-                title: `${t('title.transactionAmount')}`,
-                key: 'totalAmount',
-                dataIndex: 'totalAmount',
+                title: `${t('title.refundAmount')}`,
+                key: 'refundAmount',
+                dataIndex: 'refundAmount',
                 render: (text) => formatMoney(text),
+              },
+              {
+                title: `${t('title.refundReason')}`,
+                key: 'refundReason',
+                dataIndex: 'refundReason',
+              },
+              {
+                title: `${t('title.refundReasonDescription')}`,
+                key: 'refundReasonDescription',
+                dataIndex: 'refundReasonDescription',
               },
               {
                 title: `${t('title.createTime')}`,
@@ -291,28 +286,22 @@ const OrderPage = () => {
                 dataIndex: 'createdAt',
               },
               {
-                title: `${t('title.paymentStatus')}`,
-                key: 'paymentStatus',
-                dataIndex: 'paymentStatus',
+                title: `${t('title.requestStatus')}`,
+                key: 'requestStatus',
+                dataIndex: 'requestStatus',
                 render: (text) => {
-                  return text === 'PAID' ? (
-                    <Tag color="green">{t('title.paid')}</Tag>
+                  return text === 'PENDING' ? (
+                    <Tag color="magenta">{t(text)}</Tag>
                   ) : (
-                    <Tag color="red">{t('title.unpaid')}</Tag>
+                    <Tag color="blue">{t(text)}</Tag>
                   )
                 },
               },
               {
-                title: `${t('title.status')}`,
-                key: 'state',
-                dataIndex: 'state',
-                render: (text) => {
-                  if (text === 'FINISHED') {
-                    return <Tag color="gold-inverse">{t(text)}</Tag>
-                  } else {
-                    return <Tag color="blue">{t(text)}</Tag>
-                  }
-                },
+                title: `${t('title.refundStatus')}`,
+                key: 'refundStatus',
+                dataIndex: 'refundStatus',
+                render: (text) => <Tag color="blue">{t(text)}</Tag>,
               },
               {
                 title: `${t('title.operate')}`,
@@ -320,54 +309,30 @@ const OrderPage = () => {
                 render: (text, record) => {
                   return (
                     <div>
-                      {record.state === 'PAID' &&
-                        record.productNature === 'PHYSICAL' && (
-                          <>
-                            <Divider type="vertical" />
-                            <Button
-                              type="link"
-                              onClick={() => handleShipAction(record.id)}
-                            >
-                              {t('button.ship')}
-                            </Button>
-                          </>
-                        )}
-
-                      {record.state === 'SHIPPED' && (
+                      {record.requestStatus === 'PENDING' && (
                         <>
+                          <Button
+                            type="link"
+                            onClick={() => handleApproveAction(record.id)}
+                          >
+                            {t('button.approve')}
+                          </Button>
                           <Divider type="vertical" />
+                          <Button
+                            type="link"
+                            onClick={() => handleRejectAction(record.id)}
+                          >
+                            {t('button.reject')}
+                          </Button>
+                        </>
+                      )}
+                      {record.refundStatus === 'REFUNDING_WAIT_SIGN' && (
+                        <>
                           <Button
                             type="link"
                             onClick={() => handleSignAction(record.id)}
                           >
                             {t('button.sign')}
-                          </Button>
-                        </>
-                      )}
-
-                      {record.refundRequestStatus === 'REFUND_REQUEST' && (
-                        <>
-                          <Divider type="vertical" />
-                          <Button
-                            type="link"
-                            onClick={() =>
-                              handleApproveRefundRequest(record.id)
-                            }
-                          >
-                            {t('button.refundApprove')}
-                          </Button>
-                        </>
-                      )}
-
-                      {record.state === 'PLACED' && (
-                        <>
-                          <Divider type="vertical" />
-                          <Button
-                            type="link"
-                            danger
-                            onClick={() => handleCloseAction(record.id)}
-                          >
-                            {t('button.close')}
                           </Button>
                         </>
                       )}
@@ -377,22 +342,22 @@ const OrderPage = () => {
               },
             ]}
             rowKey={(record) => record.id}
-            dataSource={ordersData}
+            dataSource={requestsData}
             loading={loading}
             pagination={paginationProps}
           />
         </ContentContainer>
       </Card>
-      <ShipForm
-        visible={formVisible}
-        onCancel={() => setFormVisible(false)}
+      <RefundRejectForm
+        visible={refundRejectFormVisible}
+        onCancel={() => setRefundRejectFormVisible(false)}
         onSave={() => {
-          setFormVisible(false)
+          setRefundRejectFormVisible(false)
           setChangeTimestamp(Date.now())
         }}
         id={selectedId}
       />
-      <RefundRejectForm
+      <RefundApproveForm
         visible={refundApproveFormVisible}
         onCancel={() => setRefundApproveFormVisible(false)}
         onSave={() => {
@@ -400,9 +365,10 @@ const OrderPage = () => {
           setChangeTimestamp(Date.now())
         }}
         id={selectedId}
+        data={selectedData}
       />
     </>
   )
 }
 
-export default OrderPage
+export default RefundRequestPage

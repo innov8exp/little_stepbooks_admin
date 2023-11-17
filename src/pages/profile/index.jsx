@@ -113,41 +113,13 @@ const ProfilePage = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              name="author"
-              label={t('title.label.role')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.enterRole')}`,
-                },
-              ]}
-            >
+            {/* <Form.Item name="author" label={t('title.label.role')}>
               <Input />
-            </Form.Item>
-            <Form.Item
-              name="introduction"
-              label={t('title.label.personal')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.enterPersonalIntro')}`,
-                },
-              ]}
-            >
+            </Form.Item> */}
+            <Form.Item name="introduction" label={t('title.label.personal')}>
               <TextArea rows={2} style={{ resize: 'none' }} />
             </Form.Item>
-            <Form.Item
-              name="coverImg"
-              label={t('title.label.picture')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.uploadCoverImage')}`,
-                },
-              ]}
-            >
-              <Input hidden />
+            <Form.Item name="coverImg" label={t('title.label.picture')}>
               <Upload
                 name="file"
                 listType="picture-card"

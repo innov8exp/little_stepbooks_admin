@@ -315,12 +315,12 @@ const BookForm = () => {
             <Form.Item
               name="coverImg"
               label={t('title.cover')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.uploadCoverImage')}`,
-                },
-              ]}
+              // rules={[
+              //   {
+              //     required: true,
+              //     message: `${t('message.check.uploadCoverImage')}`,
+              //   },
+              // ]}
             >
               <Upload
                 name="file"

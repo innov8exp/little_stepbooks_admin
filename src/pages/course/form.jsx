@@ -53,7 +53,7 @@ const CourseForm = () => {
   const [initFormData, setInitFormData] = useState({})
   const [loading, setLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
-  const [isDisplayForm, setIsDisplayForm] = useState(!bookId)
+  const [isDisplayForm, setIsDisplayForm] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [imageUrl, setImageUrl] = useState()
 
@@ -129,7 +129,7 @@ const CourseForm = () => {
       .validateFields()
       .then((values) => {
         console.log('数字：', values)
-        if (bookId) {
+        if (id) {
           updateData({
             ...values,
           })
@@ -285,7 +285,7 @@ const CourseForm = () => {
               ]}
             >
               <Radio.Group>
-                <Radio value={'PAID'}>{t('title.PAID')}</Radio>
+                <Radio value={'NEED_TO_PAY'}>{t('title.NEED_TO_PAY')}</Radio>
                 <Radio value={'TRIAL'}>{t('title.TRIAL')}</Radio>
               </Radio.Group>
             </Form.Item>

@@ -51,16 +51,16 @@ const ShipForm = ({ id, visible, onSave, onCancel }) => {
         name="form_in_modal"
       >
         <Form.Item
-          name="shipCompany"
-          label={t('title.shipCompany')}
+          name="deliveryCompany"
+          label={t('title.deliveryCompany')}
           rules={[
             {
               required: true,
-              message: t('message.check.shipCompany'),
+              message: t('message.check.deliveryCompany'),
             },
           ]}
         >
-          <Select placeholder={t('message.placeholder.selectShipCompany')}>
+          <Select placeholder={t('message.placeholder.selectDeliveryCompany')}>
             {fetchedData?.map(({ code, name }) => (
               <Select.Option key={code} value={code}>
                 {name}
@@ -69,16 +69,16 @@ const ShipForm = ({ id, visible, onSave, onCancel }) => {
           </Select>
         </Form.Item>
         <Form.Item
-          name="shipCode"
-          label={t('title.shipCode')}
+          name="deliveryCode"
+          label={t('title.deliveryCode')}
           rules={[
             {
               required: true,
-              message: t('message.check.shipCode'),
+              message: t('message.check.deliveryCode'),
             },
           ]}
         >
-          <Input placeholder={t('message.check.shipCode')} />
+          <Input placeholder={t('message.check.deliveryCode')} />
         </Form.Item>
       </Form>
     </Modal>

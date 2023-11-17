@@ -276,12 +276,12 @@ const ChapterForm = () => {
             <Form.Item
               name="image"
               label={t('title.image')}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.uploadImage')}`,
-                },
-              ]}
+              // rules={[
+              //   {
+              //     required: true,
+              //     message: `${t('message.check.uploadImage')}`,
+              //   },
+              // ]}
             >
               <Upload
                 name="file"

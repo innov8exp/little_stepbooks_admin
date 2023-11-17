@@ -5,10 +5,10 @@ import {
   // CommentOutlined,
   DashboardOutlined,
   FundProjectionScreenOutlined,
-  MailOutlined,
+  // MailOutlined,
   SettingOutlined,
   ShoppingOutlined,
-  SmileOutlined,
+  // SmileOutlined,
   UserOutlined,
 } from '@ant-design/icons'
 import { useState } from 'react'
@@ -136,6 +136,11 @@ const AdminLayout = () => {
         '41',
         <ShoppingOutlined />,
       ),
+      getItem(
+        <Link to={Routes.REFUND_REQUEST.path}>{t('menu.refundRequest')}</Link>,
+        '42',
+        <ShoppingOutlined />,
+      ),
       // getItem(
       //   <Link to={Routes.COMMENT_LIST.path}>{t('menu.comment')}</Link>,
       //   '43',
@@ -157,31 +162,31 @@ const AdminLayout = () => {
         '54',
         <FundProjectionScreenOutlined />,
       ),
-      getItem(
-        <Link to="/book2">{t('menu.push')}</Link>,
-        '55',
-        <MailOutlined />,
-      ),
-      getItem(
-        <Link to="/comment3">{t('menu.feedback')}</Link>,
-        '56',
-        <SmileOutlined />,
-      ),
+      // getItem(
+      //   <Link to="/book2">{t('menu.push')}</Link>,
+      //   '55',
+      //   <MailOutlined />,
+      // ),
+      // getItem(
+      //   <Link to="/comment3">{t('menu.feedback')}</Link>,
+      //   '56',
+      //   <SmileOutlined />,
+      // ),
     ]),
 
     getItem(t('menu.system'), '7', <SettingOutlined />, [
+      // getItem(
+      //   <Link to="/category1">{t('menu.basic')}</Link>,
+      //   '61',
+      //   <SettingOutlined />,
+      // ),
+      // getItem(
+      //   <Link to="/book1">{t('menu.configuration')}</Link>,
+      //   '62',
+      //   <UserOutlined />,
+      // ),
       getItem(
-        <Link to="/category1">{t('menu.basic')}</Link>,
-        '61',
-        <SettingOutlined />,
-      ),
-      getItem(
-        <Link to="/book1">{t('menu.configuration')}</Link>,
-        '62',
-        <UserOutlined />,
-      ),
-      getItem(
-        <Link to="/comment1">{t('menu.adminUser')}</Link>,
+        <Link to="/admin-user">{t('menu.adminUser')}</Link>,
         '63',
         <UserOutlined />,
       ),

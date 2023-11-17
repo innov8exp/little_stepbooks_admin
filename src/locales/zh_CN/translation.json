@@ -41,6 +41,7 @@
   "menu.bookSet": "书籍套装列表",
   "menu.comment": "评论管理",
   "menu.order": "订单中心",
+  "menu.refundRequest": "退款申请",
   "menu.orderList": "订单明细",
   "menu.inventory": "库存管理",
   "menu.orderInventoryLogList": "库存变更记录",
