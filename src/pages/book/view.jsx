@@ -1,6 +1,6 @@
 import ViewItem from '@/components/view-item'
 import { LeftCircleOutlined } from '@ant-design/icons'
-import { Button, Card, Empty, message, Skeleton } from 'antd'
+import { Button, Card, Empty, message, Skeleton, Image } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
@@ -17,8 +17,7 @@ const BookView = () => {
     hasEnding: true,
   })
   const [loading, setLoading] = useState(false)
-  const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
-  const [imageUrl, setImageUrl] = useState()
+  const [isDisplayForm, setIsDisplayForm] = useState(false)
 
   const initData = useCallback(() => {
     if (!queryId) {
@@ -32,7 +31,6 @@ const BookView = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
-          setImageUrl(resultData.coverImgUrl)
           setInitFormData({
             ...resultData,
           })
@@ -83,7 +81,11 @@ const BookView = () => {
           <ViewItem
             label={t('title.cover')}
             value={
-              <img src={imageUrl} alt="封面图片" style={{ height: 200 }} />
+              <Image
+                src={initFormData?.bookImgUrl}
+                alt="封面图片"
+                style={{ height: 200 }}
+              />
             }
           />
         </Skeleton>

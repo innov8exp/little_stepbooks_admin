@@ -1,10 +1,6 @@
+import UploadComp from '@/components/upload'
 import useFetch from '@/hooks/useFetch'
-import { Routes } from '@/libs/router'
-import {
-  LeftCircleOutlined,
-  LoadingOutlined,
-  PlusOutlined,
-} from '@ant-design/icons'
+import { LeftCircleOutlined } from '@ant-design/icons'
 import {
   Button,
   Card,
@@ -15,7 +11,6 @@ import {
   Input,
   Row,
   Skeleton,
-  Upload,
   message,
 } from 'antd'
 import axios from 'axios'
@@ -25,24 +20,6 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const { TextArea } = Input
-
-const getBase64 = (img, callback) => {
-  const reader = new FileReader()
-  reader.addEventListener('load', () => callback(reader.result))
-  reader.readAsDataURL(img)
-}
-
-const beforeUpload = (file) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
-  if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!')
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!')
-  }
-  return isJpgOrPng && isLt2M
-}
 
 const BookForm = () => {
   const { t } = useTranslation()
@@ -54,8 +31,6 @@ const BookForm = () => {
   const [loading, setLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
-  const [uploading, setUploading] = useState(false)
-  const [imageUrl, setImageUrl] = useState()
 
   const classifications = useFetch('/api/admin/v1/classifications', [])
 
@@ -94,8 +69,8 @@ const BookForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
-          setImageUrl(resultData.coverImg)
           setInitFormData({
+            bookImg: resultData.bookImgId,
             ...resultData,
           })
         }
@@ -125,12 +100,12 @@ const BookForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(`${t('message.successfullySaved')}`)
-          navigate(Routes.BOOK_LIST.path)
+          navigate('/books')
         }
       })
       .catch((err) => {
         message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
+          `${t('message.error.failureReason')}${err?.response?.data?.message}`,
         )
       })
       .finally(() => setSaveLoading(false))
@@ -146,7 +121,7 @@ const BookForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(`${t('message.successfullySaved')}`)
-          navigate(Routes.BOOK_LIST.path)
+          navigate('/books')
         }
       })
       .catch((err) => {
@@ -177,57 +152,6 @@ const BookForm = () => {
       .catch()
   }
 
-  const handleUploadChange = (info) => {
-    if (info.file.status === 'uploading') {
-      setUploading(true)
-      return
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, (url) => {
-        setUploading(false)
-        setImageUrl(url)
-      })
-    }
-  }
-
-  const uploadButton = (
-    <div>
-      {uploading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>{t('title.coverUpload')}</div>
-    </div>
-  )
-
-  const handleUpload = (options) => {
-    // setUploading(true);
-    const { onSuccess, onError, file } = options
-    const fmData = new FormData()
-    fmData.append('file', file)
-    axios
-      .post(`/api/admin/v1/books/upload`, fmData, {
-        headers: { 'content-type': 'multipart/form-data' },
-      })
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          onSuccess()
-          form.setFieldsValue({
-            coverImgId: res.data.id,
-            coverImgUrl: res.data.object_url,
-          })
-          message.success(`${t('message.tips.uploadSuccess')}`)
-        }
-      })
-      .catch((err) => {
-        onError(err)
-        message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
-        )
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-  }
-
   useEffect(() => {
     initData()
   }, [initData])
@@ -256,6 +180,12 @@ const BookForm = () => {
               ...initFormData,
             }}
           >
+            <Form.Item name="bookImgId" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="bookImgUrl" hidden>
+              <Input />
+            </Form.Item>
             <Form.Item
               name="bookName"
               label={t('title.bookName')}
@@ -313,30 +243,25 @@ const BookForm = () => {
               />
             </Form.Item>
             <Form.Item
-              name="coverImg"
+              name="bookImg"
               label={t('title.cover')}
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: `${t('message.check.uploadCoverImage')}`,
-              //   },
-              // ]}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.uploadCoverImage')}`,
+                },
+              ]}
             >
-              <Upload
-                name="file"
-                listType="picture-card"
-                style={{ width: 240, height: 320 }}
-                showUploadList={false}
-                customRequest={handleUpload}
-                beforeUpload={beforeUpload}
-                onChange={handleUploadChange}
-              >
-                {imageUrl ? (
-                  <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
-                ) : (
-                  uploadButton
-                )}
-              </Upload>
+              <UploadComp
+                domain="BOOK"
+                initUrl={initFormData?.bookImgUrl}
+                onOk={(data) =>
+                  form.setFieldsValue({
+                    bookImgId: data.id,
+                    bookImgUrl: data.objectUrl,
+                  })
+                }
+              />
             </Form.Item>
             <div style={{ marginTop: 10 }} />
             <Row justify="end">

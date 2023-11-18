@@ -1,140 +1,150 @@
-import { UploadOutlined } from '@ant-design/icons'
-import PropTypes from 'prop-types'
-import { Form, message, Upload, Button } from 'antd'
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
+import { Upload, message } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
-import { useState } from 'react'
+import PropTypes from 'prop-types'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-const UploadForm = ({ buttonName, fileType }) => {
+const getBase64 = (img, callback) => {
+  const reader = new FileReader()
+  reader.addEventListener('load', () => callback(reader.result))
+  reader.readAsDataURL(img)
+}
+
+const beforeUpload = (file) => {
+  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+  if (!isJpgOrPng) {
+    message.error('You can only upload JPG/PNG file!')
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2
+  if (!isLt2M) {
+    message.error('Image must smaller than 2MB!')
+  }
+  return isJpgOrPng && isLt2M
+}
+
+const UploadComp = ({
+  domain,
+  permission = 'PUBLIC',
+  buttonName,
+  listType = 'picture-card',
+  initUrl,
+  style = { width: 240, height: 320 },
+  onOk = (data) => {
+    console.log(data)
+  },
+  onErr = (err) => {
+    console.error(err)
+  },
+  ...props
+}) => {
   const { t } = useTranslation()
-  const [form] = Form.useForm()
-  const [setUploading] = useState(false)
-  const [setImageUrl] = useState()
-
-  const getBase64 = (img, callback) => {
-    const reader = new FileReader()
-    reader.addEventListener('load', () => callback(reader.result))
-    reader.readAsDataURL(img)
-  }
-
-  const handleUploadChange = (info) => {
-    if (info.file.status === 'uploading') {
-      setUploading(true)
-      return
-    }
-    if (info.file.status === 'done') {
-      getBase64(info.file.originFileObj, (url) => {
-        setUploading(false)
-        setImageUrl(url)
-      })
-    }
-  }
-
-  // const uploadButton = (
-  //   <div>
-  //     {uploading ? <LoadingOutlined /> : <PlusOutlined />}
-  //     <div style={{ marginTop: 8 }}>{t('title.audioFrequencyUpload')}</div>
-  //   </div>
-  // )
+  const [uploading, setUploading] = useState(false)
+  const [imageUrl, setImageUrl] = useState()
 
   const handleUpload = (options) => {
+    setUploading(true)
     const { onSuccess, onError, file } = options
     const fmData = new FormData()
     fmData.append('file', file)
     axios
-      .post(`/api/admin/v1/books/upload`, fmData, {
-        headers: { 'content-type': 'multipart/form-data' },
-      })
+      .post(
+        `/api/admin/v1/medias/upload?permission=${permission}&domain=${domain}`,
+        fmData,
+        {
+          headers: { 'content-type': 'multipart/form-data' },
+        },
+      )
       .then((res) => {
         if (res.status === HttpStatus.OK) {
-          onSuccess()
-          form.setFieldsValue({ coverImg: res.data })
-          message.success(`${t('message.tips.uploadSuccess')}`)
+          onSuccess(res.data)
+          message.success(`${file.name} file uploaded successfully.`)
+          getBase64(file, (url) => {
+            setImageUrl(url)
+          })
+          onOk(res.data)
         }
       })
       .catch((err) => {
         onError(err)
-        message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
-        )
+        message.error(`${file.name} file upload failed.`)
+        onErr(err)
       })
-      .finally(() => {
-        // setLoading(false)
-      })
-  }
-  const beforeUpload = (file) => {
-    if (fileType === 'audio') {
-      checkFileVideoType(file)
-    }
-
-    checkSize(file)
+      .finally(() => setUploading(false))
   }
 
-  const checkFileVideoType = (file) => {
-    return new Promise((resolve, reject) => {
-      const isVideo = file.type === 'audio/mp3' || file.type === 'audio/mpeg'
+  useEffect(() => {
+    setImageUrl(initUrl)
+  }, [initUrl])
 
-      if (!isVideo) {
-        reject(message.error('You can only upload audio file!'))
-      } else {
-        resolve()
-      }
-    })
-  }
+  // const handleUploadChange = (info) => {
+  //   console.log('my-info:', info)
+  //   if (info.file.status === 'uploading') {
+  //     setUploading(true)
+  //     return
+  //   }
+  //   if (info.file.status === 'done') {
+  //     message.success(`${info.file.name} file uploaded successfully.`)
+  //     // Get this url from response in real world.
+  //     getBase64(info.file.originFileObj, (url) => {
+  //       setUploading(false)
+  //       setImageUrl(url)
+  //     })
+  //     const resData = info.file.response
+  //     onOk(resData)
+  //     // form.setFieldsValue({
+  //     //   bookImgId: resData.id,
+  //     //   bookImgUrl: resData.objectUrl,
+  //     // })
+  //   }
+  //   if (info.file.status === 'error') {
+  //     setUploading(false)
+  //     message.error(`${info.file.name} file upload failed.`)
+  //     const resData = info.file.response
+  //     onErr(resData)
+  //   }
+  // }
 
-  const checkSize = (file) => {
-    return new Promise((resolve, reject) => {
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isLt2M) {
-        message.error('Image must smaller than 2MB!')
-        reject()
-      } else {
-        resolve()
-      }
-    })
-  }
+  const uploadButton = (
+    <div>
+      {uploading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div style={{ marginTop: 8 }}>
+        {buttonName ? buttonName : t('title.upload')}
+      </div>
+    </div>
+  )
 
-  // const fileList = [
-  //   {
-  //     uid: '1',
-  //     name: 'xxx.png',
-  //     status: 'uploading',
-  //     url: 'http://www.baidu.com/xxx.png',
-  //     percent: 33,
-  //   },
-  //   {
-  //     uid: '2',
-  //     name: 'yyy.png',
-  //     status: 'done',
-  //     url: 'http://www.baidu.com/yyy.png',
-  //   },
-  //   {
-  //     uid: '3',
-  //     name: 'zzz.png',
-  //     status: 'error',
-  //     response: 'Server Error 500',
-  //     url: 'http://www.baidu.com/zzz.png',
-  //   },
-  // ]
   return (
     <Upload
       name="file"
-      // listType="picture"
-      // style={{ width: 240, height: 320 }}
-      // defaultFileList={[...fileList]}
-      showUploadList={true}
-      customRequest={handleUpload}
+      listType={listType}
+      style={style}
+      showUploadList={false}
       beforeUpload={beforeUpload}
-      onChange={handleUploadChange}
+      // onChange={handleUploadChange}
+      // action={`/api/admin/v1/medias/upload?permission=${permission}&domain=${domain}`}
+      // withCredentials
+      customRequest={handleUpload}
+      {...props}
     >
-      <Button icon={<UploadOutlined />}>{buttonName}</Button>
+      {imageUrl ? (
+        <img src={imageUrl} style={{ width: '100%' }} />
+      ) : (
+        uploadButton
+      )}
     </Upload>
   )
 }
-UploadForm.propTypes = {
-  buttonName: PropTypes.string.isRequired,
-  fileType: PropTypes.string.isRequired,
+UploadComp.propTypes = {
+  domain: PropTypes.string.isRequired,
+  permission: PropTypes.string,
+  buttonName: PropTypes.string,
+  listType: PropTypes.string,
+  style: PropTypes.object,
+  initUrl: PropTypes.string,
+  onOk: PropTypes.func,
+  onErr: PropTypes.func,
 }
 
-export default UploadForm
+export default UploadComp

@@ -1,8 +1,6 @@
-import {
-  LeftCircleOutlined,
-  LoadingOutlined,
-  PlusOutlined,
-} from '@ant-design/icons'
+import UploadComp from '@/components/upload'
+import useFetch from '@/hooks/useFetch'
+import { LeftCircleOutlined } from '@ant-design/icons'
 import {
   Button,
   Card,
@@ -11,18 +9,15 @@ import {
   Form,
   Input,
   InputNumber,
-  message,
   Row,
   Skeleton,
-  Upload,
+  message,
 } from 'antd'
-import useFetch from '@/hooks/useFetch'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import UploadComponent from '@/components/upload'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const { TextArea } = Input
 
@@ -37,28 +32,8 @@ const ChapterForm = () => {
   const [loading, setLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
-  const [uploading, setUploading] = useState(false)
-  const [imageUrl, setImageUrl] = useState()
 
   const { fetchedData } = useFetch(`/api/admin/v1/books/${bookId}`, [])
-
-  const getBase64 = (img, callback) => {
-    const reader = new FileReader()
-    reader.addEventListener('load', () => callback(reader.result))
-    reader.readAsDataURL(img)
-  }
-
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
-    if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!')
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2
-    if (!isLt2M) {
-      message.error('Image must smaller than 2MB!')
-    }
-    return isJpgOrPng && isLt2M
-  }
 
   const initData = useCallback(() => {
     if (!queryId) {
@@ -79,6 +54,8 @@ const ChapterForm = () => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
           setInitFormData({
+            img: resultData.imgId,
+            audio: resultData.audioId,
             ...resultData,
           })
         }
@@ -150,54 +127,6 @@ const ChapterForm = () => {
       .catch()
   }
 
-  const handleUploadChange = (info) => {
-    if (info.file.status === 'uploading') {
-      setUploading(true)
-      return
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, (url) => {
-        setUploading(false)
-        setImageUrl(url)
-      })
-    }
-  }
-
-  const uploadButton = (
-    <div>
-      {uploading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>{t('title.imageUpload')}</div>
-    </div>
-  )
-
-  const handleUpload = (options) => {
-    // setUploading(true);
-    const { onSuccess, onError, file } = options
-    const fmData = new FormData()
-    fmData.append('file', file)
-    axios
-      .post(`/api/admin/v1/books/upload`, fmData, {
-        headers: { 'content-type': 'multipart/form-data' },
-      })
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          onSuccess()
-          form.setFieldsValue({ coverImg: res.data })
-          message.success(`${t('message.tips.uploadSuccess')}`)
-        }
-      })
-      .catch((err) => {
-        onError(err)
-        message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
-        )
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-  }
-
   useEffect(() => {
     initData()
   }, [initData])
@@ -226,6 +155,18 @@ const ChapterForm = () => {
               ...initFormData,
             }}
           >
+            <Form.Item name="imgId" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="imgUrl" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="audioId" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="audioUrl" hidden>
+              <Input />
+            </Form.Item>
             <Form.Item
               name="chapterNo"
               label={t('title.chapterNo')}
@@ -266,38 +207,44 @@ const ChapterForm = () => {
                 },
               ]}
             >
-              <UploadComponent
+              {/* <UploadComp
                 name="file"
                 showUploadList={false}
                 buttonName={t('title.audioFrequencyUpload')}
                 fileType={'audio'}
+              /> */}
+              <UploadComp
+                // listType="text"
+                fileType={'audio'}
+                domain="BOOK"
+                onOk={(data) =>
+                  form.setFieldsValue({
+                    audioId: data.id,
+                    audioUrl: data.objectUrl,
+                  })
+                }
               />
             </Form.Item>
             <Form.Item
-              name="image"
+              name="img"
               label={t('title.image')}
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: `${t('message.check.uploadImage')}`,
-              //   },
-              // ]}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.uploadImage')}`,
+                },
+              ]}
             >
-              <Upload
-                name="file"
-                listType="picture-card"
-                style={{ width: 240, height: 320 }}
-                showUploadList={false}
-                customRequest={handleUpload}
-                beforeUpload={beforeUpload}
-                onChange={handleUploadChange}
-              >
-                {imageUrl ? (
-                  <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
-                ) : (
-                  uploadButton
-                )}
-              </Upload>
+              <UploadComp
+                domain="BOOK"
+                initUrl={initFormData?.imgUrl}
+                onOk={(data) =>
+                  form.setFieldsValue({
+                    bookImgId: data.id,
+                    bookImgUrl: data.objectUrl,
+                  })
+                }
+              />
             </Form.Item>
             <div style={{ marginTop: 10 }} />
             <Row justify="end">
