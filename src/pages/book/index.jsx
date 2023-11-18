@@ -27,7 +27,7 @@ import {
 } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
-import { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
@@ -91,8 +91,7 @@ const BookPage = () => {
           .delete(`/api/admin/v1/books/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              const timestamp = new Date().getTime()
-              setChangeTimestamp(timestamp)
+              setChangeTimestamp(Date.now())
               message.success(`${t('message.archiveSuccessful')}`)
             }
           })
