@@ -1,13 +1,9 @@
 import { ButtonWrapper } from '@/components/styled'
 import useFetch from '@/hooks/useFetch'
-import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, Card, message, Modal, Table } from 'antd'
-import axios from 'axios'
-import HttpStatus from 'http-status-codes'
+import { Button, Card, Table, Image } from 'antd'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
-const { confirm } = Modal
+import AdminUserForm from './form'
 
 const AdminUserPage = () => {
   const { t } = useTranslation()
@@ -18,111 +14,128 @@ const AdminUserPage = () => {
   const [formVisible, setFormVisible] = useState(false)
   const [selectedId, setSelectedId] = useState()
 
-  // const handleEditAction = (id) => {
-  //   setSelectedId(id)
-  //   setFormVisible(true)
-  // }
-
-  const handleDeleteAction = (id) => {
-    confirm({
-      title: `${t('message.tips.delete')}`,
-      icon: <ExclamationCircleOutlined />,
-      okText: `${t('button.determine')}`,
-      okType: 'primary',
-      cancelText: `${t('button.cancel')}`,
-      onOk() {
-        axios
-          .delete(`/api/admin/v1/admin-users/${id}`)
-          .then((res) => {
-            if (res.status === HttpStatus.OK) {
-              message.success(t('message.successInfo'))
-              setChangeTime(Date.now())
-            }
-          })
-          .catch((err) => {
-            console.error(err)
-            message.error(err.message)
-          })
-      },
-    })
+  const handleEditAction = (id) => {
+    setSelectedId(id)
+    setFormVisible(true)
   }
 
+  // const handleDeleteAction = (id) => {
+  //   confirm({
+  //     title: `${t('message.tips.delete')}`,
+  //     icon: <ExclamationCircleOutlined />,
+  //     okText: `${t('button.determine')}`,
+  //     okType: 'primary',
+  //     cancelText: `${t('button.cancel')}`,
+  //     onOk() {
+  //       axios
+  //         .delete(`/api/admin/v1/admin-users/${id}`)
+  //         .then((res) => {
+  //           if (res.status === HttpStatus.OK) {
+  //             message.success(t('message.successInfo'))
+  //             setChangeTime(Date.now())
+  //           }
+  //         })
+  //         .catch((err) => {
+  //           console.error(err)
+  //           message.error(err.message)
+  //         })
+  //     },
+  //   })
+  // }
+
   return (
-    <Card title={t('title.userManagement')}>
-      <ButtonWrapper>
-        <Button
-          type="primary"
-          onClick={() => {
-            setSelectedId(undefined)
-            setFormVisible(true)
-          }}
-        >
-          {t('button.create')}
-        </Button>
-      </ButtonWrapper>
-      <Table
-        columns={[
-          {
-            title: '#',
-            key: 'number',
-            render: (text, record, index) => index + 1,
-          },
-          {
-            title: `${t('title.label.userNickName')}`,
-            key: 'username',
-            dataIndex: 'username',
-          },
-          {
-            title: `${t('title.userNickname')}`,
-            key: 'nickname',
-            dataIndex: 'nickname',
-          },
-          {
-            title: `${t('title.email')}`,
-            key: 'email',
-            dataIndex: 'email',
-          },
-          {
-            title: `${t('title.phone')}`,
-            key: 'phone',
-            dataIndex: 'phone',
-          },
-          {
-            title: `${t('title.creationTime')}`,
-            key: 'createdAt',
-            dataIndex: 'createdAt',
-          },
-          {
-            title: `${t('title.operate')}`,
-            key: 'action',
-            width: 200,
-            render: (text, record) => {
-              return (
-                <div>
-                  {/* <Button
-                    onClick={() => handleEditAction(record.id)}
-                    type="link"
-                  >
-                    {t('button.edit')}
-                  </Button> */}
-                  {/* <Button
+    <>
+      <Card title={t('title.userManagement')}>
+        <ButtonWrapper>
+          <Button
+            type="primary"
+            onClick={() => {
+              setSelectedId(undefined)
+              setFormVisible(true)
+            }}
+          >
+            {t('button.create')}
+          </Button>
+        </ButtonWrapper>
+        <Table
+          columns={[
+            {
+              title: '#',
+              key: 'number',
+              render: (text, record, index) => index + 1,
+            },
+            {
+              title: `${t('title.avatarImage')}`,
+              key: 'avatarImgUrl',
+              dataIndex: 'avatarImgUrl',
+              render: (text) => <Image width={50} src={text} />,
+            },
+            {
+              title: `${t('title.label.username')}`,
+              key: 'username',
+              dataIndex: 'username',
+            },
+            {
+              title: `${t('title.userNickname')}`,
+              key: 'nickname',
+              dataIndex: 'nickname',
+            },
+            {
+              title: `${t('title.email')}`,
+              key: 'email',
+              dataIndex: 'email',
+            },
+            {
+              title: `${t('title.phone')}`,
+              key: 'phone',
+              dataIndex: 'phone',
+            },
+            {
+              title: `${t('title.creationTime')}`,
+              key: 'createdAt',
+              dataIndex: 'createdAt',
+            },
+            {
+              title: `${t('title.operate')}`,
+              key: 'action',
+              width: 200,
+              render: (text, record) => {
+                return (
+                  <div>
+                    <Button
+                      onClick={() => handleEditAction(record.id)}
+                      type="link"
+                    >
+                      {t('button.edit')}
+                    </Button>
+                    {/* <Button
                     onClick={() => handleDeleteAction(record.id)}
                     danger
                     type="link"
                   >
                     {t('button.disable')}
                   </Button> */}
-                </div>
-              )
+                  </div>
+                )
+              },
             },
-          },
-        ]}
-        rowKey={(record) => record.id}
-        dataSource={fetchedData}
-        pagination={false}
-        loading={loading}
+          ]}
+          rowKey={(record) => record.id}
+          dataSource={fetchedData}
+          pagination={false}
+          loading={loading}
+        />
+      </Card>
+      <AdminUserForm
+        visible={formVisible}
+        onCancel={() => setFormVisible(false)}
+        onSave={() => {
+          setFormVisible(false)
+          setChangeTime(Date.now())
+        }}
+        id={selectedId}
       />
-    </Card>
+    </>
   )
 }
 

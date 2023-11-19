@@ -1,38 +1,18 @@
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
-import { Form, Input, message, Modal, Select, Upload } from 'antd'
+import DebounceSelect from '@/components/debounce-select'
+import ImageListUpload from '@/components/image-list-upload'
+import { Form, Input, Modal, Select, message } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import axios from 'axios'
-import DebounceSelect from '@/components/debounce-select'
 import HttpStatus from 'http-status-codes'
-import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const { Option } = Select
 
-const getBase64 = (img, callback) => {
-  const reader = new FileReader()
-  reader.addEventListener('load', () => callback(reader.result))
-  reader.readAsDataURL(img)
-}
-
-const beforeUpload = (file) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
-  if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!')
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!')
-  }
-  return isJpgOrPng && isLt2M
-}
-
 const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
-  const [uploading, setUploading] = useState(false)
-  const [imageUrl, setImageUrl] = useState()
   const [initBookOptions, setInitBookOptions] = useState([])
 
   useEffect(() => {
@@ -41,9 +21,22 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
         .get(`/api/admin/v1/advertisements/${id}`)
         .then((res) => {
           if (res.status === HttpStatus.OK) {
-            setImageUrl(res.data?.adsImg)
+            const resultData = res.data
+            const adsImgArr = []
+            if (resultData.adsImgId) {
+              adsImgArr.push({
+                id: resultData.adsImgId,
+                name: resultData.adsImgUrl?.split('/')?.pop(),
+                url: resultData.adsImgUrl,
+                response: {
+                  id: resultData.adsImgId,
+                  objectUrl: resultData.adsImgUrl,
+                },
+              })
+            }
             form.setFieldsValue({
               ...res.data,
+              adsImg: adsImgArr,
             })
           }
         })
@@ -88,9 +81,17 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       .validateFields()
       .then((values) => {
         if (id) {
-          updateData(values)
+          updateData({
+            ...values,
+            adsImgId: values.adsImg?.[0]?.response?.id,
+            adsImgUrl: values.adsImg?.[0]?.response?.objectUrl,
+          })
         } else {
-          createData(values)
+          createData({
+            ...values,
+            adsImgId: values.adsImg?.[0]?.response?.id,
+            adsImgUrl: values.adsImg?.[0]?.response?.objectUrl,
+          })
         }
       })
       .catch()
@@ -100,51 +101,6 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
     form.setFieldsValue({
       bookId: optionValue,
     })
-  }
-
-  const handleUploadChange = (info) => {
-    if (info.file.status === 'uploading') {
-      setUploading(true)
-      return
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, (url) => {
-        setUploading(false)
-        setImageUrl(url)
-      })
-    }
-  }
-
-  const uploadButton = (
-    <div>
-      {uploading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>{t('title.uploadPromotionalImages')}</div>
-    </div>
-  )
-
-  const handleUpload = (options) => {
-    // setUploading(true);
-    const { onSuccess, onError, file } = options
-    const fmData = new FormData()
-    fmData.append('file', file)
-    axios
-      .post(`/api/admin/v1/books/upload`, fmData, {
-        headers: { 'content-type': 'multipart/form-data' },
-      })
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          onSuccess()
-          form.setFieldsValue({ adsImg: res.data })
-          message.success(`${t('message.tips.uploadSuccess')}`)
-        }
-      })
-      .catch((err) => {
-        onError(err)
-        message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
-        )
-      })
   }
 
   const fetchProduct = async (value) => {
@@ -230,22 +186,24 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
             <Option value="RECOMMEND">{t('radio.label.RECOMMEND')}</Option>
           </Select>
         </Form.Item>
-        <Form.Item name="adsImg" label={t('title.cover')}>
-          <Upload
-            name="file"
-            listType="picture-card"
-            style={{ width: 240, height: 320 }}
-            showUploadList={false}
-            customRequest={handleUpload}
-            beforeUpload={beforeUpload}
-            onChange={handleUploadChange}
-          >
-            {imageUrl ? (
-              <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
-            ) : (
-              uploadButton
-            )}
-          </Upload>
+        <Form.Item
+          name="adsImg"
+          label={t('title.cover')}
+          valuePropName="fileList"
+          getValueFromEvent={(e) => {
+            if (Array.isArray(e)) {
+              return e
+            }
+            return e?.fileList
+          }}
+          rules={[
+            {
+              required: true,
+              message: `${t('message.check.uploadImage')}`,
+            },
+          ]}
+        >
+          <ImageListUpload domain={'ADVERTISEMENT'} maxCount={1} />
         </Form.Item>
         <Form.Item name="introduction" label={t('title.briefIntroduction')}>
           <TextArea

@@ -73,11 +73,7 @@ const BookForm = () => {
           if (resultData.bookImgId) {
             bookImgArr.push({
               id: resultData.bookImgId,
-              name: resultData.bookImgUrl
-                ?.split('/')
-                ?.pop()
-                ?.split('?')
-                ?.shift(),
+              name: resultData.bookImgUrl?.split('/')?.pop(),
               url: resultData.bookImgUrl,
               response: {
                 id: resultData.bookImgId,
@@ -152,7 +148,6 @@ const BookForm = () => {
     form
       .validateFields()
       .then((values) => {
-        console.log('数字：', values)
         if (queryId) {
           updateData({
             ...values,

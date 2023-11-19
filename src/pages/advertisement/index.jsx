@@ -1,5 +1,5 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, Card, message, Modal, Table, Image } from 'antd'
+import { Button, Card, message, App, Table, Image } from 'antd'
 import useFetch from '@/hooks/useFetch'
 import axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
@@ -8,9 +8,8 @@ import { useState } from 'react'
 import AdvertisementForm from './form'
 import { useTranslation } from 'react-i18next'
 
-const { confirm } = Modal
-
 const AdvertisementPage = () => {
+  const { modal } = App.useApp()
   const { t } = useTranslation()
   const [changeTime, setChangeTime] = useState(Date.now())
   const { loading, fetchedData } = useFetch(`/api/admin/v1/advertisements`, [
@@ -25,7 +24,7 @@ const AdvertisementPage = () => {
   }
 
   const handleDeleteAction = (id) => {
-    confirm({
+    modal.confirm({
       title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,
@@ -75,8 +74,8 @@ const AdvertisementPage = () => {
           },
           {
             title: `${t('title.promotionalImages')}`,
-            key: 'adsImg',
-            dataIndex: 'adsImg',
+            key: 'adsImgUrl',
+            dataIndex: 'adsImgUrl',
             render: (text) => <Image width={50} src={text} />,
           },
           {
