@@ -4,6 +4,7 @@ import { Button, Card, Table, Image } from 'antd'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import AdminUserForm from './form'
+import useUserInfoStore from '@/stores/useUserInfoStore'
 
 const AdminUserPage = () => {
   const { t } = useTranslation()
@@ -13,6 +14,7 @@ const AdminUserPage = () => {
   ])
   const [formVisible, setFormVisible] = useState(false)
   const [selectedId, setSelectedId] = useState()
+  const { userInfo } = useUserInfoStore()
 
   const handleEditAction = (id) => {
     setSelectedId(id)
@@ -102,12 +104,15 @@ const AdminUserPage = () => {
               render: (text, record) => {
                 return (
                   <div>
-                    <Button
-                      onClick={() => handleEditAction(record.id)}
-                      type="link"
-                    >
-                      {t('button.edit')}
-                    </Button>
+                    {record.username === userInfo.username ? (
+                      <Button
+                        onClick={() => handleEditAction(record.id)}
+                        type="link"
+                      >
+                        {t('button.edit')}
+                      </Button>
+                    ) : null}
+
                     {/* <Button
                     onClick={() => handleDeleteAction(record.id)}
                     danger

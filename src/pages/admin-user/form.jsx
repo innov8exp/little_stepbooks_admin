@@ -80,12 +80,18 @@ const AdminUserForm = ({ id, visible, onSave, onCancel }) => {
             ...values,
             avatarImgId: values.avatarImg?.[0]?.response?.id,
             avatarImgUrl: values.avatarImg?.[0]?.response?.objectUrl,
+            password:
+              '{bcrypt}$2a$10$Mauvb3WBioPsOf9hZHX7l.np69XxobcoDn.kOEvcuu6YSafmqgQ6q',
+            role: 'ADMIN',
           })
         } else {
           createData({
             ...values,
             avatarImgId: values.avatarImg?.[0]?.response?.id,
             avatarImgUrl: values.avatarImg?.[0]?.response?.objectUrl,
+            password:
+              '{bcrypt}$2a$10$Mauvb3WBioPsOf9hZHX7l.np69XxobcoDn.kOEvcuu6YSafmqgQ6q',
+            role: 'ADMIN',
           })
         }
       })
