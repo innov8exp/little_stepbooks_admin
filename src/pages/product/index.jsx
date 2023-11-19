@@ -73,6 +73,7 @@ const ProductPage = () => {
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
+          console.log([...responseObject.records])
           setProducts([...responseObject.records])
           setTotal(responseObject.total)
         }
@@ -103,6 +104,7 @@ const ProductPage = () => {
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success(t('message.successInfo'))
+              setChangeTime(Date.now())
             }
           })
           .catch((err) => {
@@ -110,13 +112,13 @@ const ProductPage = () => {
             message.error(err.message)
           })
           .finally(() => {
-            setChangeTime(Date.now())
             setSwitchLoading({ id, loading: false })
           })
       },
       onCancel() {
-        setChangeTime(Date.now())
+        console.log('ni hao')
         setSwitchLoading({ id, loading: false })
+        setChangeTime(Date.now())
       },
     })
   }
@@ -134,7 +136,7 @@ const ProductPage = () => {
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success(t('message.successInfo'))
-              setChangeTime(Date.now().getTime())
+              setChangeTime(Date.now())
             }
           })
           .catch((err) => {
@@ -281,22 +283,25 @@ const ProductPage = () => {
               title: `${t('title.label.status')}`,
               key: 'status',
               dataIndex: 'status',
-              render: (text, record) => (
-                <Switch
-                  checkedChildren={t('ON_SHELF')}
-                  unCheckedChildren={t('OFF_SHELF')}
-                  defaultChecked={record.status === 'ON_SHELF'}
-                  loading={
-                    switchLoading.id === record.id && switchLoading.loading
-                  }
-                  onClick={(checked) =>
-                    handleUpdateStatusAction(
-                      record.id,
-                      checked ? 'ON_SHELF' : 'OFF_SHELF',
-                    )
-                  }
-                />
-              ),
+              render: (text, record) => {
+                console.log(text)
+                return (
+                  <Switch
+                    checkedChildren={t('ON_SHELF')}
+                    unCheckedChildren={t('OFF_SHELF')}
+                    checked={text === 'ON_SHELF'}
+                    loading={
+                      switchLoading.id === record.id && switchLoading.loading
+                    }
+                    onClick={(checked) =>
+                      handleUpdateStatusAction(
+                        record.id,
+                        checked ? 'ON_SHELF' : 'OFF_SHELF',
+                      )
+                    }
+                  />
+                )
+              },
             },
             {
               title: `${t('title.operate')}`,
