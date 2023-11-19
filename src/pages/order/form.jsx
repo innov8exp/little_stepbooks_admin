@@ -155,6 +155,10 @@ const OrderForm = () => {
     initData()
   }, [initData])
 
+  useEffect(() => {
+    form.setFieldsValue({ ...deliveryResponse?.fetchedData })
+  }, [deliveryResponse?.fetchedData, form])
+
   return (
     <Card
       title={
