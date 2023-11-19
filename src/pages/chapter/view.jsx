@@ -6,6 +6,7 @@ import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import ReactPlayer from 'react-player'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const ChapterView = () => {
@@ -58,7 +59,7 @@ const ChapterView = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`/books/${bookId}/chapters`)}
           />
           《{fetchedData?.bookName}》- {t('title.content.view')}
         </>
@@ -77,14 +78,6 @@ const ChapterView = () => {
                 value={initFormData?.chapterName}
               />
               <ViewItem
-                label={t('title.description')}
-                value={initFormData?.description}
-              />
-              <ViewItem
-                label={t('title.audio')}
-                value={initFormData?.audioId}
-              />
-              <ViewItem
                 label={t('title.image')}
                 value={
                   <Image
@@ -93,6 +86,27 @@ const ChapterView = () => {
                     style={{ height: 200 }}
                   />
                 }
+              />
+              <ViewItem
+                label={t('title.audio')}
+                value={
+                  <ReactPlayer
+                    url={initFormData?.audioUrl}
+                    // url="https://storage.googleapis.com/media-session/elephants-dream/the-wires.mp3"
+                    width={'100%'}
+                    height={50}
+                    controls={true}
+                    config={{
+                      file: {
+                        forceAudio: true,
+                      },
+                    }}
+                  />
+                }
+              />
+              <ViewItem
+                label={t('title.description')}
+                value={initFormData?.description}
               />
             </Col>
           </Row>

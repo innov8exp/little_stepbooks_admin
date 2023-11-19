@@ -1,8 +1,6 @@
-import {
-  LeftCircleOutlined,
-  LoadingOutlined,
-  PlusOutlined,
-} from '@ant-design/icons'
+import FileListUpload from '@/components/file-list-upload'
+import ImageListUpload from '@/components/image-list-upload'
+import { LeftCircleOutlined } from '@ant-design/icons'
 import {
   Button,
   Card,
@@ -14,7 +12,6 @@ import {
   Radio,
   Row,
   Skeleton,
-  Upload,
   message,
 } from 'antd'
 import axios from 'axios'
@@ -24,24 +21,6 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const { TextArea } = Input
-
-const getBase64 = (img, callback) => {
-  const reader = new FileReader()
-  reader.addEventListener('load', () => callback(reader.result))
-  reader.readAsDataURL(img)
-}
-
-const beforeUpload = (file) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
-  if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!')
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!')
-  }
-  return isJpgOrPng && isLt2M
-}
 
 const CourseForm = () => {
   const { t } = useTranslation()
@@ -54,8 +33,6 @@ const CourseForm = () => {
   const [loading, setLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(true)
-  const [uploading, setUploading] = useState(false)
-  const [imageUrl, setImageUrl] = useState()
 
   const initData = useCallback(() => {
     if (!id) {
@@ -69,9 +46,34 @@ const CourseForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
-          setImageUrl(resultData.coverImg)
+          const videoArr = []
+          if (resultData.videoId) {
+            videoArr.push({
+              id: resultData.videoId,
+              name: resultData.videoUrl?.split('/')?.pop()?.split('?')?.shift(),
+              url: resultData.videoUrl,
+              response: {
+                id: resultData.videoId,
+                objectUrl: resultData.videoUrl,
+              },
+            })
+          }
+          const coverImgArr = []
+          if (resultData.coverImgId) {
+            coverImgArr.push({
+              id: resultData.coverImgId,
+              name: resultData.coverImgUrl?.split('/')?.pop(),
+              url: resultData.coverImgUrl,
+              response: {
+                id: resultData.coverImgId,
+                objectUrl: resultData.coverImgUrl,
+              },
+            })
+          }
           setInitFormData({
             ...resultData,
+            video: videoArr,
+            coverImg: coverImgArr,
           })
         }
       })
@@ -105,6 +107,7 @@ const CourseForm = () => {
   }
 
   const updateData = (data) => {
+    console.log(data)
     setSaveLoading(true)
     axios
       .put(`/api/admin/v1/courses/${id}`, {
@@ -128,66 +131,26 @@ const CourseForm = () => {
     form
       .validateFields()
       .then((values) => {
-        console.log('数字：', values)
+        console.log(values)
         if (id) {
           updateData({
             ...values,
+            coverImgId: values.coverImg?.[0]?.response?.id,
+            coverImgUrl: values.coverImg?.[0]?.response?.objectUrl,
+            videoId: values.video?.[0]?.response?.id,
+            videoUrl: values.video?.[0]?.response?.objectUrl,
           })
         } else {
           createData({
             ...values,
+            coverImgId: values.coverImg?.[0]?.response?.id,
+            coverImgUrl: values.coverImg?.[0]?.response?.objectUrl,
+            videoId: values.video?.[0]?.response?.id,
+            videoUrl: values.video?.[0]?.response?.objectUrl,
           })
         }
       })
       .catch()
-  }
-
-  const handleUploadChange = (info) => {
-    if (info.file.status === 'uploading') {
-      setUploading(true)
-      return
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, (url) => {
-        setUploading(false)
-        setImageUrl(url)
-      })
-    }
-  }
-
-  const uploadButton = (
-    <div>
-      {uploading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>{t('title.coverUpload')}</div>
-    </div>
-  )
-
-  const handleUpload = (options) => {
-    // setUploading(true);
-    const { onSuccess, onError, file } = options
-    const fmData = new FormData()
-    fmData.append('file', file)
-    axios
-      .post(`/api/admin/v1/books/upload`, fmData, {
-        headers: { 'content-type': 'multipart/form-data' },
-      })
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          onSuccess()
-          form.setFieldsValue({ coverImg: res.data })
-          message.success(`${t('message.tips.uploadSuccess')}`)
-        }
-      })
-      .catch((err) => {
-        onError(err)
-        message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
-        )
-      })
-      .finally(() => {
-        setLoading(false)
-      })
   }
 
   useEffect(() => {
@@ -202,7 +165,7 @@ const CourseForm = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`/books/${bookId}/courses`)}
           />
           {t('button.courseEditing')}
         </>
@@ -290,56 +253,46 @@ const CourseForm = () => {
               </Radio.Group>
             </Form.Item>
             <Form.Item
-              name="coverImgId"
-              label={t('title.cover')}
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: `${t('message.check.uploadCoverImage')}`,
-              //   },
-              // ]}
+              name="coverImg"
+              label={t('title.image')}
+              valuePropName="fileList"
+              getValueFromEvent={(e) => {
+                if (Array.isArray(e)) {
+                  return e
+                }
+                return e?.fileList
+              }}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.uploadImage')}`,
+                },
+              ]}
             >
-              <Upload
-                name="file"
-                listType="picture-card"
-                style={{ width: 240, height: 320 }}
-                showUploadList={false}
-                customRequest={handleUpload}
-                beforeUpload={beforeUpload}
-                onChange={handleUploadChange}
-              >
-                {imageUrl ? (
-                  <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
-                ) : (
-                  uploadButton
-                )}
-              </Upload>
+              <ImageListUpload
+                domain={'COURSE'}
+                maxCount={1}
+                buttonName={t('title.coverUpload')}
+              />
             </Form.Item>
             <Form.Item
               name="video"
               label={t('title.video')}
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: `${t('message.check.uploadVideo')}`,
-              //   },
-              // ]}
+              valuePropName="fileList"
+              getValueFromEvent={(e) => {
+                if (Array.isArray(e)) {
+                  return e
+                }
+                return e?.fileList
+              }}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.video')}`,
+                },
+              ]}
             >
-              <Upload
-                name="file"
-                listType="picture-card"
-                style={{ width: 240, height: 320 }}
-                showUploadList={false}
-                customRequest={handleUpload}
-                beforeUpload={beforeUpload}
-                onChange={handleUploadChange}
-              >
-                {imageUrl ? (
-                  <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
-                ) : (
-                  uploadButton
-                )}
-              </Upload>
+              <FileListUpload domain={'COURSE'} maxCount={1} />
             </Form.Item>
             <div style={{ marginTop: 10 }} />
             <Row justify="end">

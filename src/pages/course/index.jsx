@@ -21,7 +21,7 @@ import {
   Form,
   Image,
   Input,
-  Modal,
+  App,
   Row,
   Table,
   Tag,
@@ -33,8 +33,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 
-const { confirm } = Modal
-
 const CoursePage = () => {
   const { t } = useTranslation()
   const [queryForm] = Form.useForm()
@@ -45,6 +43,7 @@ const CoursePage = () => {
   const [courses, setCourses] = useState()
   const [queryCriteria, setQueryCriteria] = useState()
   const [loading, setLoading] = useState(false)
+  const { modal } = App.useApp()
 
   const { fetchedData } = useFetch(`/api/admin/v1/books/${bookId}`, [])
 
@@ -74,7 +73,7 @@ const CoursePage = () => {
   }, [queryCriteria?.author, queryCriteria?.bookName, t, bookId])
 
   const handleDeleteAction = (id) => {
-    confirm({
+    modal.confirm({
       title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,

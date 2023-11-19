@@ -1,11 +1,8 @@
 import DebounceSelect from '@/components/debounce-select'
+import ImageListUpload from '@/components/image-list-upload'
 import useQuery from '@/hooks/useQuery'
 import { Routes } from '@/libs/router'
-import {
-  LeftCircleOutlined,
-  LoadingOutlined,
-  PlusOutlined,
-} from '@ant-design/icons'
+import { LeftCircleOutlined } from '@ant-design/icons'
 import {
   Button,
   Card,
@@ -15,11 +12,9 @@ import {
   Form,
   Input,
   InputNumber,
-  Modal,
   Row,
   Select,
   Skeleton,
-  Upload,
   message,
 } from 'antd'
 import axios from 'axios'
@@ -29,24 +24,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 const { TextArea } = Input
-
-const getBase64 = (img, callback) => {
-  const reader = new FileReader()
-  reader.addEventListener('load', () => callback(reader.result))
-  reader.readAsDataURL(img)
-}
-
-const beforeUpload = (file) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
-  if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!')
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!')
-  }
-  return isJpgOrPng && isLt2M
-}
+const { Option } = Select
 
 const ProductForm = () => {
   const { t } = useTranslation()
@@ -54,57 +32,11 @@ const ProductForm = () => {
   const queryId = query.get('id')
   const navigate = useNavigate()
   const [form] = Form.useForm()
-  const [initFormData, setInitFormData] = useState({
-    isSerialized: false,
-    hasEnding: true,
-  })
+  const [initFormData, setInitFormData] = useState()
   const [loading, setLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
-  const [uploading, setUploading] = useState(false)
-  const [imageUrl, setImageUrl] = useState()
   const [initBookSetOptions, setInitBookSetOptions] = useState([])
-  const [previewOpen, setPreviewOpen] = useState(false)
-  const [previewImage, setPreviewImage] = useState('')
-  const [previewTitle, setPreviewTitle] = useState('')
-  const [fileList, setFileList] = useState([
-    {
-      uid: '-1',
-      name: 'image.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-2',
-      name: 'image.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-3',
-      name: 'image.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-4',
-      name: 'image.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-xxx',
-      percent: 50,
-      name: 'image.png',
-      status: 'uploading',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-5',
-      name: 'image.png',
-      status: 'error',
-    },
-  ])
 
   const initData = useCallback(() => {
     fetchBookSet().then((res) => setInitBookSetOptions(res))
@@ -119,9 +51,27 @@ const ProductForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
-          setImageUrl(resultData.coverImg)
+          const coverImgArr = []
+          if (resultData.coverImgId) {
+            coverImgArr.push({
+              id: resultData.coverImgId,
+              name: resultData.coverImgUrl?.split('/')?.pop(),
+              url: resultData.coverImgUrl,
+              response: {
+                id: resultData.coverImgId,
+                objectUrl: resultData.coverImgUrl,
+              },
+            })
+          }
           setInitFormData({
             ...resultData,
+            media: resultData.medias?.map((item) => ({
+              id: item.mediaId,
+              name: item.mediaUrl?.split('/')?.pop(),
+              url: item.mediaUrl,
+              response: { id: item.mediaId, objectUrl: item.mediaUrl },
+            })),
+            coverImg: coverImgArr,
           })
         }
       })
@@ -182,66 +132,28 @@ const ProductForm = () => {
         if (queryId) {
           updateData({
             ...values,
+            coverImgId: values?.coverImg?.[0]?.response?.id,
+            coverImgUrl: values?.coverImg?.[0]?.response?.objectUrl,
+            medias: values?.media?.map((item) => ({
+              mediaId: item?.response?.id,
+              mediaUrl: item?.response?.objectUrl,
+            })),
           })
         } else {
           createData({
             ...values,
+            coverImgId: values?.coverImg?.[0]?.response?.id,
+            coverImgUrl: values?.coverImg?.[0]?.response?.objectUrl,
+            medias: values?.media?.map((item) => ({
+              mediaId: item?.response?.id,
+              mediaUrl: item?.response?.objectUrl,
+            })),
           })
         }
       })
-      .catch(() => {
+      .catch((e) => {
+        console.error(e)
         message.error(`${t('message.error.validateFields')}`)
-      })
-  }
-
-  const handleUploadChange = (info) => {
-    if (info.file.status === 'uploading') {
-      setUploading(true)
-      return
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, (url) => {
-        setUploading(false)
-        setImageUrl(url)
-      })
-    }
-  }
-
-  const uploadButton = (
-    <div>
-      {uploading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>{t('title.coverUpload')}</div>
-    </div>
-  )
-
-  const handleUpload = (options) => {
-    // setUploading(true);
-    const { onSuccess, onError, file } = options
-    const fmData = new FormData()
-    fmData.append('file', file)
-    axios
-      .post(`/api/admin/v1/products/upload`, fmData, {
-        headers: { 'content-type': 'multipart/form-data' },
-      })
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          onSuccess()
-          form.setFieldsValue({
-            coverImgId: res.data.id,
-            coverImgUrl: res.data.object_url,
-          })
-          message.success(`${t('message.tips.uploadSuccess')}`)
-        }
-      })
-      .catch((err) => {
-        onError(err)
-        message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
-        )
-      })
-      .finally(() => {
-        setLoading(false)
       })
   }
 
@@ -274,32 +186,6 @@ const ProductForm = () => {
     initData()
   }, [initData])
 
-  const uploadMediaButton = (
-    <div>
-      <PlusOutlined />
-      <div
-        style={{
-          marginTop: 8,
-        }}
-      >
-        Upload
-      </div>
-    </div>
-  )
-
-  const handleCancel = () => setPreviewOpen(false)
-  const handlePreview = async (file) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj)
-    }
-    setPreviewImage(file.url || file.preview)
-    setPreviewOpen(true)
-    setPreviewTitle(
-      file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
-    )
-  }
-  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList)
-
   return (
     <>
       <Card
@@ -325,9 +211,12 @@ const ProductForm = () => {
                 ...initFormData,
               }}
             >
-              <Form.Item name="skuCode" label={t('title.skuCode')}>
-                <Input readOnly />
-              </Form.Item>
+              {queryId && (
+                <Form.Item name="skuCode" label={t('title.skuCode')}>
+                  <Input readOnly />
+                </Form.Item>
+              )}
+
               <Form.Item
                 name="skuName"
                 label={t('title.name')}
@@ -376,20 +265,10 @@ const ProductForm = () => {
                   },
                 ]}
               >
-                {' '}
-                <Select
-                  defaultValue="PHYSICAL"
-                  options={[
-                    {
-                      value: 'PHYSICAL',
-                      label: t('PHYSICAL'),
-                    },
-                    {
-                      value: 'VIRTUAL',
-                      label: t('VIRTUAL'),
-                    },
-                  ]}
-                />
+                <Select>
+                  <Option value="PHYSICAL">{t('PHYSICAL')}</Option>
+                  <Option value="VIRTUAL">{t('VIRTUAL')}</Option>
+                </Select>
               </Form.Item>
               <Form.Item name="bookSetId" label={t('title.bookSet')}>
                 <DebounceSelect
@@ -435,52 +314,44 @@ const ProductForm = () => {
               <Form.Item
                 name="coverImg"
                 label={t('title.cover')}
-                // rules={[
-                //   {
-                //     required: true,
-                //     message: `${t('message.check.uploadCoverImage')}`,
-                //   },
-                // ]}
+                valuePropName="fileList"
+                getValueFromEvent={(e) => {
+                  if (Array.isArray(e)) {
+                    return e
+                  }
+                  return e?.fileList
+                }}
+                rules={[
+                  {
+                    required: true,
+                    message: `${t('message.check.uploadCoverImage')}`,
+                  },
+                ]}
               >
-                <Upload
-                  name="file"
-                  listType="picture-card"
-                  style={{ width: 240, height: 320 }}
-                  showUploadList={false}
-                  customRequest={handleUpload}
-                  beforeUpload={beforeUpload}
-                  onChange={handleUploadChange}
-                >
-                  {imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt="avatar"
-                      style={{ width: '100%' }}
-                    />
-                  ) : (
-                    uploadButton
-                  )}
-                </Upload>
+                <ImageListUpload
+                  domain={'PRODUCT'}
+                  maxCount={1}
+                  buttonName={t('title.coverUpload')}
+                />
               </Form.Item>
               <Form.Item
                 name="media"
                 label={t('title.media')}
-                // rules={[
-                //   {
-                //     required: true,
-                //     message: `${t('message.check.media')}`,
-                //   },
-                // ]}
+                valuePropName="fileList"
+                getValueFromEvent={(e) => {
+                  if (Array.isArray(e)) {
+                    return e
+                  }
+                  return e?.fileList
+                }}
+                rules={[
+                  {
+                    required: true,
+                    message: `${t('message.check.media')}`,
+                  },
+                ]}
               >
-                <Upload
-                  action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                  listType="picture-card"
-                  fileList={fileList}
-                  onPreview={handlePreview}
-                  onChange={handleChange}
-                >
-                  {fileList.length >= 8 ? null : uploadMediaButton}
-                </Upload>
+                <ImageListUpload domain="PRODUCT" />
               </Form.Item>
               <div style={{ marginTop: 10 }} />
               <Row justify="end">
@@ -504,20 +375,6 @@ const ProductForm = () => {
           <Empty description={<span>{t('message.error.failure')}</span>} />
         )}
       </Card>
-      <Modal
-        open={previewOpen}
-        title={previewTitle}
-        footer={null}
-        onCancel={handleCancel}
-      >
-        <img
-          alt="example"
-          style={{
-            width: '100%',
-          }}
-          src={previewImage}
-        />
-      </Modal>
     </>
   )
 }

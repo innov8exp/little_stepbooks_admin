@@ -226,8 +226,8 @@ const ProductPage = () => {
             },
             {
               title: `${t('title.cover')}`,
-              key: 'coverImg',
-              dataIndex: 'coverImg',
+              key: 'coverImgUrl',
+              dataIndex: 'coverImgUrl',
               render: (text) => <Image width={100} src={text} />,
             },
             {

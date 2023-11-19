@@ -1,4 +1,4 @@
-import UploadComp from '@/components/upload'
+import ImageListUpload from '@/components/image-list-upload'
 import useFetch from '@/hooks/useFetch'
 import { LeftCircleOutlined } from '@ant-design/icons'
 import {
@@ -69,9 +69,25 @@ const BookForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
+          const bookImgArr = []
+          if (resultData.bookImgId) {
+            bookImgArr.push({
+              id: resultData.bookImgId,
+              name: resultData.bookImgUrl
+                ?.split('/')
+                ?.pop()
+                ?.split('?')
+                ?.shift(),
+              url: resultData.bookImgUrl,
+              response: {
+                id: resultData.bookImgId,
+                objectUrl: resultData.bookImgUrl,
+              },
+            })
+          }
           setInitFormData({
-            bookImg: resultData.bookImgId,
             ...resultData,
+            bookImg: bookImgArr,
           })
         }
       })
@@ -141,11 +157,15 @@ const BookForm = () => {
           updateData({
             ...values,
             classifications: Array.from(new Set(values.classifications)),
+            bookImgId: values.bookImg?.[0]?.response?.id,
+            bookImgUrl: values.bookImg?.[0]?.response?.objectUrl,
           })
         } else {
           createData({
             ...values,
             classifications: Array.from(new Set(values.classifications)),
+            bookImgId: values.bookImg?.[0]?.response?.id,
+            bookImgUrl: values.bookImg?.[0]?.response?.objectUrl,
           })
         }
       })
@@ -180,12 +200,6 @@ const BookForm = () => {
               ...initFormData,
             }}
           >
-            <Form.Item name="bookImgId" hidden>
-              <Input />
-            </Form.Item>
-            <Form.Item name="bookImgUrl" hidden>
-              <Input />
-            </Form.Item>
             <Form.Item
               name="bookName"
               label={t('title.bookName')}
@@ -244,24 +258,22 @@ const BookForm = () => {
             </Form.Item>
             <Form.Item
               name="bookImg"
-              label={t('title.cover')}
+              label={t('title.image')}
+              valuePropName="fileList"
+              getValueFromEvent={(e) => {
+                if (Array.isArray(e)) {
+                  return e
+                }
+                return e?.fileList
+              }}
               rules={[
                 {
                   required: true,
-                  message: `${t('message.check.uploadCoverImage')}`,
+                  message: `${t('message.check.uploadImage')}`,
                 },
               ]}
             >
-              <UploadComp
-                domain="BOOK"
-                initUrl={initFormData?.bookImgUrl}
-                onOk={(data) =>
-                  form.setFieldsValue({
-                    bookImgId: data.id,
-                    bookImgUrl: data.objectUrl,
-                  })
-                }
-              />
+              <ImageListUpload domain={'BOOK'} maxCount={1} />
             </Form.Item>
             <div style={{ marginTop: 10 }} />
             <Row justify="end">

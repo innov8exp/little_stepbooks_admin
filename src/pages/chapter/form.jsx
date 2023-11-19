@@ -1,4 +1,3 @@
-import UploadComp from '@/components/upload'
 import useFetch from '@/hooks/useFetch'
 import { LeftCircleOutlined } from '@ant-design/icons'
 import {
@@ -18,6 +17,8 @@ import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
+import FileListUpload from '@/components/file-list-upload'
+import ImageListUpload from '@/components/image-list-upload'
 
 const { TextArea } = Input
 
@@ -53,10 +54,35 @@ const ChapterForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
+          const audioArr = []
+          if (resultData.audioId) {
+            audioArr.push({
+              id: resultData.audioId,
+              name: resultData.audioUrl?.split('/')?.pop()?.split('?')?.shift(),
+              url: resultData.audioUrl,
+              response: {
+                id: resultData.audioId,
+                objectUrl: resultData.audioUrl,
+              },
+            })
+          }
+          const imgArr = []
+          if (resultData.imgId) {
+            imgArr.push({
+              id: resultData.imgId,
+              name: resultData.imgUrl?.split('/')?.pop()?.split('?')?.shift(),
+              url: resultData.imgUrl,
+              response: {
+                id: resultData.imgId,
+                objectUrl: resultData.imgUrl,
+              },
+            })
+          }
+
           setInitFormData({
-            img: resultData.imgId,
-            audio: resultData.audioId,
             ...resultData,
+            audio: audioArr,
+            img: imgArr,
           })
         }
       })
@@ -78,7 +104,7 @@ const ChapterForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(`${t('message.successfullySaved')}`)
-          navigate(-1)
+          navigate(`/books/${bookId}/chapters`)
         }
       })
       .catch((err) => {
@@ -98,6 +124,7 @@ const ChapterForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(`${t('message.successfullySaved')}`)
+          navigate(`/books/${bookId}/chapters`)
         }
       })
       .catch((err) => {
@@ -116,11 +143,19 @@ const ChapterForm = () => {
           updateData({
             ...values,
             bookId,
+            imgId: values.img?.[0]?.response?.id,
+            imgUrl: values.img?.[0]?.response?.objectUrl,
+            audioId: values.audio?.[0]?.response?.id,
+            audioUrl: values.audio?.[0]?.response?.objectUrl,
           })
         } else {
           createData({
             ...values,
             bookId,
+            imgId: values.img?.[0]?.response?.id,
+            imgUrl: values.img?.[0]?.response?.objectUrl,
+            audioId: values.audio?.[0]?.response?.id,
+            audioUrl: values.audio?.[0]?.response?.objectUrl,
           })
         }
       })
@@ -139,7 +174,7 @@ const ChapterForm = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`/books/${bookId}/chapters`)}
           />
           《{fetchedData?.bookName}》- {t('title.content.create')}
         </>
@@ -155,18 +190,6 @@ const ChapterForm = () => {
               ...initFormData,
             }}
           >
-            <Form.Item name="imgId" hidden>
-              <Input />
-            </Form.Item>
-            <Form.Item name="imgUrl" hidden>
-              <Input />
-            </Form.Item>
-            <Form.Item name="audioId" hidden>
-              <Input />
-            </Form.Item>
-            <Form.Item name="audioUrl" hidden>
-              <Input />
-            </Form.Item>
             <Form.Item
               name="chapterNo"
               label={t('title.chapterNo')}
@@ -185,49 +208,23 @@ const ChapterForm = () => {
                 maxLength={50}
               />
             </Form.Item>
-            <Form.Item
-              wrapperCol={{ span: 16 }}
-              name="description"
-              label={t('title.description')}
-            >
+            <Form.Item name="description" label={t('title.description')}>
               <TextArea
                 rows={3}
                 style={{ resize: 'none' }}
-                maxLength={300}
                 placeholder={t('message.placeholder.description')}
-              />
-            </Form.Item>
-            <Form.Item
-              name="audio"
-              label={t('title.audioFrequency')}
-              rules={[
-                {
-                  required: false,
-                  message: `${t('message.check.audioFrequency')}`,
-                },
-              ]}
-            >
-              {/* <UploadComp
-                name="file"
-                showUploadList={false}
-                buttonName={t('title.audioFrequencyUpload')}
-                fileType={'audio'}
-              /> */}
-              <UploadComp
-                // listType="text"
-                fileType={'audio'}
-                domain="BOOK"
-                onOk={(data) =>
-                  form.setFieldsValue({
-                    audioId: data.id,
-                    audioUrl: data.objectUrl,
-                  })
-                }
               />
             </Form.Item>
             <Form.Item
               name="img"
               label={t('title.image')}
+              valuePropName="fileList"
+              getValueFromEvent={(e) => {
+                if (Array.isArray(e)) {
+                  return e
+                }
+                return e?.fileList
+              }}
               rules={[
                 {
                   required: true,
@@ -235,17 +232,28 @@ const ChapterForm = () => {
                 },
               ]}
             >
-              <UploadComp
-                domain="BOOK"
-                initUrl={initFormData?.imgUrl}
-                onOk={(data) =>
-                  form.setFieldsValue({
-                    bookImgId: data.id,
-                    bookImgUrl: data.objectUrl,
-                  })
-                }
-              />
+              <ImageListUpload domain={'BOOK'} maxCount={1} />
             </Form.Item>
+            <Form.Item
+              name="audio"
+              label={t('title.video')}
+              valuePropName="fileList"
+              getValueFromEvent={(e) => {
+                if (Array.isArray(e)) {
+                  return e
+                }
+                return e?.fileList
+              }}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.audio')}`,
+                },
+              ]}
+            >
+              <FileListUpload domain={'BOOK'} maxCount={1} />
+            </Form.Item>
+
             <div style={{ marginTop: 10 }} />
             <Row justify="end">
               <Col>

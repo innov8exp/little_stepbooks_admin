@@ -24,7 +24,7 @@ const beforeUpload = (file) => {
   return isJpgOrPng && isLt2M
 }
 
-const UploadComp = ({
+const ImageUpload = ({
   domain,
   permission = 'PUBLIC',
   buttonName,
@@ -45,6 +45,7 @@ const UploadComp = ({
 
   const handleUpload = (options) => {
     setUploading(true)
+    setImageUrl('')
     const { onSuccess, onError, file } = options
     const fmData = new FormData()
     fmData.append('file', file)
@@ -110,33 +111,33 @@ const UploadComp = ({
     <div>
       {uploading ? <LoadingOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>
-        {buttonName ? buttonName : t('title.upload')}
+        {buttonName ? buttonName : t('title.coverUpload')}
       </div>
     </div>
   )
 
   return (
-    <Upload
-      name="file"
-      listType={listType}
-      style={style}
-      showUploadList={false}
-      beforeUpload={beforeUpload}
-      // onChange={handleUploadChange}
-      // action={`/api/admin/v1/medias/upload?permission=${permission}&domain=${domain}`}
-      // withCredentials
-      customRequest={handleUpload}
-      {...props}
-    >
-      {imageUrl ? (
-        <img src={imageUrl} style={{ width: '100%' }} />
-      ) : (
-        uploadButton
-      )}
-    </Upload>
+    <>
+      <Upload
+        name="file"
+        listType={listType}
+        style={style}
+        showUploadList={false}
+        beforeUpload={beforeUpload}
+        // onChange={handleUploadChange}
+        customRequest={handleUpload}
+        {...props}
+      >
+        {imageUrl ? (
+          <img src={imageUrl} style={{ width: '100%' }} />
+        ) : (
+          uploadButton
+        )}
+      </Upload>
+    </>
   )
 }
-UploadComp.propTypes = {
+ImageUpload.propTypes = {
   domain: PropTypes.string.isRequired,
   permission: PropTypes.string,
   buttonName: PropTypes.string,
@@ -147,4 +148,4 @@ UploadComp.propTypes = {
   onErr: PropTypes.func,
 }
 
-export default UploadComp
+export default ImageUpload

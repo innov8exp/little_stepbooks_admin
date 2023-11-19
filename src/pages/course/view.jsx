@@ -12,6 +12,7 @@ const BookView = () => {
   const { t } = useTranslation()
   const params = useParams()
   const queryId = params?.id
+  const bookId = params?.bookId
   const navigate = useNavigate()
   const [initFormData, setInitFormData] = useState({})
   const [loading, setLoading] = useState(false)
@@ -55,7 +56,7 @@ const BookView = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`/books/${bookId}/courses`)}
           />
           {t('title.courseView')}
         </>
@@ -100,9 +101,10 @@ const BookView = () => {
                 label={t('title.video')}
                 value={
                   <ReactPlayer
-                    url={initFormData?.videoUrl}
-                    width={350}
-                    height={200}
+                    // url={initFormData?.videoUrl}
+                    url="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4"
+                    width={480}
+                    height={270}
                     controls={true}
                     light={true}
                     style={{ backgroundColor: '#cccccc' }}
