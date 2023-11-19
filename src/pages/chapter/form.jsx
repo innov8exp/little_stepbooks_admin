@@ -236,7 +236,7 @@ const ChapterForm = () => {
             </Form.Item>
             <Form.Item
               name="audio"
-              label={t('title.video')}
+              label={t('title.audio')}
               valuePropName="fileList"
               getValueFromEvent={(e) => {
                 if (Array.isArray(e)) {
