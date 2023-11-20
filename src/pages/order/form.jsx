@@ -254,7 +254,7 @@ const OrderForm = () => {
                           <Button
                             onClick={() =>
                               navigate(
-                                `${Routes.PRODUCT_VIEW.path}?id=${record.id}`,
+                                `${Routes.PRODUCT_FORM.path}?id=${record.productId}`,
                               )
                             }
                             type="link"
@@ -415,6 +415,32 @@ const OrderForm = () => {
                     </Row>
 
                     <Row gutter={8}>
+                      <Col span={12}>
+                        <Form.Item
+                          name="recipientProvince"
+                          label={t('title.recipientProvince')}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item
+                          name="recipientCity"
+                          label={t('title.recipientCity')}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={8}>
+                      <Col span={12}>
+                        <Form.Item
+                          name="recipientDistrict"
+                          label={t('title.recipientDistrict')}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
                       <Col span={12}>
                         <Form.Item
                           name="recipientAddress"

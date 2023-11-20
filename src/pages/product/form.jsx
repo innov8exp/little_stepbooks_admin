@@ -22,6 +22,7 @@ import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import useFetch from '@/hooks/useFetch'
 
 const { TextArea } = Input
 const { Option } = Select
@@ -37,6 +38,31 @@ const ProductForm = () => {
   const [saveLoading, setSaveLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
   const [initBookSetOptions, setInitBookSetOptions] = useState([])
+
+  const classifications = useFetch('/api/admin/v1/classifications', [])
+
+  const selectedClassifications = useCallback(
+    (productId) => {
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`/api/admin/v1/products/${productId}/classifications`)
+          .then((res) => {
+            if (res.status === HttpStatus.OK) {
+              resolve(res.data)
+            }
+          })
+          .catch((err) => {
+            message.error(
+              `${t('message.error.failureReason')}${
+                err.response?.data?.message
+              }`,
+            )
+            reject(err)
+          })
+      })
+    },
+    [t],
+  )
 
   const initData = useCallback(() => {
     fetchBookSet().then((res) => setInitBookSetOptions(res))
@@ -82,7 +108,14 @@ const ProductForm = () => {
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
-  }, [queryId, t])
+    selectedClassifications(queryId).then((selected) => {
+      form.setFieldsValue({
+        classificationIds: Array.from(
+          new Set(selected.flatMap((mData) => mData.id)),
+        ),
+      })
+    })
+  }, [form, queryId, selectedClassifications, t])
 
   const createData = (createdData) => {
     setSaveLoading(true)
@@ -237,25 +270,6 @@ const ProductForm = () => {
                 />
               </Form.Item>
               <Form.Item
-                name="parsedSalesPlatforms"
-                label={t('title.salesPlatforms')}
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('message.check.salesPlatforms')}`,
-                  },
-                ]}
-              >
-                <Checkbox.Group placeholder={t('message.check.salesPlatforms')}>
-                  <Checkbox value="MINI_PROGRAM" key="MINI_PROGRAM">
-                    {t('MINI_PROGRAM')}
-                  </Checkbox>
-                  <Checkbox value="APP" key="APP">
-                    {t('APP')}
-                  </Checkbox>
-                </Checkbox.Group>
-              </Form.Item>
-              <Form.Item
                 name="productNature"
                 label={t('title.productNature')}
                 rules={[
@@ -288,6 +302,41 @@ const ProductForm = () => {
                   </Checkbox>
                   <Checkbox value="EXERCISE" key="EXERCISE">
                     {t('EXERCISE')}
+                  </Checkbox>
+                </Checkbox.Group>
+              </Form.Item>
+              <Form.Item
+                name="classificationIds"
+                label={t('title.classification')}
+              >
+                <Checkbox.Group
+                  placeholder={t('message.check.selectClassification')}
+                >
+                  {classifications.fetchedData?.map((cate) => {
+                    return (
+                      <Checkbox value={cate.id} key={cate.id}>
+                        {cate.classificationName}
+                      </Checkbox>
+                    )
+                  })}
+                </Checkbox.Group>
+              </Form.Item>
+              <Form.Item
+                name="parsedSalesPlatforms"
+                label={t('title.salesPlatforms')}
+                rules={[
+                  {
+                    required: true,
+                    message: `${t('message.check.salesPlatforms')}`,
+                  },
+                ]}
+              >
+                <Checkbox.Group placeholder={t('message.check.salesPlatforms')}>
+                  <Checkbox value="MINI_PROGRAM" key="MINI_PROGRAM">
+                    {t('MINI_PROGRAM')}
+                  </Checkbox>
+                  <Checkbox value="APP" key="APP">
+                    {t('APP')}
                   </Checkbox>
                 </Checkbox.Group>
               </Form.Item>

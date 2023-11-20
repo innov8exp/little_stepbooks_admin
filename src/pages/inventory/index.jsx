@@ -61,9 +61,9 @@ const InventoryPage = () => {
     if (queryCriteria?.skuCode) {
       searchURL += `&skuCode=${queryCriteria.skuCode}`
     }
-    // if (queryCriteria?.username) {
-    //   searchURL += `&username=${queryCriteria.username}`
-    // }
+    if (queryCriteria?.skuName) {
+      searchURL += `&skuName=${queryCriteria.skuName}`
+    }
     axios
       .get(searchURL)
       .then((res) => {
@@ -79,7 +79,7 @@ const InventoryPage = () => {
         ),
       )
       .finally(() => setLoading(false))
-  }, [pageNumber, pageSize, queryCriteria?.skuCode, t])
+  }, [pageNumber, pageSize, queryCriteria?.skuCode, queryCriteria?.skuName, t])
 
   const handleQuery = () => {
     const timestamp = new Date().getTime()
@@ -160,7 +160,7 @@ const InventoryPage = () => {
                 width: 150,
                 render: (text, record) => (
                   <Button
-                    onClick={() => handleViewAction(record.id)}
+                    onClick={() => handleViewAction(record.productId)}
                     type="link"
                   >
                     {text}

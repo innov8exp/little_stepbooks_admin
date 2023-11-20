@@ -105,9 +105,9 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
 
   const fetchProduct = async (value) => {
     return new Promise((resolve, reject) => {
-      let url = `/api/admin/v1/products?skuName=${value}&currentPage=1&pageSize=10`
+      let url = `/api/admin/v1/products?status=ON_SHELF&skuName=${value}&currentPage=1&pageSize=10`
       if (!value) {
-        url = `/api/admin/v1/products?currentPage=1&pageSize=10`
+        url = `/api/admin/v1/products?status=ON_SHELF&currentPage=1&pageSize=10`
       }
       axios
         .get(url)

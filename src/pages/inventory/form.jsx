@@ -8,39 +8,10 @@ const InventoryForm = ({ record, visible, onSave, onCancel }) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
 
-  // useEffect(() => {
-  //   if (record) {
-  //     console.log(record)
-  //     axios
-  //       .get(`/api/admin/v1/inventories/${record.id}`)
-  //       .then((res) => {
-  //         if (res.status === HttpStatus.OK) {
-  //           form.setFieldsValue({
-  //             ...res.data,
-  //           })
-  //         }
-  //       })
-  //       .catch((err) => message.error(`load error:${err.message}`))
-  //   }
-  // }, [record, form])
-
   const createData = (values) => {
+    console.log(values)
     axios
-      .post(`/api/admin/v1/inventories`, { ...values })
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          message.success(t('message.successInfo'))
-          onSave()
-        }
-      })
-      .catch((err) => {
-        message.error(`save data failed, reason:${err.message}`)
-      })
-  }
-
-  const updateData = (values) => {
-    axios
-      .put(`/api/admin/v1/inventories/${record.id}`, { ...values })
+      .post(`/api/admin/v1/inventories`, { ...record, ...values })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(t('message.successInfo'))
@@ -56,11 +27,7 @@ const InventoryForm = ({ record, visible, onSave, onCancel }) => {
     form
       .validateFields()
       .then((values) => {
-        if (record) {
-          updateData(values)
-        } else {
-          createData(values)
-        }
+        createData(values)
       })
       .catch()
   }

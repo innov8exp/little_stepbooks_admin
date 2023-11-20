@@ -78,7 +78,12 @@ const AdminLayout = () => {
     ]),
 
     // 书籍管理
-    getItem(t('menu.bookManage'), '4', <BookOutlined />, [
+    // getItem(t('menu.bookManage'), '4', <BookOutlined />, [
+
+    // ]),
+
+    // 产品管理
+    getItem(t('menu.sku'), '8', <BookOutlined />, [
       getItem(
         <Link to={Routes.CLASSIFICATION_LIST.path}>
           {t('menu.classificationManagement')}
@@ -91,20 +96,11 @@ const AdminLayout = () => {
         '72',
         <BookOutlined />,
       ),
-      // getItem(
-      //   <Link to={Routes.COURSE.path}>{t('menu.courseList')}</Link>,
-      //   '73',
-      //   <BookOutlined />,
-      // ),
       getItem(
         <Link to={Routes.BOOK_SET_LIST.path}>{t('menu.bookSet')}</Link>,
         '74',
         <BookOutlined />,
       ),
-    ]),
-
-    // 产品管理
-    getItem(t('menu.sku'), '8', <BookOutlined />, [
       getItem(
         <Link to={Routes.PRODUCT_LIST.path}>{t('menu.skuList')}</Link>,
         '81',
