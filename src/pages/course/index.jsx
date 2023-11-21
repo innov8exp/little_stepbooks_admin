@@ -135,7 +135,7 @@ const CoursePage = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`/books/${bookId}/`)}
           />
           《{fetchedData?.bookName}》- {t('title.course')}
         </>
