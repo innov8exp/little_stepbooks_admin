@@ -76,7 +76,7 @@ const AdvertisementPage = () => {
             title: `${t('title.promotionalImages')}`,
             key: 'adsImgUrl',
             dataIndex: 'adsImgUrl',
-            render: (text) => <Image width={50} src={text} />,
+            render: (text) => <Image height={50} src={text} />,
           },
           {
             title: `${t('title.briefIntroduction')}`,

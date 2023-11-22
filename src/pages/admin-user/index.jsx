@@ -70,7 +70,7 @@ const AdminUserPage = () => {
               title: `${t('title.avatarImage')}`,
               key: 'avatarImgUrl',
               dataIndex: 'avatarImgUrl',
-              render: (text) => <Image width={50} src={text} />,
+              render: (text) => <Image height={50} src={text} />,
             },
             {
               title: `${t('title.label.username')}`,

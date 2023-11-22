@@ -209,7 +209,7 @@ const BookPage = () => {
               title: `${t('title.cover')}`,
               key: 'bookImgUrl',
               dataIndex: 'bookImgUrl',
-              render: (text) => <Image width={50} src={text} />,
+              render: (text) => <Image height={50} src={text} />,
             },
             {
               title: `${t('title.name')}`,
