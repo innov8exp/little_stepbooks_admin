@@ -305,7 +305,11 @@ const CourseForm = () => {
                 },
               ]}
             >
-              <FileListUpload domain={'COURSE'} maxCount={1} />
+              <FileListUpload
+                domain={'COURSE'}
+                permission="PRIVATE"
+                maxCount={1}
+              />
             </Form.Item>
             <div style={{ marginTop: 10 }} />
             <Row justify="end">

@@ -81,8 +81,8 @@ const ChapterView = () => {
                 label={t('title.image')}
                 value={
                   <Image
-                    src={initFormData?.coverImgUrl}
-                    alt="coverImg"
+                    src={initFormData?.imgUrl}
+                    alt="imgUrl"
                     style={{ height: 200 }}
                   />
                 }

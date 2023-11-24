@@ -11,7 +11,7 @@ import {
   LeftCircleOutlined,
   SearchOutlined,
 } from '@ant-design/icons'
-import { App, Button, Card, Divider, Image, Table, message } from 'antd'
+import { App, Button, Card, Divider, Table, message } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
@@ -150,12 +150,6 @@ const ChapterPage = () => {
               title: `${t('title.chapterName')}`,
               key: 'chapterName',
               dataIndex: 'chapterName',
-            },
-            {
-              title: `${t('title.cover')}`,
-              key: 'img',
-              dataIndex: 'img',
-              render: (text) => <Image width={100} alt="image" src={text} />,
             },
             {
               title: `${t('title.chapterIntroduction')}`,

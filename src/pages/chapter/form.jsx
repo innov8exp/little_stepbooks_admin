@@ -232,7 +232,11 @@ const ChapterForm = () => {
                 },
               ]}
             >
-              <ImageListUpload domain={'BOOK'} maxCount={1} />
+              <ImageListUpload
+                domain={'BOOK'}
+                permission="PRIVATE"
+                maxCount={1}
+              />
             </Form.Item>
             <Form.Item
               name="audio"
@@ -251,7 +255,11 @@ const ChapterForm = () => {
                 },
               ]}
             >
-              <FileListUpload domain={'BOOK'} maxCount={1} />
+              <FileListUpload
+                domain={'BOOK'}
+                permission="PRIVATE"
+                maxCount={1}
+              />
             </Form.Item>
 
             <div style={{ marginTop: 10 }} />
