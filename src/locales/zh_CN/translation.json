@@ -156,7 +156,7 @@
   "title.email": "邮箱",
   "title.returnLogin": "返回登录",
   "title.retrievePassword": "找回密码",
-  "title.password": "找回密码",
+  "title.password": "密码",
   "title.forgotPassword": "忘记密码？",
   "title.login": "登录",
   "title.chapterNumber": "章节序号",
@@ -322,7 +322,6 @@
   "select.option.hotSearchRecommendations": "热搜推荐",
   "select.option.male": "男",
   "select.option.female": "女",
-
   "menu.bookSetList": "书籍套装列表",
   "title.bookSet": "书籍套装列表",
   "message.placeholder.code": "请输入编码",
