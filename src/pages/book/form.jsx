@@ -1,5 +1,6 @@
 import ImageListUpload from '@/components/image-list-upload'
 import useFetch from '@/hooks/useFetch'
+import dayjs from 'dayjs'
 import { LeftCircleOutlined } from '@ant-design/icons'
 import {
   Button,
@@ -12,6 +13,7 @@ import {
   Row,
   Skeleton,
   message,
+  TimePicker,
 } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
@@ -84,6 +86,9 @@ const BookForm = () => {
           setInitFormData({
             ...resultData,
             bookImg: bookImgArr,
+            duration: resultData.duration
+              ? dayjs(resultData.duration, 'mm:ss')
+              : dayjs('00:00', 'mm:ss'),
           })
         }
       })
@@ -154,6 +159,7 @@ const BookForm = () => {
             classifications: Array.from(new Set(values.classifications)),
             bookImgId: values.bookImg?.[0]?.response?.id,
             bookImgUrl: values.bookImg?.[0]?.response?.objectUrl,
+            duration: values.duration.format('mm:ss'),
           })
         } else {
           createData({
@@ -161,6 +167,7 @@ const BookForm = () => {
             classifications: Array.from(new Set(values.classifications)),
             bookImgId: values.bookImg?.[0]?.response?.id,
             bookImgUrl: values.bookImg?.[0]?.response?.objectUrl,
+            duration: values.duration.format('mm:ss'),
           })
         }
       })
@@ -249,6 +256,15 @@ const BookForm = () => {
                 rows={3}
                 style={{ resize: 'none' }}
                 placeholder={t('message.placeholder.describe')}
+              />
+            </Form.Item>
+            <Form.Item name="duration" label={t('title.duration')}>
+              <TimePicker
+                format={'mm:ss'}
+                placeholder={'mm:ss'}
+                showNow={false}
+                allowClear={false}
+                defaultValue={dayjs('00:00', 'mm:ss')}
               />
             </Form.Item>
             <Form.Item

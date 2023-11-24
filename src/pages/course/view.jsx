@@ -101,8 +101,7 @@ const BookView = () => {
                 label={t('title.video')}
                 value={
                   <ReactPlayer
-                    // url={initFormData?.videoUrl}
-                    url="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4"
+                    url={initFormData?.videoUrl}
                     width={480}
                     height={270}
                     controls={true}

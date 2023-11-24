@@ -1,6 +1,7 @@
 import FileListUpload from '@/components/file-list-upload'
 import ImageListUpload from '@/components/image-list-upload'
 import { LeftCircleOutlined } from '@ant-design/icons'
+import dayjs from 'dayjs'
 import {
   Button,
   Card,
@@ -8,7 +9,7 @@ import {
   Empty,
   Form,
   Input,
-  InputNumber,
+  TimePicker,
   Radio,
   Row,
   Skeleton,
@@ -70,10 +71,14 @@ const CourseForm = () => {
               },
             })
           }
+          console.log(dayjs(resultData.duration, 'mm:ss'))
           setInitFormData({
             ...resultData,
             video: videoArr,
             coverImg: coverImgArr,
+            duration: resultData.duration
+              ? dayjs(resultData.duration, 'mm:ss')
+              : dayjs('00:00', 'mm:ss'),
           })
         }
       })
@@ -139,6 +144,7 @@ const CourseForm = () => {
             coverImgUrl: values.coverImg?.[0]?.response?.objectUrl,
             videoId: values.video?.[0]?.response?.id,
             videoUrl: values.video?.[0]?.response?.objectUrl,
+            duration: values.duration.format('mm:ss'),
           })
         } else {
           createData({
@@ -147,6 +153,7 @@ const CourseForm = () => {
             coverImgUrl: values.coverImg?.[0]?.response?.objectUrl,
             videoId: values.video?.[0]?.response?.id,
             videoUrl: values.video?.[0]?.response?.objectUrl,
+            duration: values.duration.format('mm:ss'),
           })
         }
       })
@@ -235,7 +242,13 @@ const CourseForm = () => {
                 },
               ]}
             >
-              <InputNumber placeholder={t('message.check.duration')} />
+              <TimePicker
+                format={'mm:ss'}
+                placeholder={'mm:ss'}
+                showNow={false}
+                allowClear={false}
+                defaultValue={dayjs('00:00', 'mm:ss')}
+              />
             </Form.Item>
             <Form.Item
               name="courseNature"

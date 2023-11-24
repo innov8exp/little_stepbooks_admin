@@ -71,6 +71,10 @@ const BookView = () => {
           />
           <ViewItem label={t('title.author')} value={initFormData?.author} />
           <ViewItem
+            label={t('title.duration')}
+            value={initFormData?.duration}
+          />
+          <ViewItem
             label={t('title.classification')}
             value={initFormData?.classifications?.join(', ')}
           />

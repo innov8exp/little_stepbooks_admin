@@ -107,7 +107,7 @@ const ChapterPage = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(`/books/${bookId}/`)}
+            onClick={() => navigate(`/books`)}
           />
           《{fetchedData?.bookName}》- {t('title.content')}
         </>
