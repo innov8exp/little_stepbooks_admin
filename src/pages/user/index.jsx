@@ -81,13 +81,13 @@ const UserPage = () => {
       >
         <Row>
           <Col span={6}>
-            <Form.Item label={t('title.username')} name="username">
-              <Input placeholder={t('message.placeholder.username')} />
+            <Form.Item label={t('title.label.userNickName')} name="username">
+              <Input placeholder={t('message.placeholder.enterUserName')} />
             </Form.Item>
           </Col>
           <Col span={6}>
             <Form.Item label={t('title.phone')} name="phone">
-              <Input placeholder={t('message.placeholder.phone')} />
+              <Input placeholder={t('message.placeholder.enterPhone')} />
             </Form.Item>
           </Col>
         </Row>
@@ -155,7 +155,7 @@ const UserPage = () => {
             //   dataIndex: 'deviceId',
             // },
             {
-              title: `${t('title.childrenGender')}`,
+              title: `${t('title.gender')}`,
               key: 'childrenGender',
               dataIndex: 'childrenGender',
             },

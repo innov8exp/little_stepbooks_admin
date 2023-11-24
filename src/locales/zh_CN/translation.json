@@ -321,5 +321,10 @@
   "select.option.TodayRecommendation": "今日推荐",
   "select.option.hotSearchRecommendations": "热搜推荐",
   "select.option.male": "男",
-  "select.option.female": "女"
+  "select.option.female": "女",
+
+  "menu.bookSetList": "书籍套装列表",
+  "title.bookSet": "书籍套装列表",
+  "message.placeholder.code": "请输入编码",
+  "button.bookSetEditing": "书籍套装编辑"
 }
