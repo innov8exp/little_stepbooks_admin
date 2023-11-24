@@ -324,12 +324,6 @@ const ProductForm = () => {
               <Form.Item
                 name="parsedSalesPlatforms"
                 label={t('title.salesPlatforms')}
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('message.check.salesPlatforms')}`,
-                  },
-                ]}
               >
                 <Checkbox.Group placeholder={t('message.check.salesPlatforms')}>
                   <Checkbox value="MINI_PROGRAM" key="MINI_PROGRAM">
