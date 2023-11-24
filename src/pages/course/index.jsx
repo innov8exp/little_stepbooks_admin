@@ -203,9 +203,9 @@ const CoursePage = () => {
               render: (text, record, index) => index + 1,
             },
             {
-              title: `${t('title.cover')}`,
-              key: 'coverImgUrl',
-              dataIndex: 'coverImgUrl',
+              title: `${t('title.imgUrl')}`,
+              key: 'imgUrl',
+              dataIndex: 'imgUrl',
               render: (text) => <Image width={50} src={text} />,
             },
             {
