@@ -286,7 +286,7 @@ const OrderForm = () => {
                         dataIndex: 'quantity',
                       },
                     ]}
-                    rowKey={(record) => record.id}
+                    rowKey={(record) => record?.id}
                     dataSource={[productsResponse?.fetchedData]}
                     loading={productsResponse?.loading}
                     pagination={false}
