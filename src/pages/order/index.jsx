@@ -184,6 +184,34 @@ const OrderPage = () => {
     setSelectedId(id)
   }
 
+  const handleMockRefundPaymentAction = (id) => {
+    modal.confirm({
+      title: `${t('message.tips.mock')}`,
+      icon: <ExclamationCircleOutlined />,
+      okText: `${t('button.determine')}`,
+      okType: 'primary',
+      cancelText: `${t('button.cancel')}`,
+      onOk() {
+        axios
+          .put(`/api/admin/v1/orders/${id}/mock/refund-callback`)
+          .then((res) => {
+            if (res.status === HttpStatus.OK) {
+              const timestamp = new Date().getTime()
+              setChangeTimestamp(timestamp)
+              message.success(t('message.successInfo'))
+            }
+          })
+          .catch((err) => {
+            message.error(
+              `${t('message.error.failureReason')}${
+                err.response?.data?.message
+              }`,
+            )
+          })
+      },
+    })
+  }
+
   useEffect(() => {
     fetchOrders()
   }, [fetchOrders, pageNumber, changeTimestamp])
@@ -371,6 +399,21 @@ const OrderPage = () => {
                           </Button>
                         </>
                       )}
+
+                      {record.state === 'REFUNDING' &&
+                        record.productNature === 'PHYSICAL' && (
+                          <>
+                            <Divider type="vertical" />
+                            <Button
+                              type="link"
+                              onClick={() =>
+                                handleMockRefundPaymentAction(record.id)
+                              }
+                            >
+                              {t('button.mockRefundPayment')}
+                            </Button>
+                          </>
+                        )}
                     </div>
                   )
                 },
