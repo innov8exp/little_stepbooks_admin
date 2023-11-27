@@ -254,11 +254,11 @@ const RefundRequestPage = () => {
                   </Button>
                 ),
               },
-              {
-                title: `${t('title.nickname')}`,
-                key: 'nickname',
-                dataIndex: 'nickname',
-              },
+              // {
+              //   title: `${t('title.nickname')}`,
+              //   key: 'nickname',
+              //   dataIndex: 'nickname',
+              // },
               {
                 title: `${t('title.userPhone')}`,
                 key: 'phone',
@@ -274,11 +274,6 @@ const RefundRequestPage = () => {
                 title: `${t('title.refundReason')}`,
                 key: 'refundReason',
                 dataIndex: 'refundReason',
-              },
-              {
-                title: `${t('title.refundReasonDescription')}`,
-                key: 'refundReasonDescription',
-                dataIndex: 'refundReasonDescription',
               },
               {
                 title: `${t('title.createTime')}`,
