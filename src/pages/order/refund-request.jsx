@@ -220,7 +220,7 @@ const RefundRequestPage = () => {
                   (pageNumber - 1) * pageSize + index + 1,
               },
               {
-                title: `${t('title.label.code')}`,
+                title: `${t('title.code')}`,
                 key: 'id',
                 dataIndex: 'id',
                 render: (text, record) => (
@@ -255,9 +255,9 @@ const RefundRequestPage = () => {
                 ),
               },
               {
-                title: `${t('title.userName')}`,
-                key: 'username',
-                dataIndex: 'username',
+                title: `${t('title.nickname')}`,
+                key: 'nickname',
+                dataIndex: 'nickname',
               },
               {
                 title: `${t('title.userPhone')}`,
