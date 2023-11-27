@@ -269,6 +269,7 @@ const RefundRequestPage = () => {
                 title: `${t('title.refundReason')}`,
                 key: 'refundReason',
                 dataIndex: 'refundReason',
+                render: (text) => t(text),
               },
               {
                 title: `${t('title.refundReasonDescription')}`,
