@@ -353,13 +353,17 @@ const OrderForm = () => {
                       <Col span={12}>
                         <ViewItem
                           label={t('title.deliveryMethod')}
-                          value={deliveryResponse?.fetchedData?.deliveryMethod}
+                          value={t(
+                            deliveryResponse?.fetchedData?.deliveryMethod,
+                          )}
                         />
                       </Col>
                       <Col span={12}>
                         <ViewItem
                           label={t('title.deliveryStatus')}
-                          value={deliveryResponse?.fetchedData?.deliveryStatus}
+                          value={t(
+                            deliveryResponse?.fetchedData?.deliveryStatus,
+                          )}
                         />
                       </Col>
                     </Row>
@@ -460,14 +464,14 @@ const OrderForm = () => {
                     items={eventLogsResponse?.fetchedData?.map((item) => {
                       return {
                         children:
-                          item.eventTime +
+                          t(item.eventTime) +
                           ' [' +
-                          item.eventType +
+                          t(item.eventType) +
                           ']' +
                           ' ' +
-                          item.fromState +
+                          t(item.fromState) +
                           ' -> ' +
-                          item.toState,
+                          t(item.toState),
                       }
                     })}
                   />
