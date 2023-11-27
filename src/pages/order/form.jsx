@@ -311,11 +311,13 @@ const OrderForm = () => {
                         title: `${t('title.label.paymentType')}`,
                         key: 'paymentType',
                         dataIndex: 'paymentType',
+                        render: (text) => t(text),
                       },
                       {
                         title: `${t('title.label.paymentMethod')}`,
                         key: 'paymentMethod',
                         dataIndex: 'paymentMethod',
+                        render: (text) => t(text),
                       },
                       {
                         title: `${t('title.transactionAmount')}`,
