@@ -254,11 +254,6 @@ const RefundRequestPage = () => {
                   </Button>
                 ),
               },
-              // {
-              //   title: `${t('title.nickname')}`,
-              //   key: 'nickname',
-              //   dataIndex: 'nickname',
-              // },
               {
                 title: `${t('title.userPhone')}`,
                 key: 'phone',
@@ -274,6 +269,11 @@ const RefundRequestPage = () => {
                 title: `${t('title.refundReason')}`,
                 key: 'refundReason',
                 dataIndex: 'refundReason',
+              },
+              {
+                title: `${t('title.refundReasonDescription')}`,
+                key: 'refundReasonDescription',
+                dataIndex: 'refundReasonDescription',
               },
               {
                 title: `${t('title.createTime')}`,
@@ -296,7 +296,13 @@ const RefundRequestPage = () => {
                 title: `${t('title.refundStatus')}`,
                 key: 'refundStatus',
                 dataIndex: 'refundStatus',
-                render: (text) => <Tag color="blue">{t(text)}</Tag>,
+                render: (text) => {
+                  return text === 'PENDING' ? (
+                    <Tag color="blue">{t('REFUNDING')}</Tag>
+                  ) : (
+                    <Tag color="blue">{t(text)}</Tag>
+                  )
+                },
               },
               {
                 title: `${t('title.operate')}`,
