@@ -23,7 +23,7 @@
   "VIRTUAL": "数字商品",
   "ON_SHELF": "已上架",
   "OFF_SHELF": "已下架",
-  "APPROVE": "已批准",
+  "APPROVED": "已批准",
   "PENDING": "待审批",
   "REJECTED": "已拒绝",
   "CANCELLED": "已取消",
