@@ -56,6 +56,7 @@ const CourseForm = () => {
               response: {
                 id: resultData.videoId,
                 objectUrl: resultData.videoUrl,
+                objectKey: resultData.videoKey,
               },
             })
           }
@@ -143,7 +144,7 @@ const CourseForm = () => {
             coverImgId: values.coverImg?.[0]?.response?.id,
             coverImgUrl: values.coverImg?.[0]?.response?.objectUrl,
             videoId: values.video?.[0]?.response?.id,
-            videoUrl: values.video?.[0]?.response?.objectUrl,
+            videoUrl: values.video?.[0]?.response?.objectKey,
             duration: values.duration.format('mm:ss'),
           })
         } else {
@@ -152,7 +153,7 @@ const CourseForm = () => {
             coverImgId: values.coverImg?.[0]?.response?.id,
             coverImgUrl: values.coverImg?.[0]?.response?.objectUrl,
             videoId: values.video?.[0]?.response?.id,
-            videoUrl: values.video?.[0]?.response?.objectUrl,
+            videoUrl: values.video?.[0]?.response?.objectKey,
             duration: values.duration.format('mm:ss'),
           })
         }

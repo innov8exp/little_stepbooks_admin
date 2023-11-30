@@ -86,6 +86,12 @@ const BookForm = () => {
           setInitFormData({
             ...resultData,
             bookImg: bookImgArr,
+            media: resultData.medias?.map((item) => ({
+              id: item.mediaId,
+              name: item.mediaUrl?.split('/')?.pop(),
+              url: item.mediaUrl,
+              response: { id: item.mediaId, objectUrl: item.mediaUrl },
+            })),
             duration: resultData.duration
               ? dayjs(resultData.duration, 'mm:ss')
               : dayjs('00:00', 'mm:ss'),
@@ -160,6 +166,10 @@ const BookForm = () => {
             bookImgId: values.bookImg?.[0]?.response?.id,
             bookImgUrl: values.bookImg?.[0]?.response?.objectUrl,
             duration: values.duration.format('mm:ss'),
+            medias: values?.media?.map((item) => ({
+              mediaId: item?.response?.id,
+              mediaUrl: item?.response?.objectUrl,
+            })),
           })
         } else {
           createData({
@@ -168,6 +178,10 @@ const BookForm = () => {
             bookImgId: values.bookImg?.[0]?.response?.id,
             bookImgUrl: values.bookImg?.[0]?.response?.objectUrl,
             duration: values.duration.format('mm:ss'),
+            medias: values?.media?.map((item) => ({
+              mediaId: item?.response?.id,
+              mediaUrl: item?.response?.objectUrl,
+            })),
           })
         }
       })

@@ -63,6 +63,7 @@ const ChapterForm = () => {
               response: {
                 id: resultData.audioId,
                 objectUrl: resultData.audioUrl,
+                objectKey: resultData.audioKey,
               },
             })
           }
@@ -75,6 +76,7 @@ const ChapterForm = () => {
               response: {
                 id: resultData.imgId,
                 objectUrl: resultData.imgUrl,
+                objectKey: resultData.imgKey,
               },
             })
           }
@@ -144,18 +146,18 @@ const ChapterForm = () => {
             ...values,
             bookId,
             imgId: values.img?.[0]?.response?.id,
-            imgUrl: values.img?.[0]?.response?.objectUrl,
+            imgUrl: values.img?.[0]?.response?.objectKey,
             audioId: values.audio?.[0]?.response?.id,
-            audioUrl: values.audio?.[0]?.response?.objectUrl,
+            audioUrl: values.audio?.[0]?.response?.objectKey,
           })
         } else {
           createData({
             ...values,
             bookId,
             imgId: values.img?.[0]?.response?.id,
-            imgUrl: values.img?.[0]?.response?.objectUrl,
+            imgUrl: values.img?.[0]?.response?.objectKey,
             audioId: values.audio?.[0]?.response?.id,
-            audioUrl: values.audio?.[0]?.response?.objectUrl,
+            audioUrl: values.audio?.[0]?.response?.objectKey,
           })
         }
       })
