@@ -243,7 +243,7 @@ const ProductPage = () => {
               ),
             },
             {
-              title: `${t('title.productName')}`,
+              title: `${t('title.skuName')}`,
               key: 'skuName',
               dataIndex: 'skuName',
             },
@@ -280,7 +280,7 @@ const ProductPage = () => {
               },
             },
             {
-              title: `${t('title.label.status')}`,
+              title: `${t('title.status')}`,
               key: 'status',
               dataIndex: 'status',
               render: (text, record) => {

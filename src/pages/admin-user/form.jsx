@@ -126,7 +126,7 @@ const AdminUserForm = ({ id, visible, onSave, onCancel }) => {
             },
           ]}
         >
-          <Input placeholder={t('message.placeholder.username')} />
+          <Input placeholder={t('message.check.username')} />
         </Form.Item>
         <Form.Item
           name="nickname"
@@ -138,7 +138,7 @@ const AdminUserForm = ({ id, visible, onSave, onCancel }) => {
             },
           ]}
         >
-          <Input placeholder={t('message.placeholder.nickname')} />
+          <Input placeholder={t('message.check.nickname')} />
         </Form.Item>
         <Form.Item name="email" label={t('title.email')}>
           <Input placeholder={t('message.placeholder.email')} />

@@ -279,7 +279,7 @@ const ProductForm = () => {
                   },
                 ]}
               >
-                <Select>
+                <Select placeholder={`${t('message.check.productNature')}`}>
                   <Option value="PHYSICAL">{t('PHYSICAL')}</Option>
                   <Option value="VIRTUAL">{t('VIRTUAL')}</Option>
                 </Select>
