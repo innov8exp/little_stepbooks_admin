@@ -410,5 +410,17 @@
   "message.check.username": "请输入用户名",
   "message.check.nickname": "请输入用户昵称",
   "message.placeholder.email": "请输入邮箱",
-  "message.placeholder.phone": "请输入手机"
+  "message.placeholder.phone": "请输入手机",
+  "title.chapterNo": "章节编号",
+  "title.audio": "音频",
+  "title.content.view": "书籍内容预览",
+  "title.courseNature": "是否付费",
+  "title.authorIntroduction": "讲师介绍",
+  "message.check.authorIntroduction": "请输入讲师介绍",
+  "title.NEED_TO_PAY": "付费",
+  "title.video": "视频",
+  "title.trial": "体验课",
+  "title.needToPay": "付费",
+  "title.courseView": "课程预览",
+  "title.TRIAL": "体验课"
 }

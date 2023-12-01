@@ -69,7 +69,11 @@ const BookView = () => {
               <ViewItem label={t('title.name')} value={initFormData?.name} />
               <ViewItem
                 label={t('title.courseNature')}
-                value={initFormData?.courseNature}
+                value={
+                  initFormData?.courseNature == 'TRIAL'
+                    ? t('title.TRIAL')
+                    : t('title.NEED_TO_PAY')
+                }
               />
               <ViewItem
                 label={t('title.description')}
