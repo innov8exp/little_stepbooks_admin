@@ -310,12 +310,6 @@ const BookForm = () => {
                 }
                 return e?.fileList
               }}
-              rules={[
-                {
-                  required: true,
-                  message: `${t('message.check.media')}`,
-                },
-              ]}
             >
               <ImageListUpload domain="BOOK" />
             </Form.Item>
