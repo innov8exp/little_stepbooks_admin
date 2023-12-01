@@ -90,6 +90,10 @@ const ProductPage = () => {
     navigate(`${Routes.PRODUCT_FORM.path}?id=${id}`)
   }
 
+  const handleViewAction = (id) => {
+    navigate(`${Routes.PRODUCT_VIEW.path}?id=${id}`)
+  }
+
   const handleUpdateStatusAction = (id, status) => {
     setSwitchLoading({ id, loading: true })
     modal.confirm({
@@ -237,7 +241,7 @@ const ProductPage = () => {
               key: 'skuCode',
               dataIndex: 'skuCode',
               render: (text, record) => (
-                <Button onClick={() => handleEditAction(record.id)} type="link">
+                <Button onClick={() => handleViewAction(record.id)} type="link">
                   <Tooltip title={record.description}>{text}</Tooltip>
                 </Button>
               ),

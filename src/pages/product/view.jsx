@@ -3,7 +3,7 @@ import useQuery from '@/hooks/useQuery'
 import { Routes } from '@/libs/router'
 import { formatMoney } from '@/libs/util'
 import { LeftCircleOutlined } from '@ant-design/icons'
-import { Button, Card, Empty, Image, Skeleton, Space, message } from 'antd'
+import { Button, Card, Col, Empty, Image, Row, Skeleton, message } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
@@ -60,55 +60,78 @@ const ProductView = () => {
               icon={<LeftCircleOutlined />}
               onClick={() => navigate(Routes.PRODUCT_LIST.path)}
             />
-            {t('button.productEditing')}
+            {t('button.productView')}
           </>
         }
       >
         {isDisplayForm ? (
           <Skeleton loading={loading} active>
             <ViewItem
+              labelSpan={4}
               label={t('title.skuCode')}
               value={initFormData?.skuCode}
             />
             <ViewItem
+              labelSpan={4}
               label={t('title.skuName')}
               value={initFormData?.skuName}
             />
             <ViewItem
+              labelSpan={4}
               label={t('title.describe')}
               value={initFormData?.description}
             />
             <ViewItem
-              label={t('title.salesPlatform')}
-              value={initFormData?.salesPlatforms?.map((item) => item)}
+              labelSpan={4}
+              label={t('title.salesPlatforms')}
+              value={initFormData?.parsedSalesPlatforms
+                ?.map((item) => t(item))
+                .join(', ')}
             />
             <ViewItem
+              labelSpan={4}
               label={t('title.productNature')}
               value={t(initFormData?.productNature)}
             />
             <ViewItem
-              label={t('title.bookSetName')}
+              labelSpan={4}
+              label={t('title.classification')}
+              value={initFormData?.classificationNames?.join(', ')}
+            />
+            <ViewItem
+              labelSpan={4}
+              label={t('title.bookSet')}
               value={t(initFormData?.bookSetName)}
             />
             <ViewItem
-              label={t('title.material')}
-              value={t(initFormData?.materials?.map((item) => item))}
+              labelSpan={4}
+              label={t('title.materials')}
+              value={initFormData?.parsedMaterials
+                ?.map((item) => t(item))
+                .join(', ')}
             />
             <ViewItem
+              labelSpan={4}
               label={t('title.price')}
               value={formatMoney(initFormData?.price)}
             />
             <ViewItem
+              labelSpan={4}
               label={t('title.cover')}
-              value={<Image src={initFormData?.coverImgUrl} />}
+              value={<Image src={initFormData?.coverImgUrl} width={300} />}
             />
             <ViewItem
-              label={t('title.cover')}
-              value={initFormData?.medias?.map((item) => (
-                <Space key={item?.id}>
-                  <Image src={item?.objectUrl} />
-                </Space>
-              ))}
+              labelSpan={4}
+              label={t('title.media')}
+              value={initFormData?.medias?.map((item) => {
+                return (
+                  <Row key={item?.mediaId}>
+                    <Col>
+                      <Image src={item?.mediaUrl} width={300} />
+                    </Col>
+                  </Row>
+                )
+              })}
             />
           </Skeleton>
         ) : (
