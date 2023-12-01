@@ -254,7 +254,7 @@ const OrderForm = () => {
                           <Button
                             onClick={() =>
                               navigate(
-                                `${Routes.PRODUCT_FORM.path}?id=${record.productId}`,
+                                `${Routes.PRODUCT_VIEW.path}?id=${record.productId}`,
                               )
                             }
                             type="link"

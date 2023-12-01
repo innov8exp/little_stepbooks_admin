@@ -84,7 +84,7 @@ const OrderInventoryLogPage = () => {
   }
 
   const handleProductViewAction = (id) => {
-    navigate(`${Routes.PRODUCT_FORM.path}?id=${id}`)
+    navigate(`${Routes.PRODUCT_VIEW.path}?id=${id}`)
   }
 
   const handleOrderViewAction = (id) => {
