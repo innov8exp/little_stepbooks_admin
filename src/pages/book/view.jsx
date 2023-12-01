@@ -92,6 +92,13 @@ const BookView = () => {
               />
             }
           />
+          {initFormData?.medias?.map((item, index) => (
+            <ViewItem
+              key={index}
+              label={t('title.media')}
+              value={<Image src={item?.mediaUrl} style={{ height: 200 }} />}
+            />
+          ))}
         </Skeleton>
       ) : (
         <Empty description={<span>{t('message.error.failure')}</span>} />

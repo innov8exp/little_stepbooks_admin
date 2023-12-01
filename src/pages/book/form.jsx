@@ -165,7 +165,7 @@ const BookForm = () => {
             classifications: Array.from(new Set(values.classifications)),
             bookImgId: values.bookImg?.[0]?.response?.id,
             bookImgUrl: values.bookImg?.[0]?.response?.objectUrl,
-            duration: values.duration.format('mm:ss'),
+            duration: values.duration?.format('mm:ss') || '00:00',
             medias: values?.media?.map((item) => ({
               mediaId: item?.response?.id,
               mediaUrl: item?.response?.objectUrl,
@@ -177,7 +177,7 @@ const BookForm = () => {
             classifications: Array.from(new Set(values.classifications)),
             bookImgId: values.bookImg?.[0]?.response?.id,
             bookImgUrl: values.bookImg?.[0]?.response?.objectUrl,
-            duration: values.duration.format('mm:ss'),
+            duration: values.duration?.format('mm:ss') || '00:00',
             medias: values?.media?.map((item) => ({
               mediaId: item?.response?.id,
               mediaUrl: item?.response?.objectUrl,
@@ -299,6 +299,25 @@ const BookForm = () => {
               ]}
             >
               <ImageListUpload domain={'BOOK'} maxCount={1} />
+            </Form.Item>
+            <Form.Item
+              name="media"
+              label={t('title.media')}
+              valuePropName="fileList"
+              getValueFromEvent={(e) => {
+                if (Array.isArray(e)) {
+                  return e
+                }
+                return e?.fileList
+              }}
+              rules={[
+                {
+                  required: true,
+                  message: `${t('message.check.media')}`,
+                },
+              ]}
+            >
+              <ImageListUpload domain="BOOK" />
             </Form.Item>
             <div style={{ marginTop: 10 }} />
             <Row justify="end">
