@@ -1,4 +1,9 @@
 {
+  "AUDIO": "图文音频",
+  "COURSE": "视频课程",
+  "EXERCISE": "练习题",
+  "MINI_PROGRAM": "小程序",
+  "APP": "APP应用",
   "ORDER_PAYMENT": "订单支付",
   "REFUND_PAYMENT": "退款支付",
   "WECHAT_PAY": "微信支付",

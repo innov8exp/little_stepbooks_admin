@@ -1,4 +1,9 @@
 {
+  "AUDIO": "AUDIO",
+  "COURSE": "COURSE",
+  "EXERCISE": "EXERCISE",
+  "MINI_PROGRAM": "MINI PROGRAM",
+  "APP": "APP",
   "ORDER_PAYMENT": "Order Payment",
   "REFUND_PAYMENT": "Refund Payment",
   "WECHAT_PAY": "Wechat Pay",

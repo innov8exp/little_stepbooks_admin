@@ -261,7 +261,7 @@ const ProductPage = () => {
                 <Space>
                   {text.map((item) => (
                     <Tag key={item} color="blue">
-                      {item}
+                      {t(item)}
                     </Tag>
                   ))}
                 </Space>
