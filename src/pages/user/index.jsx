@@ -4,7 +4,6 @@ import {
   QueryBtnWrapper,
   StyledCondition,
 } from '@/components/styled'
-import useFetch from '@/hooks/useFetch'
 import {
   ExclamationCircleOutlined,
   SearchOutlined,
@@ -25,16 +24,46 @@ import {
 } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const UserPage = () => {
   const { t } = useTranslation()
   const { modal } = App.useApp()
   const [changeTime, setChangeTime] = useState(Date.now())
-  const { loading, fetchedData } = useFetch(`/api/admin/v1/users`, [changeTime])
+  const [fetchedData, setFetchedData] = useState([])
   const [queryCriteria, setQueryCriteria] = useState()
+  const [loading, setLoading] = useState(false)
+  const [pageNumber, setPageNumber] = useState(1)
+  const [pageSize] = useState(10)
+  const [total, setTotal] = useState(0)
   const [queryForm] = Form.useForm()
+
+  const paginationProps = {
+    pageSize,
+    current: pageNumber,
+    total,
+    onChange: (current) => {
+      setPageNumber(current)
+    },
+  }
+
+  const loadData = useCallback(() => {
+    setLoading(true)
+    axios
+      .get(
+        `/api/admin/v1/users?currentPage=${pageNumber}&pageSize=${pageSize}`,
+        { params: queryCriteria },
+      )
+      .then((res) => {
+        if (res.status === HttpStatus.OK) {
+          const resultData = res.data
+          setFetchedData(resultData.records)
+          setTotal(resultData.total)
+        }
+      })
+      .finally(() => setLoading(false))
+  }, [pageNumber, pageSize, queryCriteria])
 
   const handleChangeStatusAction = (id, active) => {
     modal.confirm({
@@ -71,6 +100,10 @@ const UserPage = () => {
     queryForm.resetFields()
   }
 
+  useEffect(() => {
+    loadData()
+  }, [loadData, changeTime])
+
   return (
     <Card title={t('title.userManagement')}>
       <Form
@@ -86,8 +119,8 @@ const UserPage = () => {
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label={t('title.phone')} name="phone">
-              <Input placeholder={t('message.placeholder.enterPhone')} />
+            <Form.Item label={t('title.nickname')} name="nickname">
+              <Input placeholder={t('message.placeholder.nickname')} />
             </Form.Item>
           </Col>
         </Row>
@@ -202,7 +235,7 @@ const UserPage = () => {
           ]}
           rowKey={(record) => record.id}
           dataSource={fetchedData}
-          pagination={false}
+          pagination={paginationProps}
           loading={loading}
         />
       </ContentContainer>

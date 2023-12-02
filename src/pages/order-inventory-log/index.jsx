@@ -52,9 +52,9 @@ const OrderInventoryLogPage = () => {
     if (queryCriteria?.skuCode) {
       searchURL += `&skuCode=${queryCriteria.skuCode}`
     }
-    // if (queryCriteria?.username) {
-    //   searchURL += `&username=${queryCriteria.username}`
-    // }
+    if (queryCriteria?.orderCode) {
+      searchURL += `&username=${queryCriteria.orderCode}`
+    }
     axios
       .get(searchURL)
       .then((res) => {

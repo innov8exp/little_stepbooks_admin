@@ -379,5 +379,6 @@
   "select.option.TodayRecommendation": "Today's recommendation",
   "select.option.hotSearchRecommendations": "Hot search recommendations",
   "select.option.male": "male",
-  "select.option.female": "female"
+  "select.option.female": "female",
+  "title.status.normal": "Normal"
 }
