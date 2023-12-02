@@ -90,10 +90,9 @@ const CoursePage = () => {
             }
           })
           .catch((err) => {
+            console.error(err)
             message.error(
-              `${t('message.error.failureReason')}${
-                err.response?.data?.message
-              }`,
+              `${t('message.error.failureReason')} 已绑定产品，不能删除!`,
             )
           })
       },
