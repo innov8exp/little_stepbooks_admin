@@ -1,6 +1,5 @@
 import ViewItem from '@/components/view-item'
 import useQuery from '@/hooks/useQuery'
-import { Routes } from '@/libs/router'
 import { formatMoney } from '@/libs/util'
 import { LeftCircleOutlined } from '@ant-design/icons'
 import { Button, Card, Col, Empty, Image, Row, Skeleton, message } from 'antd'
@@ -58,7 +57,7 @@ const ProductView = () => {
               type="link"
               size="large"
               icon={<LeftCircleOutlined />}
-              onClick={() => navigate(Routes.PRODUCT_LIST.path)}
+              onClick={() => navigate(-1)}
             />
             {t('button.productView')}
           </>

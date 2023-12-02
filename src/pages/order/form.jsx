@@ -167,7 +167,7 @@ const OrderForm = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.ORDER_LIST.path)}
+            onClick={() => navigate(-1)}
           />
           {t('button.orderEditing')}
         </>
