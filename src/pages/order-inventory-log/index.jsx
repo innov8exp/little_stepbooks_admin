@@ -70,7 +70,13 @@ const OrderInventoryLogPage = () => {
         ),
       )
       .finally(() => setLoading(false))
-  }, [pageNumber, pageSize, queryCriteria?.skuCode, t])
+  }, [
+    pageNumber,
+    pageSize,
+    queryCriteria?.orderCode,
+    queryCriteria?.skuCode,
+    t,
+  ])
 
   const handleQuery = () => {
     const timestamp = new Date().getTime()

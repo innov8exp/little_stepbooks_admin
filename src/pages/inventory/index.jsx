@@ -93,7 +93,7 @@ const InventoryPage = () => {
   }
 
   const handleViewAction = (id) => {
-    navigate(`${Routes.PRODUCT_FORM.path}?id=${id}`)
+    navigate(`${Routes.PRODUCT_VIEW.path}?id=${id}`)
   }
 
   useEffect(() => {
