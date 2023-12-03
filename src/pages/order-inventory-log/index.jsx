@@ -191,6 +191,12 @@ const OrderInventoryLogPage = () => {
                 title: `${t('title.inventoryQuantity')}`,
                 key: 'quantity',
                 dataIndex: 'quantity',
+                render: (text, record) => {
+                  if (record.changeType === 'INCREASE') {
+                    return `+${text}`
+                  }
+                  return `-${text}`
+                },
               },
             ]}
             rowKey={(record) => record.id}
