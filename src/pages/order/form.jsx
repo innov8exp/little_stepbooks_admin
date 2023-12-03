@@ -91,36 +91,15 @@ const OrderForm = () => {
       .finally(() => setLoading(false))
   }, [queryId, t])
 
-  const createData = (book) => {
-    setSaveLoading(true)
-    axios
-      .post('/api/admin/v1/books', {
-        ...book,
-      })
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          message.success(`${t('message.successfullySaved')}`)
-          navigate(Routes.BOOK_LIST.path)
-        }
-      })
-      .catch((err) => {
-        message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
-        )
-      })
-      .finally(() => setSaveLoading(false))
-  }
-
   const updateData = (book) => {
     setSaveLoading(true)
     axios
-      .put(`/api/admin/v1/orders/${queryId}`, {
+      .put(`/api/admin/v1/orders/${queryId}/delivery`, {
         ...book,
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(`${t('message.successfullySaved')}`)
-          navigate(Routes.BOOK_LIST.path)
         }
       })
       .catch((err) => {
@@ -138,11 +117,6 @@ const OrderForm = () => {
         console.log('数字：', values)
         if (queryId) {
           updateData({
-            ...values,
-            classifications: Array.from(new Set(values.classifications)),
-          })
-        } else {
-          createData({
             ...values,
             classifications: Array.from(new Set(values.classifications)),
           })
