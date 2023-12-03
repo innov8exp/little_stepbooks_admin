@@ -198,6 +198,11 @@ const OrderInventoryLogPage = () => {
                   return `-${text}`
                 },
               },
+              {
+                title: `${t('title.createTime')}`,
+                key: 'createdAt',
+                dataIndex: 'createdAt',
+              },
             ]}
             rowKey={(record) => record.id}
             dataSource={records}
