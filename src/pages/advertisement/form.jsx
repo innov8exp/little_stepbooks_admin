@@ -41,6 +41,8 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
           }
         })
         .catch((err) => message.error(`load error:${err.message}`))
+    } else {
+      form.resetFields()
     }
   }, [id, form])
 
@@ -196,12 +198,6 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
             }
             return e?.fileList
           }}
-          rules={[
-            {
-              required: true,
-              message: `${t('message.check.uploadImage')}`,
-            },
-          ]}
         >
           <ImageListUpload domain={'ADVERTISEMENT'} maxCount={1} />
         </Form.Item>

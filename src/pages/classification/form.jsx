@@ -19,6 +19,8 @@ const ClassificationForm = ({ id, visible, onSave, onCancel }) => {
           }
         })
         .catch((err) => message.error(`load error:${err.message}`))
+    } else {
+      form.resetFields()
     }
   }, [id, form])
 
