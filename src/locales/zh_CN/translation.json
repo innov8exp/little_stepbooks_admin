@@ -156,6 +156,7 @@
   "title.listed": "已上架",
   "title.notListed": "未上架",
   "title.comment": "评论管理",
+  "title.label.orderState": "订单状态",
   "title.label.skuCode": "产品编号(sku)",
   "title.label.skuName": "产品名称",
   "title.label.productNature": "产品性质",

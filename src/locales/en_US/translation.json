@@ -156,6 +156,7 @@
   "title.listed": "Listed",
   "title.notListed": "Not listed",
   "title.comment": "Comment Management",
+  "title.label.orderState": "Order State",
   "title.label.skuCode": "SKU No.",
   "title.label.skuName": "SKU Name",
   "title.label.productNature": "Product Nature",

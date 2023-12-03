@@ -17,6 +17,7 @@ import {
   Table,
   Tag,
   message,
+  Select,
 } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
@@ -33,6 +34,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import RefundRejectForm from './refund-reject-form'
 import ShipForm from './ship-form'
+import useFetch from '@/hooks/useFetch'
 
 const OrderPage = () => {
   const { t } = useTranslation()
@@ -50,6 +52,7 @@ const OrderPage = () => {
   const [refundApproveFormVisible, setRefundApproveFormVisible] =
     useState(false)
   const [selectedId, setSelectedId] = useState()
+  const orderStateRes = useFetch(`/api/admin/v1/orders/states`, [])
 
   const navigate = useNavigate()
 
@@ -71,6 +74,9 @@ const OrderPage = () => {
     if (queryCriteria?.username) {
       searchURL += `&username=${queryCriteria.username}`
     }
+    if (queryCriteria?.state) {
+      searchURL += `&state=${queryCriteria.state}`
+    }
     axios
       .get(searchURL)
       .then((res) => {
@@ -90,6 +96,7 @@ const OrderPage = () => {
     pageNumber,
     pageSize,
     queryCriteria?.orderCode,
+    queryCriteria?.state,
     queryCriteria?.username,
     t,
   ])
@@ -234,6 +241,21 @@ const OrderPage = () => {
             <Col span={6}>
               <Form.Item label={t('title.label.userName')} name="username">
                 <Input placeholder={t('message.placeholder.enterUserName')} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label={t('title.label.orderState')} name="state">
+                <Select
+                  style={{
+                    width: '100%',
+                  }}
+                  loading={orderStateRes.loading}
+                  options={orderStateRes.fetchedData
+                    ?.filter((item) => item !== 'INIT')
+                    ?.map((item) => {
+                      return { label: t(item), value: item }
+                    })}
+                />
               </Form.Item>
             </Col>
           </Row>
