@@ -37,7 +37,7 @@ const ProductForm = () => {
   const [loading, setLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
-  const [initBookSetOptions, setInitBookSetOptions] = useState([])
+  const [initBookOptions, setInitBookOptions] = useState([])
 
   const classifications = useFetch('/api/admin/v1/classifications', [])
 
@@ -65,7 +65,7 @@ const ProductForm = () => {
   )
 
   const initData = useCallback(() => {
-    fetchBookSet().then((res) => setInitBookSetOptions(res))
+    fetchBook().then((res) => setInitBookOptions(res))
     if (!queryId) {
       return
     }
@@ -108,6 +108,12 @@ const ProductForm = () => {
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
+    fetchProductBooks(queryId).then((books) => {
+      form.setFieldsValue({
+        bookIds: books.flatMap((mData) => mData.id),
+      })
+    })
+
     selectedClassifications(queryId).then((selected) => {
       form.setFieldsValue({
         classificationIds: Array.from(
@@ -190,23 +196,39 @@ const ProductForm = () => {
       })
   }
 
-  const fetchBookSet = async (value) => {
+  const fetchBook = async (value) => {
     return new Promise((resolve, reject) => {
-      let url = `/api/admin/v1/book-sets?name=${value}&currentPage=1&pageSize=10`
+      let url = `/api/admin/v1/books?bookName=${value}&currentPage=1&pageSize=10`
       if (!value) {
-        url = `/api/admin/v1/book-sets?currentPage=1&pageSize=10`
+        url = `/api/admin/v1/books?currentPage=1&pageSize=10`
       }
       axios
         .get(url)
         .then((res) => {
           if (res.status === HttpStatus.OK) {
             const results = res.data
-            const bookSets = results.records
-            const options = bookSets.map((item) => ({
-              label: item.name,
+            const books = results.records
+            const options = books.map((item) => ({
               value: item.id,
+              label: item.bookName,
             }))
             resolve(options)
+          }
+        })
+        .catch((e) => {
+          reject(e)
+        })
+    })
+  }
+
+  const fetchProductBooks = async (productId) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`/api/admin/v1/products/${productId}/books`)
+        .then((res) => {
+          if (res.status === HttpStatus.OK) {
+            const books = res.data
+            resolve(books)
           }
         })
         .catch((e) => {
@@ -284,12 +306,13 @@ const ProductForm = () => {
                   <Option value="VIRTUAL">{t('VIRTUAL')}</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name="bookSetId" label={t('title.bookSet')}>
+              <Form.Item name="bookIds" label={t('title.books')}>
                 <DebounceSelect
                   showSearch
-                  initOptions={initBookSetOptions}
-                  fetchOptions={fetchBookSet}
-                  placeholder={t('message.placeholder.enterBookSetSearch')}
+                  mode="multiple"
+                  initOptions={initBookOptions}
+                  fetchOptions={fetchBook}
+                  placeholder={t('message.placeholder.enterBookSearch')}
                 />
               </Form.Item>
               <Form.Item name="parsedMaterials" label={t('title.materials')}>

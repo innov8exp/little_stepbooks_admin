@@ -97,11 +97,6 @@ const AdminLayout = () => {
         <BookOutlined />,
       ),
       getItem(
-        <Link to={Routes.BOOK_SET_LIST.path}>{t('menu.bookSet')}</Link>,
-        '74',
-        <BookOutlined />,
-      ),
-      getItem(
         <Link to={Routes.PRODUCT_LIST.path}>{t('menu.skuList')}</Link>,
         '81',
         <BookOutlined />,

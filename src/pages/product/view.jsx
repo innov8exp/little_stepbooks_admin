@@ -15,8 +15,25 @@ const ProductView = () => {
   const queryId = query.get('id')
   const navigate = useNavigate()
   const [initFormData, setInitFormData] = useState()
+  const [books, setBooks] = useState()
   const [loading, setLoading] = useState(false)
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
+
+  const fetchProductBooks = async (productId) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`/api/admin/v1/products/${productId}/books`)
+        .then((res) => {
+          if (res.status === HttpStatus.OK) {
+            const books = res.data
+            resolve(books)
+          }
+        })
+        .catch((e) => {
+          reject(e)
+        })
+    })
+  }
 
   const initData = useCallback(() => {
     if (!queryId) {
@@ -42,6 +59,10 @@ const ProductView = () => {
         setIsDisplayForm(false)
       })
       .finally(() => setLoading(false))
+
+    fetchProductBooks(queryId).then((res) => {
+      setBooks(res)
+    })
   }, [queryId, t])
 
   useEffect(() => {
@@ -99,8 +120,12 @@ const ProductView = () => {
             />
             <ViewItem
               labelSpan={4}
-              label={t('title.bookSet')}
-              value={t(initFormData?.bookSetName)}
+              label={t('title.books')}
+              value={
+                '《' +
+                t(books?.map((item) => item?.bookName).join('》《')) +
+                '》'
+              }
             />
             <ViewItem
               labelSpan={4}

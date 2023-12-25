@@ -133,6 +133,9 @@ const OrderForm = () => {
     form.setFieldsValue({ ...deliveryResponse?.fetchedData })
   }, [deliveryResponse?.fetchedData, form])
 
+  useEffect(() => {
+    console.log(productsResponse?.fetchedData)
+  }, [productsResponse])
   return (
     <Card
       title={
@@ -260,8 +263,8 @@ const OrderForm = () => {
                         dataIndex: 'quantity',
                       },
                     ]}
-                    rowKey={(record) => record?.id}
-                    dataSource={[productsResponse?.fetchedData]}
+                    rowKey={(record) => record?.productId}
+                    dataSource={productsResponse?.fetchedData}
                     loading={productsResponse?.loading}
                     pagination={false}
                   />
