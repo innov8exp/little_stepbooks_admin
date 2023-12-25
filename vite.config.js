@@ -12,8 +12,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        // target: 'https://api-stage.stepbooks.net',
-        target: 'http://localhost:8081',
+        target: 'https://api-stage.stepbooks.net',
+        // target: 'http://localhost:8081',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },

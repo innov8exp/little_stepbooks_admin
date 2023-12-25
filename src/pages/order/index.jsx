@@ -422,7 +422,7 @@ const OrderPage = () => {
                         </>
                       )}
 
-                      {record.state === 'REFUNDING' &&
+                      {/* {record.state === 'REFUNDING' &&
                         record.productNature === 'PHYSICAL' && (
                           <>
                             <Divider type="vertical" />
@@ -435,7 +435,7 @@ const OrderPage = () => {
                               {t('button.mockRefundPayment')}
                             </Button>
                           </>
-                        )}
+                        )} */}
                     </div>
                   )
                 },
