@@ -21,7 +21,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
-const BookSetView = () => {
+const BookQRCodeView = () => {
   const { t } = useTranslation()
   const query = useQuery()
   const queryId = query.get('id')
@@ -90,7 +90,7 @@ const BookSetView = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.BOOK_SET_LIST.path)}
+            onClick={() => navigate(Routes.BOOK_QRCODE_LIST.path)}
           />
           {t('title.bookViewing')}
         </>
@@ -181,4 +181,4 @@ const BookSetView = () => {
   )
 }
 
-export default BookSetView
+export default BookQRCodeView

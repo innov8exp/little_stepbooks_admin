@@ -137,6 +137,10 @@ const BookPage = () => {
     navigate(`/books/${book.id}/courses`)
   }
 
+  const handleLinkToQRCodeAction = (book) => {
+    navigate(`/books/${book.id}/qrcodes`)
+  }
+
   useEffect(() => {
     fetchBooks()
   }, [fetchBooks, pageNumber, changeTimestamp])
@@ -248,11 +252,19 @@ const BookPage = () => {
                     >
                       {t('button.Chapter')}({record.chapterCount})
                     </Button>
+                    <Divider type="vertical" />
                     <Button
                       onClick={() => handleLinkToCourseAction(record)}
                       type="link"
                     >
                       {t('button.course')}({record.courseCount})
+                    </Button>
+                    <Divider type="vertical" />
+                    <Button
+                      onClick={() => handleLinkToQRCodeAction(record)}
+                      type="link"
+                    >
+                      {t('button.qrcode')}({record.qrcodeCount})
                     </Button>
                     <Divider type="vertical" />
                     <Button

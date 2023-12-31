@@ -10,6 +10,7 @@ import {
   ExclamationCircleOutlined,
   LeftCircleOutlined,
   SearchOutlined,
+  PlusOutlined,
 } from '@ant-design/icons'
 import { App, Button, Card, Divider, Table, message } from 'antd'
 import axios from 'axios'
@@ -117,7 +118,11 @@ const ChapterPage = () => {
         <StyledCondition>
           <QueryBtnWrapper>
             <ConditionItem>
-              <Button type="primary" onClick={() => handleCreateAction()}>
+              <Button
+                icon={<PlusOutlined />}
+                type="primary"
+                onClick={() => handleCreateAction()}
+              >
                 {t('button.create')}
               </Button>
             </ConditionItem>

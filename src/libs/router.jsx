@@ -4,9 +4,9 @@ import Advertisement from '@/pages/advertisement'
 import ForgetPassword from '@/pages/auth/forget-password'
 import SignIn from '@/pages/auth/sign-in'
 import Book from '@/pages/book'
-import BookSet from '@/pages/book-set'
-import BookSetForm from '@/pages/book-set/form'
-import BookSetView from '@/pages/book-set/view'
+import BookQRCode from '@/pages/book-qrcode'
+import BookQRCodeForm from '@/pages/book-qrcode/form'
+import BookQRCodeView from '@/pages/book-qrcode/view'
 import BookForm from '@/pages/book/form'
 import BookView from '@/pages/book/view'
 import Chapter from '@/pages/chapter'
@@ -46,9 +46,9 @@ export const Routes = {
     element: <Classification />,
   },
 
-  BOOK_SET_LIST: { path: '/book-set-list', element: <BookSet /> },
-  BOOK_SET_FORM: { path: '/book-set-form', element: <BookSetForm /> },
-  BOOK_SET_VIEW: { path: '/book-set-view', element: <BookSetView /> },
+  // BOOK_QRCODE_LIST: { path: '/book-qrcode-list', element: <BookQRCode /> },
+  // BOOK_QRCODE_FORM: { path: '/book-qrcode-form', element: <BookQRCodeForm /> },
+  // BOOK_QRCODE_VIEW: { path: '/book-qrcode-view', element: <BookQRCodeView /> },
 
   COMMENT_LIST: { path: '/comment-list', element: <Comment /> },
   ORDER_LIST: { path: '/order-list', element: <Order /> },
@@ -152,18 +152,21 @@ export const Router = createBrowserRouter([
         element: <CourseView />,
       },
       {
-        path: Routes.BOOK_SET_LIST.path,
-        element: Routes.BOOK_SET_LIST.element,
+        path: '/books/:bookId/qrcodes',
+        element: <BookQRCode />,
       },
       {
-        path: Routes.BOOK_SET_FORM.path,
-        element: Routes.BOOK_SET_FORM.element,
+        path: '/books/:bookId/qrcodes/form',
+        element: <BookQRCodeForm />,
       },
       {
-        path: Routes.BOOK_SET_VIEW.path,
-        element: Routes.BOOK_SET_VIEW.element,
+        path: '/books/:bookId/qrcodes/:id/form',
+        element: <BookQRCodeForm />,
       },
-
+      {
+        path: '/books/:bookId/qrcodes/:id/view',
+        element: <BookQRCodeView />,
+      },
       {
         path: Routes.COMMENT_LIST.path,
         element: Routes.COMMENT_LIST.element,

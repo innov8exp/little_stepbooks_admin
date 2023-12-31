@@ -219,11 +219,11 @@ const AdminLayout = () => {
 
     getBreadcrumbItem('/books', t('menu.bookManage'), t('menu.book')),
 
-    getBreadcrumbItem(
-      Routes.BOOK_SET_LIST.path,
-      t('menu.bookManage'),
-      t('menu.bookSetList'),
-    ),
+    // getBreadcrumbItem(
+    //   Routes.BOOK_QRCODE_LIST.path,
+    //   t('menu.bookManage'),
+    //   t('menu.bookSetList'),
+    // ),
 
     getBreadcrumbItem(
       Routes.ORDER_LIST.path,
