@@ -23,6 +23,7 @@ import {
   Input,
   QRCode,
   Row,
+  Select,
   Table,
   message,
 } from 'antd'
@@ -48,6 +49,7 @@ const BookQRCodePage = () => {
   // const [queryCriteria, setQueryCriteria] = useState()
   const [loading, setLoading] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
+  const [queryCriteria, setQueryCriteria] = useState()
 
   const { fetchedData } = useFetch(`/api/admin/v1/books/${bookId}`, [])
 
@@ -63,6 +65,12 @@ const BookQRCodePage = () => {
   const fetchBookQRCodes = useCallback(() => {
     setLoading(true)
     let searchURL = `/api/admin/v1/books-qrcode?bookId=${bookId}&currentPage=${pageNumber}&pageSize=${pageSize}`
+    if (queryCriteria?.qrCode) {
+      searchURL += `&qrCode=${queryCriteria.qrCode}`
+    }
+    if (queryCriteria?.activeStatus) {
+      searchURL += `&activeStatus=${queryCriteria.activeStatus}`
+    }
     axios
       .get(searchURL)
       .then((res) => {
@@ -78,7 +86,14 @@ const BookQRCodePage = () => {
         ),
       )
       .finally(() => setLoading(false))
-  }, [bookId, pageNumber, pageSize, t])
+  }, [
+    bookId,
+    pageNumber,
+    pageSize,
+    queryCriteria?.activeStatus,
+    queryCriteria?.qrCode,
+    t,
+  ])
 
   const handleDeleteAction = (id) => {
     modal.confirm({
@@ -111,8 +126,8 @@ const BookQRCodePage = () => {
   const handleQuery = () => {
     const timestamp = new Date().getTime()
     setChangeTimestamp(timestamp)
-    // const queryValue = queryForm.getFieldsValue()
-    // setQueryCriteria(queryValue)
+    const queryValue = queryForm.getFieldsValue()
+    setQueryCriteria(queryValue)
   }
 
   const handleReset = () => {
@@ -163,8 +178,29 @@ const BookQRCodePage = () => {
         >
           <Row>
             <Col span={6}>
-              <Form.Item label={t('title.code')} name="code">
+              <Form.Item label={t('title.code')} name="qrCode">
                 <Input placeholder={t('message.placeholder.code')} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label={t('title.status')} name="activeStatus">
+                <Select
+                  defaultValue=""
+                  options={[
+                    {
+                      value: '',
+                      label: t('ALL'),
+                    },
+                    {
+                      value: 'ACTIVATED',
+                      label: t('ACTIVATED'),
+                    },
+                    {
+                      value: 'UNACTIVATED',
+                      label: t('UNACTIVATED'),
+                    },
+                  ]}
+                />
               </Form.Item>
             </Col>
           </Row>

@@ -1,4 +1,7 @@
 {
+  "ALL": "全部",
+  "ACTIVATED": "已激活",
+  "UNACTIVATED": "未激活",
   "AUDIO": "图文音频",
   "COURSE": "视频课程",
   "EXERCISE": "练习题",
