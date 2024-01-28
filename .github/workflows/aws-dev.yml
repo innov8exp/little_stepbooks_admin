@@ -34,7 +34,7 @@ env:
   AWS_REGION: cn-north-1 # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: stepbook-admin-repo-dev # set this to your Amazon ECR repository name
   ECS_SERVICE: stepbook-admin # set this to your Amazon ECS service name
-  ECS_CLUSTER: stepbook-prod-ecs-cluster # set this to your Amazon ECS cluster name
+  ECS_CLUSTER: stepbook-dev-ecs-cluster # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION:
     aws-ecs-task-definition-admin-web-dev.json # set this to the path to your Amazon ECS task definition
     # file, e.g. .aws/task-definition.json
