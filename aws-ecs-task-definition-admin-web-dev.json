@@ -1,0 +1,82 @@
+{
+    "taskDefinitionArn": "arn:aws-cn:ecs:cn-north-1:855070278401:task-definition/stepbook-admin-ecs-task-definition-dev:14",
+    "containerDefinitions": [
+        {
+            "name": "stepbook-admin",
+            "image": "855070278401.dkr.ecr.cn-north-1.amazonaws.com.cn/stepbook-admin-repo-dev",
+            "cpu": 128,
+            "memory": 256,
+            "portMappings": [
+                {
+                    "name": "stepbook-admin",
+                    "containerPort": 8082,
+                    "hostPort": 8082,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/stepbook/ecs/dev/stepbook-admin",
+                    "awslogs-region": "cn-north-1",
+                    "awslogs-stream-prefix": "stepbook-admin-log-stream-dev"
+                }
+            }
+        }
+    ],
+    "family": "stepbook-admin-ecs-task-definition-dev",
+    "executionRoleArn": "arn:aws-cn:iam::855070278401:role/stepbook_ecs_task_execution_role_dev",
+    "networkMode": "awsvpc",
+    "revision": 14,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "registeredAt": "2024-01-28T16:28:28.316Z",
+    "registeredBy": "arn:aws-cn:iam::855070278401:user/terraform-user",
+    "tags": [
+        {
+            "key": "Project",
+            "value": "stepbook"
+        },
+        {
+            "key": "Environment",
+            "value": "dev"
+        }
+    ]
+}
