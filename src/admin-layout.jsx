@@ -153,6 +153,13 @@ const AdminLayout = () => {
         '54',
         <FundProjectionScreenOutlined />,
       ),
+      getItem(
+        <Link to={Routes.ACTIVITY_LIST.path}>
+          {t('menu.activityList')}
+        </Link>,
+        '55',
+        <FundProjectionScreenOutlined />,
+      ),
       // getItem(
       //   <Link to="/book2">{t('menu.push')}</Link>,
       //   '55',

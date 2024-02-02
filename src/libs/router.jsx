@@ -1,6 +1,7 @@
 import AdminLayout from '@/admin-layout'
 import AdminUserPage from '@/pages/admin-user'
 import Advertisement from '@/pages/advertisement'
+import Activity from '@/pages/activity'
 import ForgetPassword from '@/pages/auth/forget-password'
 import SignIn from '@/pages/auth/sign-in'
 import Book from '@/pages/book'
@@ -70,6 +71,10 @@ export const Routes = {
   ADVERTISEMENT_LIST: {
     path: '/advertisement-list',
     element: <Advertisement />,
+  },
+  ACTIVITY_LIST: {
+    path: '/activity-list',
+    element: <Activity />,
   },
   SIGN_IN: { path: '/sign-in', element: <SignIn /> },
   FORGET_PASSWORD: { path: '/forget-password', element: <ForgetPassword /> },
@@ -218,6 +223,10 @@ export const Router = createBrowserRouter([
       {
         path: Routes.ADVERTISEMENT_LIST.path,
         element: Routes.ADVERTISEMENT_LIST.element,
+      },
+      {
+        path: Routes.ACTIVITY_LIST.path,
+        element: Routes.ACTIVITY_LIST.element,
       },
       {
         path: Routes.PROFILE.path,
