@@ -2,6 +2,7 @@ import AdminLayout from '@/admin-layout'
 import AdminUserPage from '@/pages/admin-user'
 import Advertisement from '@/pages/advertisement'
 import Activity from '@/pages/activity'
+import ActivityAudioList from '@/pages/activity/audioList'
 import ForgetPassword from '@/pages/auth/forget-password'
 import SignIn from '@/pages/auth/sign-in'
 import Book from '@/pages/book'
@@ -227,6 +228,10 @@ export const Router = createBrowserRouter([
       {
         path: Routes.ACTIVITY_LIST.path,
         element: Routes.ACTIVITY_LIST.element,
+      },
+      {
+        path: '/activity/:activityId/audios',
+        element: <ActivityAudioList />,
       },
       {
         path: Routes.PROFILE.path,

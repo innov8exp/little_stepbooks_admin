@@ -263,6 +263,12 @@ const AdminLayout = () => {
       t('menu.product'),
       t('menu.advertisement'),
     ),
+    getBreadcrumbItem(
+      Routes.ACTIVITY_LIST.path,
+      t('menu.operation'),
+      t('menu.activityList'),
+    ),
+    getBreadcrumbItem('/activity/:activityId/audios', t('menu.operation'), t('menu.audioManage')),
     getBreadcrumbItem('/book2', t('menu.product'), t('menu.push')),
     getBreadcrumbItem('/comment3', t('menu.product'), t('menu.feedback')),
 
