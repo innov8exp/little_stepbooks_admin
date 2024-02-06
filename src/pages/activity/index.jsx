@@ -1,38 +1,71 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, Card, message, App, Table, Image } from 'antd'
-import useFetch from '@/hooks/useFetch'
+import { App, Button, Card, message, Table, Image, Switch } from 'antd'
 import axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import AdvertisementForm from './form'
 import { useTranslation } from 'react-i18next'
+import {
+  ExclamationCircleOutlined,
+} from '@ant-design/icons'
 
-const AdvertisementPage = () => {
-  const { modal } = App.useApp()
+const ActivityListPage = () => {
   const { t } = useTranslation()
+  const { modal } = App.useApp()
   const [changeTime, setChangeTime] = useState(Date.now())
-  const { loading, fetchedData } = useFetch(`/api/admin/v1/advertisements`, [
-    changeTime,
-  ])
+  const [activityData, setActivityData] = useState()
   const [formVisible, setFormVisible] = useState(false)
   const [selectedId, setSelectedId] = useState()
+  const [pageNumber, setPageNumber] = useState(1)
+  const [pageSize] = useState(10)
+  const [loading, setLoading] = useState(false)
+  const [total, setTotal] = useState(0)
+  const [switchLoading, setSwitchLoading] = useState({})
+  const paginationProps = {
+    pageSize,
+    current: pageNumber,
+    total,
+    onChange: (current) => {
+      setPageNumber(current)
+    }
+  }
+
+  const fetchActivities = useCallback(() => {
+    setLoading(true)
+    const searchURL = `/api/admin/v1/paired-read-collection?currentPage=${pageNumber}&pageSize=${pageSize}`
+    axios
+      .get(searchURL)
+      .then((res) => {
+        if (res && res.status === HttpStatus.OK) {
+          const responseObject = res.data
+          setActivityData(responseObject.records)
+          setTotal(responseObject.total)
+        }
+      })
+      .catch((err) =>
+        message.error(
+          `${t('message.error.failureReason')}${err.response?.data?.message}`,
+        ),
+      )
+      .finally(() => setLoading(false))
+  }, [pageNumber, pageSize, t])
 
   const handleEditAction = (id) => {
     setSelectedId(id)
     setFormVisible(true)
   }
 
-  const handleDeleteAction = (id) => {
+  const handleUpdateStatusAction = (id, status) => {
+    setSwitchLoading({ id, loading: true })
     modal.confirm({
-      title: `${t('message.tips.delete')}`,
+      title: `${t('message.tips.changeStatus')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,
       okType: 'primary',
       cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
-          .delete(`/api/admin/v1/advertisements/${id}`)
+          .post(`/api/admin/v1/paired-read-collection/${id}/${status}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success(t('message.successInfo'))
@@ -43,12 +76,23 @@ const AdvertisementPage = () => {
             console.error(err)
             message.error(err.message)
           })
+          .finally(() => {
+            setSwitchLoading({ id, loading: false })
+          })
+      },
+      onCancel() {
+        setSwitchLoading({ id, loading: false })
+        setChangeTime(Date.now())
       },
     })
   }
 
+  useEffect(() => {
+    fetchActivities()
+  }, [fetchActivities, pageNumber, changeTime])
+
   return (
-    <Card title={t('title.advertisingSettings')}>
+    <Card title={t('menu.activityList')}>
       <ButtonWrapper>
         <Button
           type="primary"
@@ -68,34 +112,57 @@ const AdvertisementPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: `${t('title.label.skuName')}`,
-            key: 'skuName',
-            dataIndex: 'skuName',
+            title: `${t('title.activityName')}`,
+            key: 'name',
+            dataIndex: 'name',
           },
           {
-            title: `${t('title.promotionalImages')}`,
-            key: 'adsImgUrl',
-            dataIndex: 'adsImgUrl',
+            title: `${t('title.activityDesc')}`,
+            key: 'description',
+            dataIndex: 'description',
+          },
+          {
+            title: `${t('title.cover')}`,
+            key: 'coverImgUrl',
+            dataIndex: 'coverImgUrl',
             render: (text) => <Image height={50} src={text} />,
           },
           {
-            title: `${t('title.briefIntroduction')}`,
-            key: 'introduction',
-            dataIndex: 'introduction',
+            title: `${t('title.detailImage')}`,
+            key: 'detailImgUrl',
+            dataIndex: 'detailImgUrl',
+            render: (text) => <Image height={50} src={text} />,
           },
           {
-            title: `${t('title.adType')}`,
-            key: 'adsType',
-            dataIndex: 'adsType',
-            render: (text) =>
-              text === 'RECOMMEND'
-                ? `${t('radio.label.RECOMMEND')}`
-                : `${t('radio.label.CAROUSEL')}`,
+            title: `${t('title.creationTime')}`,
+            key: 'createdAt',
+            dataIndex: 'createdAt',
           },
           {
-            title: `${t('title.ORDER')}`,
-            key: 'sortIndex',
-            dataIndex: 'sortIndex',
+            title: `${t('title.status')}`,
+            key: 'status',
+            dataIndex: 'status',
+            render: (text, record) => {
+              return (
+                <Switch
+                  checkedChildren={t('ONLINE')}
+                  unCheckedChildren={t('OFFLINE')}
+                  checked={text === 'ONLINE'}
+                  style={{
+                    width: '70px'
+                  }}
+                  loading={
+                    switchLoading.id === record.id && switchLoading.loading
+                  }
+                  onClick={(checked) =>
+                    handleUpdateStatusAction(
+                      record.id,
+                      checked ? 'online' : 'offline',
+                    )
+                  }
+                />
+              )
+            },
           },
           {
             title: `${t('title.operate')}`,
@@ -111,10 +178,10 @@ const AdvertisementPage = () => {
                     {t('button.edit')}
                   </Button>
                   <Button
-                    onClick={() => handleDeleteAction(record.id)}
+                    onClick={() => handleEditAction(record.id)}
                     type="link"
                   >
-                    {t('button.delete')}
+                    {t('button.audioManage')}
                   </Button>
                 </div>
               )
@@ -122,9 +189,9 @@ const AdvertisementPage = () => {
           },
         ]}
         rowKey={(record) => record.id}
-        dataSource={fetchedData}
-        pagination={false}
+        dataSource={activityData}
         loading={loading}
+        pagination={paginationProps}
       />
       <AdvertisementForm
         visible={formVisible}
@@ -139,4 +206,4 @@ const AdvertisementPage = () => {
   )
 }
 
-export default AdvertisementPage
+export default ActivityListPage
