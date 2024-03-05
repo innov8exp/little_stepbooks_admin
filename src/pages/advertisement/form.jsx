@@ -1,6 +1,6 @@
-import DebounceSelect from '@/components/debounce-select'
+// import DebounceSelect from '@/components/debounce-select'
+import { Form, Input, Modal, Select, Radio, message, Button } from 'antd'
 import ImageListUpload from '@/components/image-list-upload'
-import { Form, Input, Modal, Select, message } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
@@ -13,7 +13,14 @@ const { Option } = Select
 const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
-  const [initBookOptions, setInitBookOptions] = useState([])
+  const [displayUrl, setDisplayUrl] = useState();
+  const [showUrlForm, setShowUrlForm] = useState(false);
+  const [url, setUrl] = useState('');
+  const [jumpType, setJumpType] = useState('local');
+  const [localType, setLocalType] = useState('series');
+  const [localId, setLocalId] = useState(null);
+  const [initSeriesOptions, setInitSeriesOptions] = useState([])
+  const [initActivityOptions, setInitActivityOptions] = useState([])
 
   useEffect(() => {
     if (id) {
@@ -38,11 +45,17 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
               ...res.data,
               adsImg: adsImgArr,
             })
+            // 假如链接当前没有配置，展示链接配置界面
+            if(!resultData.actionUrl){
+              setShowUrlForm(true)
+            }
           }
         })
         .catch((err) => message.error(`load error:${err.message}`))
     } else {
       form.resetFields()
+      setDisplayUrl('')
+      setShowUrlForm(true)
     }
   }, [id, form])
 
@@ -99,29 +112,55 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       .catch()
   }
 
-  const handleSelectChangeAction = (optionValue) => {
-    form.setFieldsValue({
-      bookId: optionValue,
-    })
+  const buildLocalUrl = (type, id) => {
+    const localMap = {
+      'series': { app: 'StepBook://local/bookSeries', mini: '/pages/book-detail/book-content/book-content' },
+      'activity': { app: 'StepBook://local/pairedReadCollection', mini: '/packageAudio/audio-collection/audio-content/index' }
+    }
+    return {
+      appUrl: `${localMap[type].app}?id=${id}`,
+      wxUrl: `${localMap[type].mini}?id=${id}`
+    }
   }
 
-  const fetchProduct = async (value) => {
-    return new Promise((resolve, reject) => {
-      let url = `/api/admin/v1/products?status=ON_SHELF&skuName=${value}&currentPage=1&pageSize=10`
-      if (!value) {
-        url = `/api/admin/v1/products?status=ON_SHELF&currentPage=1&pageSize=10`
+  const onUrlConfirm = () => {
+    if(jumpType === 'local'){
+      if(localId){
+        const { appUrl, wxUrl } = buildLocalUrl(localType, localId)
+        form.setFieldValue('actionUrl', appUrl);
+        form.setFieldValue('wxActionUrl', wxUrl);
+        setShowUrlForm(false);
+        setDisplayUrl(appUrl);
+        console.log('表单内容',form.getFieldsValue());
+      }else{
+        const msg = localType === 'series' ? t('message.placeholder.selectSeries') : t('message.placeholder.selectActivity');
+        message.error(msg)
       }
+    }else{
+      if(!url){
+        message.error(t('message.placeholder.url'))
+      }else if(url.substring(0, 4) != 'http'){
+        message.error(t('message.placeholder.collectHttpUrl'))
+      }else{
+        form.setFieldValue('actionUrl', url);
+        form.setFieldValue('wxActionUrl', '');
+        setDisplayUrl(url);
+        setShowUrlForm(false);
+        console.log('表单内容',form.getFieldsValue());
+      }
+    }
+  }
+
+  const fetchAllSeries = async () => {
+    return new Promise((resolve, reject) => {
       axios
-        .get(url)
+        .get('/api/admin/v1/bookseries?currentPage=1&pageSize=5000&status=ONLINE')
         .then((res) => {
           if (res.status === HttpStatus.OK) {
-            const results = res.data
-            const products = results.records
-            const options = products.map((item) => ({
+            resolve(res.data.map(item => ({
               value: item.id,
-              label: item.skuName,
-            }))
-            resolve(options)
+              label: item.seriesName
+            })))
           }
         })
         .catch((e) => {
@@ -130,10 +169,37 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
     })
   }
 
+  const fetchAllActivities = async () => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get('/api/admin/v1/paired-read-collection?currentPage=1&pageSize=5000&status=ONLINE')
+        .then((res) => {
+          if (res.status === HttpStatus.OK) {
+            const results = res.data.records
+            resolve(results.map(item => ({
+              value: item.id,
+              label: item.name
+            })))
+          }
+        })
+        .catch((e) => {
+          reject(e)
+        })
+    })
+  }
+
+  const handleLocalTypeChange = type => {
+    setLocalType(type);
+    setLocalId(null);
+  }
+
   useEffect(() => {
     if (visible) {
-      fetchProduct().then((res) => {
-        setInitBookOptions(res)
+      fetchAllSeries().then(res => {
+        setInitSeriesOptions(res)
+      })
+      fetchAllActivities().then(res => {
+        setInitActivityOptions(res)
       })
     }
   }, [visible])
@@ -149,29 +215,64 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       onOk={okHandler}
     >
       <Form
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 14 }}
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 20 }}
         layout="horizontal"
         form={form}
         name="form_in_modal"
       >
+        <Form.Item name="wxActionUrl" style={{ display: 'none' }}>
+          <Input type="text" />
+        </Form.Item>
         <Form.Item
-          name="productId"
-          label={t('title.label.product')}
+          name="actionUrl"
+          label={t('title.label.url')}
           rules={[
             {
               required: true,
-              message: `${t('message.check.selectProduct')}`,
+              message: `${t('message.placeholder.setJumpUrl')}`,
             },
           ]}
         >
-          <DebounceSelect
-            showSearch
-            initOptions={initBookOptions}
-            fetchOptions={fetchProduct}
-            placeholder={t('message.placeholder.enterProductSearch')}
-            onChange={({ value }) => handleSelectChangeAction(value)}
-          />
+          <div>
+            <div style={{ position: 'relative' }}>
+              <Input value={displayUrl} placeholder={t('message.placeholder.setUrlBelow')} disabled style={{ width: 'calc(100% - 80px)' }} />
+              <Button style={{ position: 'absolute', top: 0, right: 0 }} type='primary' disabled={showUrlForm} onClick={() => setShowUrlForm(true)}>{t('button.edit')}</Button>
+            </div>
+            <div style={{ display: showUrlForm ? 'block' : 'none' }}>
+              <div style={{ padding: '10px 15px', marginTop: '10px', background: '#f6f6f6' }}>
+                <div>
+                    <Radio.Group  onChange={ e => setJumpType(e.target.value) } value={jumpType}>
+                      <Radio value='local'>{t('title.label.localJump')}</Radio>
+                      <Radio value='link'>{t('title.label.urlJump')}</Radio>
+                    </Radio.Group>
+                </div>
+                <div style={{ marginTop: '12px' }}>
+                  {
+                    jumpType === 'local'
+                    ? <div>
+                        <Select style={{ width: '35%' }} value={localType} placeholder={t('title.label.localServiceType')} onChange={value => handleLocalTypeChange(value)}>
+                          <Option value="series">{t('title.label.jumpToBookSeries')}</Option>
+                          <Option value="activity">{t('title.label.jumpToActivity')}</Option>
+                        </Select>
+                        <Select 
+                          placeholder={ localType === 'series' ? t('message.placeholder.selectSeries') : t('message.placeholder.selectActivity') }
+                          style={{ width: '65%' }}
+                          value={localId}
+                          options={localType === 'series' ? initSeriesOptions : initActivityOptions}
+                          onChange={value => setLocalId(value)}
+                        />
+                      </div>
+                    : <Input value={url} placeholder={t('message.placeholder.url')} onInput={ event => setUrl(event.target.value) } />
+                  }
+                </div>
+                <div style={{ marginTop: '12px', textAlign: 'right' }}>
+                  <Button type='default' onClick={() => setShowUrlForm(false)} style={{ marginRight: '20px' }}>{t('button.cancel')}</Button>
+                  <Button type='primary' onClick={() => onUrlConfirm()}>{t('button.determine')}</Button>
+                </div>
+              </div>
+            </div>
+          </div>
         </Form.Item>
         <Form.Item
           name="adsType"

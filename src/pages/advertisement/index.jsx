@@ -68,20 +68,25 @@ const AdvertisementPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: `${t('title.label.skuName')}`,
-            key: 'skuName',
-            dataIndex: 'skuName',
-          },
-          {
             title: `${t('title.promotionalImages')}`,
             key: 'adsImgUrl',
             dataIndex: 'adsImgUrl',
             render: (text) => <Image height={50} src={text} />,
           },
           {
-            title: `${t('title.briefIntroduction')}`,
+            title: `${t('TITLE')}`,
+            key: 'skuName',
+            dataIndex: 'skuName',
+          },
+          {
+            title: `${t('DESCRIPTION')}`,
             key: 'introduction',
             dataIndex: 'introduction',
+          },
+          {
+            title: `${t('title.label.url')}`,
+            key: 'actionUrl',
+            dataIndex: 'actionUrl',
           },
           {
             title: `${t('title.adType')}`,
@@ -100,7 +105,7 @@ const AdvertisementPage = () => {
           {
             title: `${t('title.operate')}`,
             key: 'action',
-            width: 300,
+            width: 160,
             render: (text, record) => {
               return (
                 <div>
