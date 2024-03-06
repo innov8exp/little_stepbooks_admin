@@ -45,10 +45,10 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
               ...res.data,
               adsImg: adsImgArr,
             })
-            // 假如链接当前没有配置，展示链接配置界面
-            if(!resultData.actionUrl){
-              setShowUrlForm(true)
-            }
+
+            // 假如链接当前没有配置，展示链接配置界面，有链接的情况下隐藏配置界面
+            setDisplayUrl(resultData.actionUrl)
+            setShowUrlForm(resultData.actionUrl ? false : true)
           }
         })
         .catch((err) => message.error(`load error:${err.message}`))
@@ -112,26 +112,39 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       .catch()
   }
 
-  const buildLocalUrl = (type, id) => {
+  const buildLocalData = (type, id) => {
     const localMap = {
       'series': { app: 'StepBook://local/bookSeries', mini: '/pages/book-detail/book-content/book-content' },
       'activity': { app: 'StepBook://local/pairedReadCollection', mini: '/packageAudio/audio-collection/audio-content/index' }
     }
+    let selectedLabel = '';
+    const selectArr = type === 'series' ? initSeriesOptions : initActivityOptions
+    selectArr.some(item => {
+      if(item.value == id){
+        selectedLabel = item.label
+        return true
+      }else{
+        return false
+      }
+    })
     return {
       appUrl: `${localMap[type].app}?id=${id}`,
-      wxUrl: `${localMap[type].mini}?id=${id}`
+      wxUrl: `${localMap[type].mini}?id=${id}`,
+      selectedLabel
     }
   }
 
   const onUrlConfirm = () => {
     if(jumpType === 'local'){
       if(localId){
-        const { appUrl, wxUrl } = buildLocalUrl(localType, localId)
-        form.setFieldValue('actionUrl', appUrl);
-        form.setFieldValue('wxActionUrl', wxUrl);
+        const { appUrl, wxUrl, selectedLabel } = buildLocalData(localType, localId)
+        form.setFieldsValue({
+          actionUrl: appUrl,
+          wxActionUrl: wxUrl,
+          introduction: selectedLabel
+        })
         setShowUrlForm(false);
         setDisplayUrl(appUrl);
-        console.log('表单内容',form.getFieldsValue());
       }else{
         const msg = localType === 'series' ? t('message.placeholder.selectSeries') : t('message.placeholder.selectActivity');
         message.error(msg)
@@ -142,11 +155,12 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       }else if(url.substring(0, 4) != 'http'){
         message.error(t('message.placeholder.collectHttpUrl'))
       }else{
-        form.setFieldValue('actionUrl', url);
-        form.setFieldValue('wxActionUrl', '');
+        form.setFieldsValue({
+          actionUrl: url,
+          wxActionUrl: ''
+        })
         setDisplayUrl(url);
         setShowUrlForm(false);
-        console.log('表单内容',form.getFieldsValue());
       }
     }
   }

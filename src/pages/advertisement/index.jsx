@@ -74,11 +74,6 @@ const AdvertisementPage = () => {
             render: (text) => <Image height={50} src={text} />,
           },
           {
-            title: `${t('TITLE')}`,
-            key: 'skuName',
-            dataIndex: 'skuName',
-          },
-          {
             title: `${t('DESCRIPTION')}`,
             key: 'introduction',
             dataIndex: 'introduction',
