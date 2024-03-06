@@ -119,9 +119,9 @@ const AudioListPage = () => {
             dataIndex: 'duration',
           },
           {
-            title: `${t('title.duration')}`,
-            key: 'duration',
-            dataIndex: 'duration',
+            title: `${t('title.audio')}`,
+            key: 'audioUrl',
+            dataIndex: 'audioUrl',
             render: (text, record) => {
               return(
                 <audio
