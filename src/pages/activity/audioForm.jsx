@@ -78,6 +78,23 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
       })
   }
 
+  const beforeAudioUpload = (file) => {
+    const url = URL.createObjectURL(file);
+    //经测试，发现audio也可获取视频的时长
+    const audioCtx = new Audio(url);
+    return new Promise((resolve) => {
+      audioCtx.addEventListener("loadedmetadata", () => {
+        resolve(file)
+        const duration = Math.ceil(audioCtx.duration);
+        let minute = Math.floor(duration / 60)
+        minute = minute > 9 ? minute : '0' + minute;
+        let second = duration % 60
+        second = second > 9 ? second : '0' + second;
+        form.setFieldValue('duration', `${minute}:${second}`)
+      });
+    })
+  }
+
   const okHandler = () => {
     form
       .validateFields()
@@ -109,8 +126,8 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
       onOk={okHandler}
     >
       <Form
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 14 }}
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 20 }}
         layout="horizontal"
         form={form}
         name="form_in_modal"
@@ -129,10 +146,10 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
             return e?.fileList
           }}
         >
-          <FileListUpload domain={'DEFAULT'} maxCount={1} />
+          <FileListUpload beforeUpload={beforeAudioUpload} domain={'DEFAULT'} accept={'.mp3'} maxCount={1} />
         </Form.Item>
         <Form.Item name="duration" label={t('title.duration')}>
-          <Input type="text" placeholder={t('message.placeholder.audioDuration')} />
+          <Input type="text" placeholder={t('message.placeholder.audioDuration')} disabled />
         </Form.Item>
       </Form>
     </Modal>

@@ -8,6 +8,7 @@ const FileListUpload = ({
   permission = 'PUBLIC',
   buttonName,
   listType = 'text',
+  accept,
   ...props
 }) => {
   const { t } = useTranslation()
@@ -16,6 +17,7 @@ const FileListUpload = ({
     <>
       <Upload
         name="file"
+        accept={accept}
         listType={listType}
         action={`/api/admin/v1/medias/upload?permission=${permission}&domain=${domain}`}
         withCredentials
@@ -33,6 +35,7 @@ FileListUpload.propTypes = {
   permission: PropTypes.string,
   buttonName: PropTypes.string,
   listType: PropTypes.string,
+  accept: PropTypes.string,
 }
 
 export default FileListUpload
