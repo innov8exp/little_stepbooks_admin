@@ -102,7 +102,7 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={640}
       style={{ maxHeight: 500 }}
-      title={t('title.activityForm')}
+      title={t('title.audioForm')}
       okText={t('button.save')}
       cancelText={t('button.cancel')}
       onCancel={onCancel}
@@ -120,7 +120,7 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
         </Form.Item>
         <Form.Item
           name="audioArr"
-          label={t('title.cover')}
+          label={t('title.audio')}
           valuePropName="fileList"
           getValueFromEvent={(e) => {
             if (Array.isArray(e)) {
@@ -132,7 +132,7 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
           <FileListUpload domain={'DEFAULT'} maxCount={1} />
         </Form.Item>
         <Form.Item name="duration" label={t('title.duration')}>
-          <Input type="text" placeholder={t('message.placeholder.duration')} />
+          <Input type="text" placeholder={t('message.placeholder.audioDuration')} />
         </Form.Item>
       </Form>
     </Modal>

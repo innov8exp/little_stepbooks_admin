@@ -173,7 +173,7 @@ const ActivityListPage = () => {
           {
             title: `${t('title.operate')}`,
             key: 'action',
-            width: 300,
+            width: 140,
             render: (text, record) => {
               return (
                 <div>

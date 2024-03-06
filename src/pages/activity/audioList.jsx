@@ -5,11 +5,14 @@ import HttpStatus from 'http-status-codes'
 import { useState, useEffect, useCallback } from 'react'
 import AudioForm from './audioForm'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
 import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
 
 const AudioListPage = () => {
+  const params = useParams()
+  const collectionId = params?.activityId;
   const { t } = useTranslation()
   const { modal } = App.useApp()
   const [changeTime, setChangeTime] = useState(Date.now())
@@ -31,7 +34,7 @@ const AudioListPage = () => {
 
   const fetchPairedReadAudios = useCallback(() => {
     setLoading(true)
-    const searchURL = `/api/admin/v1/paired-read?currentPage=${pageNumber}&pageSize=${pageSize}`
+    const searchURL = `/api/admin/v1/paired-read?currentPage=${pageNumber}&pageSize=${pageSize}&collectionId=${collectionId}`
     axios
       .get(searchURL)
       .then((res) => {
@@ -140,7 +143,7 @@ const AudioListPage = () => {
           {
             title: `${t('title.operate')}`,
             key: 'action',
-            width: 300,
+            width: 160,
             render: (text, record) => {
               return (
                 <div>
