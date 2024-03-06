@@ -146,7 +146,7 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
             return e?.fileList
           }}
         >
-          <FileListUpload beforeUpload={beforeAudioUpload} domain={'DEFAULT'} accept={'.mp3'} maxCount={1} />
+          <FileListUpload beforeUpload={beforeAudioUpload} domain={'DEFAULT'} accept={'.mp3,.m4a'} maxCount={1} />
         </Form.Item>
         <Form.Item name="duration" label={t('title.duration')}>
           <Input type="text" placeholder={t('message.placeholder.audioDuration')} disabled />
