@@ -57,7 +57,15 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       setDisplayUrl('')
       setShowUrlForm(true)
     }
-  }, [id, form])
+    if (visible) {
+      fetchAllSeries().then(res => {
+        setInitSeriesOptions(res)
+      })
+      fetchAllActivities().then(res => {
+        setInitActivityOptions(res)
+      })
+    }
+  }, [id, form, visible])
 
   const createData = (values) => {
     axios
@@ -207,16 +215,6 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
     setLocalId(null);
   }
 
-  useEffect(() => {
-    if (visible) {
-      fetchAllSeries().then(res => {
-        setInitSeriesOptions(res)
-      })
-      fetchAllActivities().then(res => {
-        setInitActivityOptions(res)
-      })
-    }
-  }, [visible])
   return (
     <Modal
       open={visible}

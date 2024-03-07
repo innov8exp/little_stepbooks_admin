@@ -43,7 +43,7 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
     } else {
       form.resetFields()
     }
-  }, [id, form])
+  }, [id, form, visible])
 
   const createData = (values) => {
     axios
