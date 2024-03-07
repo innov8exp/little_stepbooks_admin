@@ -123,7 +123,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
   const buildLocalData = (type, id) => {
     const localMap = {
       'series': { app: 'StepBook://local/bookSeries', mini: '/pages/book-detail/book-content/book-content' },
-      'activity': { app: 'StepBook://local/pairedReadCollection', mini: '/packageAudio/audio-collection/audio-content/index' }
+      'activity': { app: 'StepBook://local/pairedReadCollection', mini: '/packageAudio/audio-collection/index' }
     }
     let selectedLabel = '';
     const selectArr = type === 'series' ? initSeriesOptions : initActivityOptions
