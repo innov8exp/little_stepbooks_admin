@@ -201,6 +201,8 @@
   "title.label.salesTime": "Sales time",
   "title.label.promotion": "Promotion",
   "title.label.url": "Url",
+  "title.label.appOrH5Url": "App Path Or Link",
+  "title.label.miniUrl": "Miniprogram Path",
   "title.label.jumpType": "Jump type",
   "title.label.urlJump": "Url jump",
   "title.label.localJump": "Local jump",

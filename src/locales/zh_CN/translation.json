@@ -206,6 +206,8 @@
   "title.label.salesTime": "促销时间",
   "title.label.promotion": "促销管理",
   "title.label.url": "跳转地址",
+  "title.label.appOrH5Url": "H5链接/APP路径",
+  "title.label.miniUrl": "小程序路径",
   "title.label.jumpType": "跳转方式",
   "title.label.urlJump": "链接跳转",
   "title.label.localJump": "本地跳转",

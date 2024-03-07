@@ -79,9 +79,14 @@ const AdvertisementPage = () => {
             dataIndex: 'introduction',
           },
           {
-            title: `${t('title.label.url')}`,
+            title: `${t('title.label.appOrH5Url')}`,
             key: 'actionUrl',
             dataIndex: 'actionUrl',
+          },
+          {
+            title: `${t('title.label.miniUrl')}`,
+            key: 'wxActionUrl',
+            dataIndex: 'wxActionUrl',
           },
           {
             title: `${t('title.adType')}`,
