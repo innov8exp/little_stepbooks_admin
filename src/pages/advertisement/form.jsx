@@ -21,6 +21,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
   const [localId, setLocalId] = useState(null);
   const [initSeriesOptions, setInitSeriesOptions] = useState([])
   const [initActivityOptions, setInitActivityOptions] = useState([])
+  const [initBookOptions, setInitBookOptions] = useState([])
 
   useEffect(() => {
     if (id) {
@@ -54,12 +55,16 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
         .catch((err) => message.error(`load error:${err.message}`))
     } else {
       form.resetFields()
-      setDisplayUrl('')
       setShowUrlForm(true)
+      setDisplayUrl('')
+      setLocalId(null)
     }
     if (visible) {
       fetchAllSeries().then(res => {
         setInitSeriesOptions(res)
+      })
+      fetchAllBooks().then(res => {
+        setInitBookOptions(res)
       })
       fetchAllActivities().then(res => {
         setInitActivityOptions(res)
@@ -123,6 +128,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
   const buildLocalData = (type, id) => {
     const localMap = {
       'series': { app: 'StepBook://local/bookSeries', mini: '/packageAudio/book-detail/index' },
+      'book': { app: 'StepBook://local/book', mini: '/pages/book-detail/book-page/book-page' },
       'activity': { app: 'StepBook://local/pairedReadCollection', mini: '/packageAudio/audio-collection/index' }
     }
     let selectedLabel = '';
@@ -191,6 +197,25 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
     })
   }
 
+  const fetchAllBooks = async () => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get('/api/admin/v1/books?currentPage=1&pageSize=5000&status=ONLINE')
+        .then((res) => {
+          if (res.status === HttpStatus.OK) {
+            const results = res.data.records
+            resolve(results.map(item => ({
+              value: item.id,
+              label: item.bookName
+            })))
+          }
+        })
+        .catch((e) => {
+          reject(e)
+        })
+    })
+  }
+
   const fetchAllActivities = async () => {
     return new Promise((resolve, reject) => {
       axios
@@ -213,6 +238,29 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
   const handleLocalTypeChange = type => {
     setLocalType(type);
     setLocalId(null);
+  }
+
+  const LocalIdSelector = () => {
+    let label, options;
+    if(localType === 'series'){
+      label = t('message.placeholder.selectSeries')
+      options = initSeriesOptions
+    }else if(localType === 'book'){
+      label = t('message.placeholder.selectBook')
+      options = initBookOptions
+    }else{
+      label = t('message.placeholder.selectActivity')
+      options = initActivityOptions
+    }
+    return (
+      <Select 
+        placeholder={ label }
+        style={{ width: '65%' }}
+        value={localId}
+        options={options}
+        onChange={value => setLocalId(value)}
+      />
+    )
   }
 
   return (
@@ -265,15 +313,10 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
                     ? <div>
                         <Select style={{ width: '35%' }} value={localType} placeholder={t('title.label.localServiceType')} onChange={value => handleLocalTypeChange(value)}>
                           <Option value="series">{t('title.label.jumpToBookSeries')}</Option>
+                          <Option value="book">{t('title.label.jumpToBook')}</Option>
                           <Option value="activity">{t('title.label.jumpToActivity')}</Option>
                         </Select>
-                        <Select 
-                          placeholder={ localType === 'series' ? t('message.placeholder.selectSeries') : t('message.placeholder.selectActivity') }
-                          style={{ width: '65%' }}
-                          value={localId}
-                          options={localType === 'series' ? initSeriesOptions : initActivityOptions}
-                          onChange={value => setLocalId(value)}
-                        />
+                        <LocalIdSelector />
                       </div>
                     : <Input value={url} placeholder={t('message.placeholder.url')} onInput={ event => setUrl(event.target.value) } />
                   }
