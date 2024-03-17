@@ -1,4 +1,5 @@
 import FileListUpload from '@/components/file-list-upload'
+import ImageListUpload from '@/components/image-list-upload'
 import { Form, Input, Modal, message } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
@@ -8,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 
 
-const ActivityForm = ({ id, visible, onSave, onCancel }) => {
+const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
   const params = useParams()
@@ -20,22 +21,41 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
         .get(`/api/admin/v1/paired-read/${id}`)
         .then((res) => {
           if (res.status === HttpStatus.OK) {
-            const resultData = res.data
-            const audioArr = []
-            if (resultData.audioId) {
-              audioArr.push({
-                id: resultData.audioId,
-                name: resultData.audioUrl?.split('/')?.pop(),
-                url: resultData.audioUrl,
-                response: {
-                  id: resultData.audioId,
-                  objectUrl: resultData.audioUrl,
-                }
-              })
+            const { audioId, audioUrl, videoId, videoUrl, coverImgId, coverImgUrl } = res.data
+            const mediaArr = [];
+            const coverImgArr = []
+            let id, url; 
+            if (isAudio) {
+              id = audioId
+              url = audioUrl
+            }else if(videoId){
+              id = videoId
+              url = videoUrl
+              if(coverImgId){
+                coverImgArr.push({
+                  id: coverImgId,
+                  url: coverImgUrl,
+                  name: coverImgUrl?.split('/')?.pop(),
+                  response: {
+                    id: coverImgId,
+                    objectUrl: coverImgUrl,
+                  }
+                })
+              }
             }
+            mediaArr.push({
+              id,
+              url,
+              name: url?.split('/')?.pop(),
+              response: {
+                id,
+                objectUrl: url,
+              }
+            })
             form.setFieldsValue({
               ...res.data,
-              audioArr,
+              mediaArr,
+              coverImgArr
             })
           }
         })
@@ -43,7 +63,7 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
     } else {
       form.resetFields()
     }
-  }, [id, form, visible])
+  }, [id, form, isAudio, visible])
 
   const createData = (values) => {
     axios
@@ -78,9 +98,9 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
       })
   }
 
-  const beforeAudioUpload = (file) => {
+  const beforeMediaUpload = (file) => {
     const url = URL.createObjectURL(file);
-    //经测试，发现audio也可获取视频的时长
+    // audio可获取视频或音频的时长
     const audioCtx = new Audio(url);
     return new Promise((resolve) => {
       audioCtx.addEventListener("loadedmetadata", () => {
@@ -99,11 +119,34 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
     form
       .validateFields()
       .then((values) => {
-        const { name, duration, audioArr } = values;
-        const sendData = { name, duration };
-        if(audioArr && audioArr.length > 0){
-          sendData.audioId = audioArr[0].response.id
-          sendData.audioUrl = audioArr[0].response.objectUrl
+        const { name, duration, mediaArr, coverImgArr } = values;
+        // 准备默认值
+        const sendData = {
+          type: isAudio ? 'AUDIO' : 'VIDEO',
+          name,
+          duration,
+          audioId: '',
+          audioUrl: '',
+          videoId: '',
+          videoUrl: '',
+          coverImgId: '',
+          coverImgUrl: ''
+        };
+        if(mediaArr && mediaArr.length > 0){
+          if(isAudio){
+            sendData.audioId = mediaArr[0].response.id
+            sendData.audioUrl = mediaArr[0].response.objectUrl
+          }else{
+            sendData.videoId = mediaArr[0].response.id
+            sendData.videoUrl = mediaArr[0].response.objectUrl
+            if(coverImgArr && coverImgArr.length > 0){
+              sendData.coverImgId = coverImgArr[0].response.id
+              sendData.coverImgUrl = coverImgArr[0].response.objectUrl
+            }else{
+              sendData.coverImgId = ''
+              sendData.coverImgUrl = ''
+            }
+          }
         }
         if (id) {
           updateData(sendData)
@@ -136,8 +179,8 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
           <Input type="text" placeholder={t('message.placeholder.name')} />
         </Form.Item>
         <Form.Item
-          name="audioArr"
-          label={t('title.audio')}
+          name="mediaArr"
+          label={ isAudio ? t('title.audio') : t('title.video') }
           valuePropName="fileList"
           getValueFromEvent={(e) => {
             if (Array.isArray(e)) {
@@ -146,20 +189,37 @@ const ActivityForm = ({ id, visible, onSave, onCancel }) => {
             return e?.fileList
           }}
         >
-          <FileListUpload beforeUpload={beforeAudioUpload} domain={'DEFAULT'} accept={'.mp3,.m4a'} maxCount={1} />
+          <FileListUpload beforeUpload={beforeMediaUpload} domain={'DEFAULT'} accept={isAudio ? '.mp3,.m4a' : '.mp4'} maxCount={1} />
         </Form.Item>
         <Form.Item name="duration" label={t('title.duration')}>
           <Input type="text" placeholder={t('message.placeholder.audioDuration')} disabled />
         </Form.Item>
+        {
+          !isAudio &&
+          <Form.Item
+            name="coverImgArr"
+            label={t('title.cover')}
+            valuePropName="fileList"
+            getValueFromEvent={(e) => {
+              if (Array.isArray(e)) {
+                return e
+              }
+              return e?.fileList
+            }}
+          >
+            <ImageListUpload domain={'DEFAULT'} maxCount={1} />
+          </Form.Item>
+        }
       </Form>
     </Modal>
   )
 }
-ActivityForm.propTypes = {
+MediaForm.propTypes = {
   id: PropTypes.string,
   visible: PropTypes.bool,
+  isAudio: PropTypes.bool,
   onSave: PropTypes.func,
   onCancel: PropTypes.func,
 }
 
-export default ActivityForm
+export default MediaForm

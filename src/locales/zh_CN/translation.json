@@ -330,6 +330,8 @@
   "button.audioManage": "音频管理",
   "button.stop": "停用",
   "button.active": "激活",
+  "button.addAudio": "添加音频",
+  "button.addVideo": "添加视频",
   "message.check.name": "请输入名称",
   "message.check.payOrNot": "请选择是否付费",
   "message.check.chapterContent": "请输入章节内容",

@@ -1,9 +1,9 @@
-import { App, Button, Card, message, Table } from 'antd'
+import { App, Button, Card, message, Table, Image } from 'antd'
 import axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect, useCallback } from 'react'
-import AudioForm from './audioForm'
+import MediaForm from './audioForm'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import {
@@ -20,6 +20,7 @@ const AudioListPage = () => {
   const [formVisible, setFormVisible] = useState(false)
   const [selectedId, setSelectedId] = useState()
   const [pageNumber, setPageNumber] = useState(1)
+  const [currentEditIsAudio, setCurrentEditIsAudio] = useState(true)
   const [pageSize] = useState(10)
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
@@ -52,8 +53,15 @@ const AudioListPage = () => {
       .finally(() => setLoading(false))
   }, [pageNumber, pageSize, t])
 
-  const handleEditAction = (id) => {
-    setSelectedId(id)
+  const handleAddAction = (isAudio) => {
+    setCurrentEditIsAudio(isAudio)
+    setSelectedId(null)
+    setFormVisible(true)
+  }
+
+  const handleEditAction = (item) => {
+    setSelectedId(item.id)
+    setCurrentEditIsAudio(item.type != 'VIDEO')
     setFormVisible(true)
   }
 
@@ -88,19 +96,42 @@ const AudioListPage = () => {
     fetchPairedReadAudios()
   }, [fetchPairedReadAudios, pageNumber, changeTime])
 
+  const AddButtonWrapper = () => {
+    if(activityData && activityData.length > 0){
+      if(activityData[0].type === 'VIDEO'){
+        return (
+          <ButtonWrapper>
+            <Button type="primary" onClick={() => handleAddAction(false)}>
+              {t('button.addVideo')}
+            </Button>
+          </ButtonWrapper>
+        )
+      }else{
+        return (
+          <ButtonWrapper>
+            <Button type="primary" onClick={() => handleAddAction(true)}>
+              {t('button.addAudio')}
+            </Button>
+          </ButtonWrapper>
+        )
+      }
+    }else{
+      return (
+        <ButtonWrapper>
+          <Button type="primary" onClick={() => handleAddAction(true)} style={{ marginRight: '20px' }}>
+            {t('button.addAudio')}
+          </Button>
+          <Button type="primary" onClick={() => handleAddAction(false)}>
+            {t('button.addVideo')}
+          </Button>
+      </ButtonWrapper>
+      )
+    }
+  }
+
   return (
     <Card title={t('button.audioManage')}>
-      <ButtonWrapper>
-        <Button
-          type="primary"
-          onClick={() => {
-            setSelectedId(undefined)
-            setFormVisible(true)
-          }}
-        >
-          {t('button.create')}
-        </Button>
-      </ButtonWrapper>
+      <AddButtonWrapper />
       <Table
         columns={[
           {
@@ -136,6 +167,17 @@ const AudioListPage = () => {
             }
           },
           {
+            title: `${t('title.video')}`,
+            key: 'videoUrl',
+            dataIndex: 'videoUrl'
+          },
+          {
+            title: `${t('title.cover')}`,
+            key: 'coverImgUrl',
+            dataIndex: 'coverImgUrl',
+            render: (text) => <Image height={50} src={text} />,
+          },
+          {
             title: `${t('title.creationTime')}`,
             key: 'createdAt',
             dataIndex: 'createdAt',
@@ -148,7 +190,7 @@ const AudioListPage = () => {
               return (
                 <div>
                   <Button
-                    onClick={() => handleEditAction(record.id)}
+                    onClick={() => handleEditAction(record)}
                     type="link"
                   >
                     {t('button.edit')}
@@ -169,7 +211,8 @@ const AudioListPage = () => {
         loading={loading}
         pagination={paginationProps}
       />
-      <AudioForm
+      <MediaForm
+        isAudio={currentEditIsAudio}
         visible={formVisible}
         onCancel={() => setFormVisible(false)}
         onSave={() => {

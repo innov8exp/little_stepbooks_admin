@@ -329,6 +329,8 @@
   "button.audioManage": "Audio Manage",
   "button.stop": "Stop",
   "button.active": "Active",
+  "button.addAudio": "Add Audio",
+  "button.addVideo": "Add Video",
   "message.check.name": "Please enter a name",
   "message.check.payOrNot": "Please choose whether to pay or not",
   "message.check.chapterContent": "Please enter the chapter content",
