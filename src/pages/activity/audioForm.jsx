@@ -181,7 +181,7 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
           <FileListUpload beforeUpload={beforeMediaUpload} domain={'DEFAULT'} accept={isAudio ? '.mp3,.m4a' : '.mp4'} maxCount={1} />
         </Form.Item>
         <Form.Item name="duration" label={t('title.duration')}>
-          <Input type="text" placeholder={t('message.placeholder.audioDuration')} disabled />
+          <Input type="text" style={{ width: '150px' }} disabled />
         </Form.Item>
         <Form.Item name="name" label={t('title.name')}>
           <Input type="text" placeholder={t('message.placeholder.name')} />
