@@ -111,6 +111,7 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
         let second = duration % 60
         second = second > 9 ? second : '0' + second;
         form.setFieldValue('duration', `${minute}:${second}`)
+        form.setFieldValue('name', file.name.split('.')[0])
       });
     })
   }
@@ -124,13 +125,7 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
         const sendData = {
           type: isAudio ? 'AUDIO' : 'VIDEO',
           name,
-          duration,
-          audioId: '',
-          audioUrl: '',
-          videoId: '',
-          videoUrl: '',
-          coverImgId: '',
-          coverImgUrl: ''
+          duration
         };
         if(mediaArr && mediaArr.length > 0){
           if(isAudio){
@@ -142,9 +137,6 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
             if(coverImgArr && coverImgArr.length > 0){
               sendData.coverImgId = coverImgArr[0].response.id
               sendData.coverImgUrl = coverImgArr[0].response.objectUrl
-            }else{
-              sendData.coverImgId = ''
-              sendData.coverImgUrl = ''
             }
           }
         }
@@ -162,7 +154,7 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
       open={visible}
       width={640}
       style={{ maxHeight: 500 }}
-      title={t('title.audioForm')}
+      title={isAudio ? t('title.audioForm') : t('title.videoForm')}
       okText={t('button.save')}
       cancelText={t('button.cancel')}
       onCancel={onCancel}
@@ -175,9 +167,6 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
         form={form}
         name="form_in_modal"
       >
-        <Form.Item name="name" label={t('title.name')}>
-          <Input type="text" placeholder={t('message.placeholder.name')} />
-        </Form.Item>
         <Form.Item
           name="mediaArr"
           label={ isAudio ? t('title.audio') : t('title.video') }
@@ -193,6 +182,9 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
         </Form.Item>
         <Form.Item name="duration" label={t('title.duration')}>
           <Input type="text" placeholder={t('message.placeholder.audioDuration')} disabled />
+        </Form.Item>
+        <Form.Item name="name" label={t('title.name')}>
+          <Input type="text" placeholder={t('message.placeholder.name')} />
         </Form.Item>
         {
           !isAudio &&

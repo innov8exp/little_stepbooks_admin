@@ -150,32 +150,40 @@ const AudioListPage = () => {
             dataIndex: 'duration',
           },
           {
-            title: `${t('title.audio')}`,
+            title: `${t('title.audio')} / ${t('title.video')}`,
             key: 'audioUrl',
             dataIndex: 'audioUrl',
             render: (text, record) => {
-              return(
-                <audio
-                  controlsList="noplaybackrate nodownload"
-                  style={ {
-                    width: '240px',
-                  } }
-                  src={ record.audioUrl }
-                  controls
-                ></audio>
-              )
+              if(record.type === 'VIDEO'){
+                return(
+                  <video
+                    style={ {
+                      width: '240px',
+                      height: '135px'
+                    } }
+                    src={ record.videoUrl }
+                    controls
+                  ></video>
+                )
+              }else{
+                return(
+                  <audio
+                    controlsList="noplaybackrate nodownload"
+                    style={ {
+                      width: '240px',
+                    } }
+                    src={ record.audioUrl }
+                    controls
+                  ></audio>
+                )
+              }
             }
-          },
-          {
-            title: `${t('title.video')}`,
-            key: 'videoUrl',
-            dataIndex: 'videoUrl'
           },
           {
             title: `${t('title.cover')}`,
             key: 'coverImgUrl',
             dataIndex: 'coverImgUrl',
-            render: (text) => <Image height={50} src={text} />,
+            render: (text) => text && <Image height={50} src={text} />,
           },
           {
             title: `${t('title.creationTime')}`,
