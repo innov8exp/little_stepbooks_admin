@@ -77,37 +77,42 @@ const AdminLayout = () => {
       ),
     ]),
 
-    // 书籍管理
-    // getItem(t('menu.bookManage'), '4', <BookOutlined />, [
-
-    // ]),
-
     // 产品管理
-    getItem(t('menu.sku'), '8', <BookOutlined />, [
+    getItem(t('menu.sku'), '3', <BookOutlined />, [
       getItem(
         <Link to={Routes.CLASSIFICATION_LIST.path}>
           {t('menu.classificationManagement')}
         </Link>,
-        '71',
+        '31',
         <BookOutlined />,
       ),
       getItem(
         <Link to="/books">{t('menu.book')}</Link>,
-        '72',
+        '32',
         <BookOutlined />,
       ),
       getItem(
         <Link to={Routes.PRODUCT_LIST.path}>{t('menu.skuList')}</Link>,
-        '81',
+        '33',
+        <BookOutlined />,
+      ),
+      getItem(
+        <Link to={Routes.PHYSICAL_GOODS_LIST.path}>{t('menu.physicalGoodsList')}</Link>,
+        '34',
+        <BookOutlined />,
+      ),
+      getItem(
+        <Link to={Routes.VIRTUAL_GOODS_LIST.path}>{t('menu.virtualGoodsList')}</Link>,
+        '35',
         <BookOutlined />,
       ),
     ]),
 
     // 库存管理
-    getItem(t('menu.inventory'), '9', <ShoppingOutlined />, [
+    getItem(t('menu.inventory'), '4', <ShoppingOutlined />, [
       getItem(
         <Link to={Routes.INVENTORY_LIST.path}>{t('menu.inventoryList')}</Link>,
-        '91',
+        '41',
         <ShoppingOutlined />,
       ),
 
@@ -115,7 +120,7 @@ const AdminLayout = () => {
         <Link to={Routes.ORDER_INVENTORY_LOG_LIST.path}>
           {t('menu.orderInventoryLogList')}
         </Link>,
-        '92',
+        '42',
         <ShoppingOutlined />,
       ),
     ]),
@@ -124,12 +129,12 @@ const AdminLayout = () => {
     getItem(t('menu.order'), '5', <ShoppingOutlined />, [
       getItem(
         <Link to={Routes.ORDER_LIST.path}>{t('menu.orderList')}</Link>,
-        '41',
+        '51',
         <ShoppingOutlined />,
       ),
       getItem(
         <Link to={Routes.REFUND_REQUEST.path}>{t('menu.refundRequest')}</Link>,
-        '42',
+        '52',
         <ShoppingOutlined />,
       ),
       // getItem(
@@ -150,14 +155,14 @@ const AdminLayout = () => {
         <Link to={Routes.ADVERTISEMENT_LIST.path}>
           {t('menu.advertisement')}
         </Link>,
-        '54',
+        '61',
         <FundProjectionScreenOutlined />,
       ),
       getItem(
         <Link to={Routes.ACTIVITY_LIST.path}>
           {t('menu.activityList')}
         </Link>,
-        '55',
+        '62',
         <FundProjectionScreenOutlined />,
       ),
       // getItem(
@@ -185,7 +190,7 @@ const AdminLayout = () => {
       // ),
       getItem(
         <Link to="/admin-user">{t('menu.adminUser')}</Link>,
-        '63',
+        '71',
         <UserOutlined />,
       ),
     ]),

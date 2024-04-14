@@ -1,28 +1,25 @@
-import { App, Button, Card, message, Table, Image, Switch } from 'antd'
+import { App, Button, Card, message, Table, Image } from 'antd'
 import axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
-import ActivityForm from './form'
+import CategoryForm from './category-form'
 import { useTranslation } from 'react-i18next'
 import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
 
-const ActivityListPage = () => {
+const CategoryListPage = () => {
   const { t } = useTranslation()
   const { modal } = App.useApp()
-  const navigate = useNavigate()
   const [changeTime, setChangeTime] = useState(Date.now())
-  const [activityData, setActivityData] = useState()
+  const [goodsData, setGoodsData] = useState()
   const [formVisible, setFormVisible] = useState(false)
   const [selectedId, setSelectedId] = useState()
   const [pageNumber, setPageNumber] = useState(1)
   const [pageSize] = useState(10)
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
-  const [switchLoading, setSwitchLoading] = useState({})
   const paginationProps = {
     pageSize,
     current: pageNumber,
@@ -32,15 +29,15 @@ const ActivityListPage = () => {
     }
   }
 
-  const fetchActivities = useCallback(() => {
+  const fetchCategories = useCallback(() => {
     setLoading(true)
-    const searchURL = `/api/admin/v1/paired-read-collection?currentPage=${pageNumber}&pageSize=${pageSize}`
+    const searchURL = `/api/admin/v1/virtual-category?currentPage=${pageNumber}&pageSize=${pageSize}`
     axios
       .get(searchURL)
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
-          setActivityData(responseObject.records)
+          setGoodsData(responseObject.records)
           setTotal(responseObject.total)
         }
       })
@@ -57,17 +54,15 @@ const ActivityListPage = () => {
     setFormVisible(true)
   }
 
-  const handleUpdateStatusAction = (id, status) => {
-    setSwitchLoading({ id, loading: true })
+  const handleDeleteAction = (id) => {
     modal.confirm({
-      title: `${t('message.tips.changeStatus')}`,
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,
       okType: 'primary',
       cancelText: `${t('button.cancel')}`,
       onOk() {
-        axios
-          .post(`/api/admin/v1/paired-read-collection/${id}/${status}`)
+        axios.delete(`/api/admin/v1/virtual-category/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success(t('message.successInfo'))
@@ -78,27 +73,16 @@ const ActivityListPage = () => {
             console.error(err)
             message.error(err.message)
           })
-          .finally(() => {
-            setSwitchLoading({ id, loading: false })
-          })
-      },
-      onCancel() {
-        setSwitchLoading({ id, loading: false })
-        setChangeTime(Date.now())
       },
     })
   }
 
-  const openAudioListPage = (id) => {
-    navigate(`/activity/${id}/audios`)
-  }
-
   useEffect(() => {
-    fetchActivities()
-  }, [fetchActivities, pageNumber, changeTime])
+    fetchCategories()
+  }, [fetchCategories, pageNumber, changeTime])
 
   return (
-    <Card title={t('menu.activityList')}>
+    <Card title={t('menu.courseCategoryList')}>
       <ButtonWrapper>
         <Button
           type="primary"
@@ -118,57 +102,20 @@ const ActivityListPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: `${t('title.activityName')}`,
+            title: `${t('title.name')}`,
             key: 'name',
             dataIndex: 'name',
           },
           {
-            title: `${t('title.activityDesc')}`,
-            key: 'description',
-            dataIndex: 'description',
-          },
-          {
             title: `${t('title.cover')}`,
-            key: 'coverImgUrl',
-            dataIndex: 'coverImgUrl',
-            render: (text) => <Image height={50} src={text} />,
-          },
-          {
-            title: `${t('title.detailImage')}`,
-            key: 'detailImgUrl',
-            dataIndex: 'detailImgUrl',
+            key: 'coverUrl',
+            dataIndex: 'coverUrl',
             render: (text) => <Image height={50} src={text} />,
           },
           {
             title: `${t('title.creationTime')}`,
             key: 'createdAt',
             dataIndex: 'createdAt',
-          },
-          {
-            title: `${t('title.status')}`,
-            key: 'status',
-            dataIndex: 'status',
-            render: (text, record) => {
-              return (
-                <Switch
-                  checkedChildren={t('ONLINE')}
-                  unCheckedChildren={t('OFFLINE')}
-                  checked={text === 'ONLINE'}
-                  style={{
-                    width: '70px'
-                  }}
-                  loading={
-                    switchLoading.id === record.id && switchLoading.loading
-                  }
-                  onClick={(checked) =>
-                    handleUpdateStatusAction(
-                      record.id,
-                      checked ? 'online' : 'offline',
-                    )
-                  }
-                />
-              )
-            },
           },
           {
             title: `${t('title.operate')}`,
@@ -184,10 +131,10 @@ const ActivityListPage = () => {
                     {t('button.edit')}
                   </Button>
                   <Button
-                    onClick={() => openAudioListPage(record.id)}
+                    onClick={() => handleDeleteAction(record.id)}
                     type="link"
                   >
-                    {t('button.mediaManage')}
+                    {t('button.delete')}
                   </Button>
                 </div>
               )
@@ -195,11 +142,11 @@ const ActivityListPage = () => {
           },
         ]}
         rowKey={(record) => record.id}
-        dataSource={activityData}
+        dataSource={goodsData}
         loading={loading}
         pagination={paginationProps}
       />
-      <ActivityForm
+      <CategoryForm
         visible={formVisible}
         onCancel={() => setFormVisible(false)}
         onSave={() => {
@@ -212,4 +159,4 @@ const ActivityListPage = () => {
   )
 }
 
-export default ActivityListPage
+export default CategoryListPage

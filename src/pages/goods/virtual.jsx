@@ -1,21 +1,24 @@
-import { App, Button, Card, message, Table, Image, Switch } from 'antd'
+import { App, Button, Card, message, Table, Switch, Row, Col, Form, Input, Select } from 'antd'
 import axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ActivityForm from './form'
+import VirtualForm from './virtual-form'
 import { useTranslation } from 'react-i18next'
 import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
 
-const ActivityListPage = () => {
+const VirtualGoodsListPage = () => {
   const { t } = useTranslation()
   const { modal } = App.useApp()
   const navigate = useNavigate()
   const [changeTime, setChangeTime] = useState(Date.now())
-  const [activityData, setActivityData] = useState()
+  const [queryForm] = Form.useForm()
+  const [categoryMap, setCategoryMap] = useState()
+  const [categoryArr, setCategoryArr] = useState([])
+  const [goodsData, setGoodsData] = useState()
   const [formVisible, setFormVisible] = useState(false)
   const [selectedId, setSelectedId] = useState()
   const [pageNumber, setPageNumber] = useState(1)
@@ -32,15 +35,37 @@ const ActivityListPage = () => {
     }
   }
 
-  const fetchActivities = useCallback(() => {
+  const fetchAllCats = function (){
+    const url = `/api/admin/v1/virtual-category?currentPage=1&pageSize=1000`
+    return axios.get(url).then(res => {
+      if(res && res.status === HttpStatus.OK){
+        const arr = [];
+        const map = {};
+        res.data.records.forEach(item => {
+          arr.push({ value: item.id, label: item.name })
+          map[item.id] = item.name
+        })
+        setCategoryArr(arr)
+        setCategoryMap(map)
+        return arr
+      }else{
+        return []
+      }
+    })
+  }
+
+  const fetchGoods = useCallback(async () => {
     setLoading(true)
-    const searchURL = `/api/admin/v1/paired-read-collection?currentPage=${pageNumber}&pageSize=${pageSize}`
+    const searchURL = `/api/admin/v1/virtual-goods?currentPage=${pageNumber}&pageSize=${pageSize}`
+    if(categoryArr.length === 0){
+      await fetchAllCats()
+    }
     axios
       .get(searchURL)
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
-          setActivityData(responseObject.records)
+          setGoodsData(responseObject.records)
           setTotal(responseObject.total)
         }
       })
@@ -67,7 +92,7 @@ const ActivityListPage = () => {
       cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
-          .post(`/api/admin/v1/paired-read-collection/${id}/${status}`)
+          .post(`/api/admin/v1/virtual-goods/${id}/${status}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success(t('message.successInfo'))
@@ -89,18 +114,51 @@ const ActivityListPage = () => {
     })
   }
 
+  const openCatListPage = () => {
+    navigate(`/goods/category-list`)
+  }
+
   const openAudioListPage = (id) => {
-    navigate(`/activity/${id}/audios`)
+    navigate(`/goods/${id}/audio-list`)
+  }
+
+  const openVideoListPage = (id) => {
+    navigate(`/goods/${id}/video-list`)
   }
 
   useEffect(() => {
-    fetchActivities()
-  }, [fetchActivities, pageNumber, changeTime])
+    fetchGoods()
+  }, [fetchGoods, pageNumber, changeTime])
 
   return (
-    <Card title={t('menu.activityList')}>
+    <Card title={t('menu.virtualGoodsList')}>
+      <Form
+        wrapperCol={{ span: 18 }}
+        form={queryForm}
+        initialValues={{ categoryId: '', name: '' }}
+      >
+      <Row>
+        <Col span={10}>
+          <Form.Item label={t('title.productCategory')} name="categoryId">
+            <Select placeholder={t('message.placeholder.bookAuthor')} options={ categoryArr }></Select>
+          </Form.Item>
+        </Col>
+        <Col span={10}>
+          <Form.Item label={t('title.name')} name="name">
+            <Input placeholder={t('message.placeholder.name')} />
+          </Form.Item>
+        </Col>
+      </Row>
+      </Form>
       <ButtonWrapper>
         <Button
+          type="default"
+          onClick={openCatListPage}
+        >
+          {t('menu.productCategoryManagement')}
+        </Button>
+        <Button
+          style={{ marginLeft: '20px' }}
           type="primary"
           onClick={() => {
             setSelectedId(undefined)
@@ -118,26 +176,27 @@ const ActivityListPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: `${t('title.activityName')}`,
+            title: `${t('title.name')}`,
             key: 'name',
             dataIndex: 'name',
           },
           {
-            title: `${t('title.activityDesc')}`,
+            title: `${t('title.description')}`,
             key: 'description',
             dataIndex: 'description',
           },
           {
-            title: `${t('title.cover')}`,
-            key: 'coverImgUrl',
-            dataIndex: 'coverImgUrl',
-            render: (text) => <Image height={50} src={text} />,
+            title: `${t('title.productCategory')}`,
+            key: 'toAddMonth',
+            dataIndex: 'toAddMonth'
           },
           {
-            title: `${t('title.detailImage')}`,
-            key: 'detailImgUrl',
-            dataIndex: 'detailImgUrl',
-            render: (text) => <Image height={50} src={text} />,
+            title: `${t('title.productCategory')}`,
+            key: 'categoryId',
+            dataIndex: 'categoryId',
+            render: (text, record) => {
+              return categoryMap[record.categoryId]
+            }
           },
           {
             title: `${t('title.creationTime')}`,
@@ -187,7 +246,13 @@ const ActivityListPage = () => {
                     onClick={() => openAudioListPage(record.id)}
                     type="link"
                   >
-                    {t('button.mediaManage')}
+                    {t('button.audioManage')}
+                  </Button>
+                  <Button
+                    onClick={() => openVideoListPage(record.id)}
+                    type="link"
+                  >
+                    {t('button.videoManage')}
                   </Button>
                 </div>
               )
@@ -195,11 +260,11 @@ const ActivityListPage = () => {
           },
         ]}
         rowKey={(record) => record.id}
-        dataSource={activityData}
+        dataSource={goodsData}
         loading={loading}
         pagination={paginationProps}
       />
-      <ActivityForm
+      <VirtualForm
         visible={formVisible}
         onCancel={() => setFormVisible(false)}
         onSave={() => {
@@ -207,9 +272,10 @@ const ActivityListPage = () => {
           setChangeTime(Date.now())
         }}
         id={selectedId}
+        categoryArr={categoryArr}
       />
     </Card>
   )
 }
 
-export default ActivityListPage
+export default VirtualGoodsListPage

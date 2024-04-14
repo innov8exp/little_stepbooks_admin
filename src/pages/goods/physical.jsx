@@ -3,8 +3,7 @@ import axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
-import ActivityForm from './form'
+import PhysicalForm from './physical-form'
 import { useTranslation } from 'react-i18next'
 import {
   ExclamationCircleOutlined,
@@ -13,9 +12,8 @@ import {
 const ActivityListPage = () => {
   const { t } = useTranslation()
   const { modal } = App.useApp()
-  const navigate = useNavigate()
   const [changeTime, setChangeTime] = useState(Date.now())
-  const [activityData, setActivityData] = useState()
+  const [goodsData, setGoodsData] = useState()
   const [formVisible, setFormVisible] = useState(false)
   const [selectedId, setSelectedId] = useState()
   const [pageNumber, setPageNumber] = useState(1)
@@ -32,15 +30,15 @@ const ActivityListPage = () => {
     }
   }
 
-  const fetchActivities = useCallback(() => {
+  const fetchGoods = useCallback(() => {
     setLoading(true)
-    const searchURL = `/api/admin/v1/paired-read-collection?currentPage=${pageNumber}&pageSize=${pageSize}`
+    const searchURL = `/api/admin/v1/physical-goods?currentPage=${pageNumber}&pageSize=${pageSize}`
     axios
       .get(searchURL)
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
-          setActivityData(responseObject.records)
+          setGoodsData(responseObject.records)
           setTotal(responseObject.total)
         }
       })
@@ -67,7 +65,7 @@ const ActivityListPage = () => {
       cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
-          .post(`/api/admin/v1/paired-read-collection/${id}/${status}`)
+          .post(`/api/admin/v1/physical-goods/${id}/${status}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success(t('message.successInfo'))
@@ -89,16 +87,35 @@ const ActivityListPage = () => {
     })
   }
 
-  const openAudioListPage = (id) => {
-    navigate(`/activity/${id}/audios`)
+  const handleDeleteAction = (id) => {
+    modal.confirm({
+      title: `${t('message.tips.delete')}`,
+      icon: <ExclamationCircleOutlined />,
+      okText: `${t('button.determine')}`,
+      okType: 'primary',
+      cancelText: `${t('button.cancel')}`,
+      onOk() {
+        axios.delete(`/api/admin/v1/physical-goods/${id}`)
+          .then((res) => {
+            if (res.status === HttpStatus.OK) {
+              message.success(t('message.successInfo'))
+              setChangeTime(Date.now())
+            }
+          })
+          .catch((err) => {
+            console.error(err)
+            message.error(err.message)
+          })
+      },
+    })
   }
 
   useEffect(() => {
-    fetchActivities()
-  }, [fetchActivities, pageNumber, changeTime])
+    fetchGoods()
+  }, [fetchGoods, pageNumber, changeTime])
 
   return (
-    <Card title={t('menu.activityList')}>
+    <Card title={t('menu.physicalGoodsList')}>
       <ButtonWrapper>
         <Button
           type="primary"
@@ -118,25 +135,19 @@ const ActivityListPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: `${t('title.activityName')}`,
+            title: `${t('title.name')}`,
             key: 'name',
             dataIndex: 'name',
           },
           {
-            title: `${t('title.activityDesc')}`,
+            title: `${t('title.description')}`,
             key: 'description',
             dataIndex: 'description',
           },
           {
             title: `${t('title.cover')}`,
-            key: 'coverImgUrl',
-            dataIndex: 'coverImgUrl',
-            render: (text) => <Image height={50} src={text} />,
-          },
-          {
-            title: `${t('title.detailImage')}`,
-            key: 'detailImgUrl',
-            dataIndex: 'detailImgUrl',
+            key: 'imgUrl',
+            dataIndex: 'imgUrl',
             render: (text) => <Image height={50} src={text} />,
           },
           {
@@ -184,10 +195,10 @@ const ActivityListPage = () => {
                     {t('button.edit')}
                   </Button>
                   <Button
-                    onClick={() => openAudioListPage(record.id)}
+                    onClick={() => handleDeleteAction(record.id)}
                     type="link"
                   >
-                    {t('button.mediaManage')}
+                    {t('button.delete')}
                   </Button>
                 </div>
               )
@@ -195,11 +206,11 @@ const ActivityListPage = () => {
           },
         ]}
         rowKey={(record) => record.id}
-        dataSource={activityData}
+        dataSource={goodsData}
         loading={loading}
         pagination={paginationProps}
       />
-      <ActivityForm
+      <PhysicalForm
         visible={formVisible}
         onCancel={() => setFormVisible(false)}
         onSave={() => {

@@ -10,17 +10,16 @@ import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
 
-const AudioListPage = () => {
+const VideoListPage = () => {
   const params = useParams()
   const collectionId = params?.activityId;
   const { t } = useTranslation()
   const { modal } = App.useApp()
   const [changeTime, setChangeTime] = useState(Date.now())
-  const [activityData, setActivityData] = useState()
+  const [videoData, setVideoData] = useState()
   const [formVisible, setFormVisible] = useState(false)
   const [selectedId, setSelectedId] = useState()
   const [pageNumber, setPageNumber] = useState(1)
-  const [currentEditIsAudio, setCurrentEditIsAudio] = useState(true)
   const [pageSize] = useState(10)
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
@@ -33,15 +32,15 @@ const AudioListPage = () => {
     }
   }
 
-  const fetchPairedReadAudios = useCallback(() => {
+  const fetchGoodsVideos = useCallback(() => {
     setLoading(true)
-    const searchURL = `/api/admin/v1/paired-read?currentPage=${pageNumber}&pageSize=${pageSize}&collectionId=${collectionId}`
+    const searchURL = `/api/admin/v1/virtual-goods-video?currentPage=${pageNumber}&pageSize=${pageSize}&collectionId=${collectionId}`
     axios
       .get(searchURL)
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
-          setActivityData(responseObject.records)
+          setVideoData(responseObject.records)
           setTotal(responseObject.total)
         }
       })
@@ -53,15 +52,13 @@ const AudioListPage = () => {
       .finally(() => setLoading(false))
   }, [pageNumber, pageSize, t])
 
-  const handleAddAction = (isAudio) => {
-    setCurrentEditIsAudio(isAudio)
+  const handleAddAction = () => {
     setSelectedId(null)
     setFormVisible(true)
   }
 
   const handleEditAction = (item) => {
     setSelectedId(item.id)
-    setCurrentEditIsAudio(item.type != 'VIDEO')
     setFormVisible(true)
   }
 
@@ -74,7 +71,7 @@ const AudioListPage = () => {
       cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
-          .delete(`/api/admin/v1/paired-read/${id}`)
+          .delete(`/api/admin/v1/virtual-goods-video/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               setChangeTime(Date.now())
@@ -93,45 +90,17 @@ const AudioListPage = () => {
   }
 
   useEffect(() => {
-    fetchPairedReadAudios()
-  }, [fetchPairedReadAudios, pageNumber, changeTime])
+    fetchGoodsVideos()
+  }, [fetchGoodsVideos, pageNumber, changeTime])
 
-  const AddButtonWrapper = () => {
-    if(activityData && activityData.length > 0){
-      if(activityData[0].type === 'VIDEO'){
-        return (
-          <ButtonWrapper>
-            <Button type="primary" onClick={() => handleAddAction(false)}>
-              {t('button.addVideo')}
-            </Button>
-          </ButtonWrapper>
-        )
-      }else{
-        return (
-          <ButtonWrapper>
-            <Button type="primary" onClick={() => handleAddAction(true)}>
-              {t('button.addAudio')}
-            </Button>
-          </ButtonWrapper>
-        )
-      }
-    }else{
-      return (
-        <ButtonWrapper>
-          <Button type="primary" onClick={() => handleAddAction(true)} style={{ marginRight: '20px' }}>
-            {t('button.addAudio')}
-          </Button>
-          <Button type="primary" onClick={() => handleAddAction(false)}>
-            {t('button.addVideo')}
-          </Button>
-      </ButtonWrapper>
-      )
-    }
-  }
 
   return (
-    <Card title={t('button.mediaManage')}>
-      <AddButtonWrapper />
+    <Card title={t('button.videoManage')}>
+      <ButtonWrapper>
+        <Button type="primary" onClick={handleAddAction}>
+            {t('button.addVideo')}
+        </Button>
+        </ButtonWrapper>
       <Table
         columns={[
           {
@@ -150,39 +119,26 @@ const AudioListPage = () => {
             dataIndex: 'duration',
           },
           {
-            title: `${t('title.audio')} / ${t('title.video')}`,
-            key: 'audioUrl',
-            dataIndex: 'audioUrl',
+            title: `${t('title.video')}`,
+            key: 'videoUrl',
+            dataIndex: 'videoUrl',
             render: (text, record) => {
-              if(record.type === 'VIDEO'){
                 return(
-                  <video
+                    <video
                     style={ {
-                      width: '240px',
-                      height: '135px'
+                        width: '240px',
+                        height: '135px'
                     } }
                     src={ record.videoUrl }
                     controls
-                  ></video>
+                    ></video>
                 )
-              }else{
-                return(
-                  <audio
-                    controlsList="noplaybackrate nodownload"
-                    style={ {
-                      width: '240px',
-                    } }
-                    src={ record.audioUrl }
-                    controls
-                  ></audio>
-                )
-              }
             }
           },
           {
             title: `${t('title.cover')}`,
-            key: 'coverImgUrl',
-            dataIndex: 'coverImgUrl',
+            key: 'coverUrl',
+            dataIndex: 'coverUrl',
             render: (text) => text && <Image height={50} src={text} />,
           },
           {
@@ -215,12 +171,12 @@ const AudioListPage = () => {
           },
         ]}
         rowKey={(record) => record.id}
-        dataSource={activityData}
+        dataSource={videoData}
         loading={loading}
         pagination={paginationProps}
       />
       <MediaForm
-        isAudio={currentEditIsAudio}
+        isAudio={false}
         visible={formVisible}
         onCancel={() => setFormVisible(false)}
         onSave={() => {
@@ -233,4 +189,4 @@ const AudioListPage = () => {
   )
 }
 
-export default AudioListPage
+export default VideoListPage

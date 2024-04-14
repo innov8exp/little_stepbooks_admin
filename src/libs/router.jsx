@@ -33,24 +33,22 @@ import ProductView from '@/pages/product/view'
 import Profile from '@/pages/profile'
 import Promotion from '@/pages/promotion'
 import Recommend from '@/pages/recommend'
+import VirtualGoods from '@/pages/goods/virtual'
+import PhysicalGoods from '@/pages/goods/physical'
+import GoodsCategory from '@/pages/goods/category'
+import GoodsAudioList from '@/pages/goods/audioList'
+import GoodsVideoList from '@/pages/goods/videoList'
 import User from '@/pages/user'
 
 import { createBrowserRouter } from 'react-router-dom'
 
-export const Routes = {
+const contentRoutes = {
   DASHBOARD: { path: '/', element: <Dashboard /> },
   PROFILE: { path: '/profile', element: <Profile /> },
   USER_REPORT: { path: '/user-report', element: <Dashboard /> },
   ORDER_REPORT: { path: '/order-report', element: <Dashboard /> },
   USER_LIST: { path: '/user-list', element: <User /> },
-  CLASSIFICATION_LIST: {
-    path: '/classification-list',
-    element: <Classification />,
-  },
-
-  // BOOK_QRCODE_LIST: { path: '/book-qrcode-list', element: <BookQRCode /> },
-  // BOOK_QRCODE_FORM: { path: '/book-qrcode-form', element: <BookQRCodeForm /> },
-  // BOOK_QRCODE_VIEW: { path: '/book-qrcode-view', element: <BookQRCodeView /> },
+  CLASSIFICATION_LIST: { path: '/classification-list', element: <Classification /> },
 
   COMMENT_LIST: { path: '/comment-list', element: <Comment /> },
   ORDER_LIST: { path: '/order-list', element: <Order /> },
@@ -58,29 +56,45 @@ export const Routes = {
   REFUND_REQUEST: { path: '/refund-request', element: <RefundRequest /> },
 
   INVENTORY_LIST: { path: '/inventory-list', element: <Inventory /> },
-  ORDER_INVENTORY_LOG_LIST: {
-    path: '/order-inventory-log-list',
-    element: <OrderInventoryLog />,
-  },
+  ORDER_INVENTORY_LOG_LIST: { path: '/order-inventory-log-list', element: <OrderInventoryLog /> },
 
   PRODUCT_LIST: { path: '/product-list', element: <Product /> },
   PRODUCT_FORM: { path: '/product-form', element: <ProductForm /> },
   PRODUCT_VIEW: { path: '/product-view', element: <ProductView /> },
+  
+  VIRTUAL_GOODS_LIST: { path: '/goods/virtual-list', element: <VirtualGoods /> },
+  PHYSICAL_GOODS_LIST: { path: '/goods/physical-list', element: <PhysicalGoods /> },
+  GOODS_CATEGORY_LIST: { path: '/goods/category-list', element: <GoodsCategory /> },
+  GOODS_AUDIO_LIST: { path: '/goods/:id/audio-list', element: <GoodsAudioList /> },
+  GOODS_VIDEO_LIST: { path: '/goods/:id/video-list', element: <GoodsVideoList /> },
 
   PROMOTION_LIST: { path: '/promotion-list', element: <Promotion /> },
   RECOMMEND_LIST: { path: '/recommend-list', element: <Recommend /> },
-  ADVERTISEMENT_LIST: {
-    path: '/advertisement-list',
-    element: <Advertisement />,
-  },
-  ACTIVITY_LIST: {
-    path: '/activity-list',
-    element: <Activity />,
-  },
+  ADVERTISEMENT_LIST: { path: '/advertisement-list', element: <Advertisement /> },
+  ACTIVITY_LIST: { path: '/activity-list', element: <Activity /> },
+}
+
+const otherRoutes = {
   SIGN_IN: { path: '/sign-in', element: <SignIn /> },
   FORGET_PASSWORD: { path: '/forget-password', element: <ForgetPassword /> },
   NOT_FOUND: { path: '/not-found', element: <ComingSoon /> },
 }
+
+export const Routes = {
+  ...contentRoutes,
+  ...otherRoutes
+}
+
+const contentArr = Object.keys(contentRoutes).map(key => {
+  const item = {
+    path: contentRoutes[key].path,
+    element: contentRoutes[key].element
+  }
+  if(contentRoutes[key].path === '/'){
+    item.index = true
+  }
+  return item
+})
 
 export const Router = createBrowserRouter([
   {
@@ -88,27 +102,7 @@ export const Router = createBrowserRouter([
     element: <AdminLayout />,
     errorElement: <Error />,
     children: [
-      {
-        index: true,
-        path: Routes.DASHBOARD.path,
-        element: Routes.DASHBOARD.element,
-      },
-      {
-        path: Routes.USER_REPORT.path,
-        element: Routes.USER_REPORT.element,
-      },
-      {
-        path: Routes.ORDER_REPORT.path,
-        element: Routes.ORDER_REPORT.element,
-      },
-      {
-        path: Routes.USER_LIST.path,
-        element: Routes.USER_LIST.element,
-      },
-      {
-        path: Routes.CLASSIFICATION_LIST.path,
-        element: Routes.CLASSIFICATION_LIST.element,
-      },
+      ...contentArr,
       {
         path: '/books',
         element: <Book />,
@@ -174,74 +168,13 @@ export const Router = createBrowserRouter([
         element: <BookQRCodeView />,
       },
       {
-        path: Routes.COMMENT_LIST.path,
-        element: Routes.COMMENT_LIST.element,
-      },
-      {
-        path: Routes.ORDER_LIST.path,
-        element: Routes.ORDER_LIST.element,
-      },
-      {
-        path: Routes.ORDER_FORM.path,
-        element: Routes.ORDER_FORM.element,
-      },
-      {
-        path: Routes.REFUND_REQUEST.path,
-        element: Routes.REFUND_REQUEST.element,
-      },
-      {
-        path: Routes.INVENTORY_LIST.path,
-        element: Routes.INVENTORY_LIST.element,
-      },
-      {
-        path: Routes.ORDER_INVENTORY_LOG_LIST.path,
-        element: Routes.ORDER_INVENTORY_LOG_LIST.element,
-      },
-      {
-        path: Routes.NOT_FOUND.path,
-        element: Routes.NOT_FOUND.element,
-      },
-      {
-        path: Routes.PRODUCT_LIST.path,
-        element: Routes.PRODUCT_LIST.element,
-      },
-      {
-        path: Routes.PRODUCT_FORM.path,
-        element: Routes.PRODUCT_FORM.element,
-      },
-      {
-        path: Routes.PRODUCT_VIEW.path,
-        element: Routes.PRODUCT_VIEW.element,
-      },
-      {
-        path: Routes.PROMOTION_LIST.path,
-        element: Routes.PROMOTION_LIST.element,
-      },
-      {
-        path: Routes.RECOMMEND_LIST.path,
-        element: Routes.RECOMMEND_LIST.element,
-      },
-      {
-        path: Routes.ADVERTISEMENT_LIST.path,
-        element: Routes.ADVERTISEMENT_LIST.element,
-      },
-      {
-        path: Routes.ACTIVITY_LIST.path,
-        element: Routes.ACTIVITY_LIST.element,
-      },
-      {
         path: '/activity/:activityId/audios',
         element: <ActivityAudioList />,
-      },
-      {
-        path: Routes.PROFILE.path,
-        element: Routes.PROFILE.element,
       },
       {
         path: '/admin-user',
         element: <AdminUserPage />,
       },
-
       {
         path: '*',
         element: <ComingSoon />,
@@ -249,12 +182,12 @@ export const Router = createBrowserRouter([
     ],
   },
   {
-    path: Routes.SIGN_IN.path,
-    element: Routes.SIGN_IN.element,
+    path: otherRoutes.SIGN_IN.path,
+    element: otherRoutes.SIGN_IN.element,
   },
   {
-    path: Routes.FORGET_PASSWORD.path,
-    element: Routes.FORGET_PASSWORD.element,
+    path: otherRoutes.FORGET_PASSWORD.path,
+    element: otherRoutes.FORGET_PASSWORD.element,
   },
   {
     path: '*',
