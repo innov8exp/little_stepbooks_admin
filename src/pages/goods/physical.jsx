@@ -146,8 +146,8 @@ const ActivityListPage = () => {
           },
           {
             title: `${t('title.cover')}`,
-            key: 'imgUrl',
-            dataIndex: 'imgUrl',
+            key: 'coverUrl',
+            dataIndex: 'coverUrl',
             render: (text) => <Image height={50} src={text} />,
           },
           {
@@ -155,32 +155,32 @@ const ActivityListPage = () => {
             key: 'createdAt',
             dataIndex: 'createdAt',
           },
-          {
-            title: `${t('title.status')}`,
-            key: 'status',
-            dataIndex: 'status',
-            render: (text, record) => {
-              return (
-                <Switch
-                  checkedChildren={t('ONLINE')}
-                  unCheckedChildren={t('OFFLINE')}
-                  checked={text === 'ONLINE'}
-                  style={{
-                    width: '70px'
-                  }}
-                  loading={
-                    switchLoading.id === record.id && switchLoading.loading
-                  }
-                  onClick={(checked) =>
-                    handleUpdateStatusAction(
-                      record.id,
-                      checked ? 'online' : 'offline',
-                    )
-                  }
-                />
-              )
-            },
-          },
+          // {
+          //   title: `${t('title.status')}`,
+          //   key: 'status',
+          //   dataIndex: 'status',
+          //   render: (text, record) => {
+          //     return (
+          //       <Switch
+          //         checkedChildren={t('ONLINE')}
+          //         unCheckedChildren={t('OFFLINE')}
+          //         checked={text === 'ONLINE'}
+          //         style={{
+          //           width: '70px'
+          //         }}
+          //         loading={
+          //           switchLoading.id === record.id && switchLoading.loading
+          //         }
+          //         onClick={(checked) =>
+          //           handleUpdateStatusAction(
+          //             record.id,
+          //             checked ? 'online' : 'offline',
+          //           )
+          //         }
+          //       />
+          //     )
+          //   },
+          // },
           {
             title: `${t('title.operate')}`,
             key: 'action',

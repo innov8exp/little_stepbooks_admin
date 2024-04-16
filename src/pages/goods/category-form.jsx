@@ -99,7 +99,7 @@ const CategoryForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={640}
       style={{ maxHeight: 500 }}
-      title={t('title.activityForm')}
+      title={t('title.goodsCategoryForm')}
       okText={t('button.save')}
       cancelText={t('button.cancel')}
       onCancel={onCancel}
@@ -126,7 +126,7 @@ const CategoryForm = ({ id, visible, onSave, onCancel }) => {
             return e?.fileList
           }}
         >
-          <ImageListUpload domain={'DEFAULT'} maxCount={1} />
+          <ImageListUpload domain={'PRODUCT'} maxCount={1} />
         </Form.Item>
       </Form>
     </Modal>

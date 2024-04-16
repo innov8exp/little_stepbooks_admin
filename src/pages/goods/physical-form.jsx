@@ -20,14 +20,14 @@ const PhysicalForm = ({ id, visible, onSave, onCancel }) => {
           if (res.status === HttpStatus.OK) {
             const resultData = res.data
             const imgArr = []
-            if (resultData.imgId) {
+            if (resultData.coverId) {
               imgArr.push({
-                id: resultData.imgId,
-                name: resultData.imgUrl?.split('/')?.pop(),
-                url: resultData.imgUrl,
+                id: resultData.coverId,
+                name: resultData.coverUrl?.split('/')?.pop(),
+                url: resultData.coverUrl,
                 response: {
-                  id: resultData.imgId,
-                  objectUrl: resultData.imgUrl,
+                  id: resultData.coverId,
+                  objectUrl: resultData.coverUrl,
                 }
               })
             }
@@ -82,10 +82,9 @@ const PhysicalForm = ({ id, visible, onSave, onCancel }) => {
         const { name, description, imgArr } = values;
         const sendData = { name, description };
         if(imgArr && imgArr.length > 0){
-          sendData.imgId = imgArr[0].response.id
-          sendData.imgUrl = imgArr[0].response.objectUrl
+          sendData.coverId = imgArr[0].response.id
+          sendData.coverUrl = imgArr[0].response.objectUrl
         }
-        console.log(values, sendData)
         if (id) {
           updateData(sendData)
         } else {
@@ -100,7 +99,7 @@ const PhysicalForm = ({ id, visible, onSave, onCancel }) => {
       open={visible}
       width={640}
       style={{ maxHeight: 500 }}
-      title={t('title.activityForm')}
+      title={t('title.physicalGoodsForm')}
       okText={t('button.save')}
       cancelText={t('button.cancel')}
       onCancel={onCancel}
@@ -134,7 +133,7 @@ const PhysicalForm = ({ id, visible, onSave, onCancel }) => {
             return e?.fileList
           }}
         >
-          <ImageListUpload domain={'DEFAULT'} maxCount={1} />
+          <ImageListUpload domain={'PRODUCT'} maxCount={1} />
         </Form.Item>
       </Form>
     </Modal>

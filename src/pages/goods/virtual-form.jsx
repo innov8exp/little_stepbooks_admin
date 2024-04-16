@@ -77,7 +77,7 @@ const VirtualForm = ({ id, visible, categoryArr, onSave, onCancel }) => {
       open={visible}
       width={640}
       style={{ maxHeight: 500 }}
-      title={t('title.activityForm')}
+      title={t('title.virtualGoodsForm')}
       okText={t('button.save')}
       cancelText={t('button.cancel')}
       onCancel={onCancel}
