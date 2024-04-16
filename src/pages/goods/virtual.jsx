@@ -1,4 +1,5 @@
-import { App, Button, Card, message, Table, Switch, Row, Col, Form, Input, Select } from 'antd'
+import { App, Button, Card, message, Table, Row, Col, Form, Input, Select } from 'antd'
+import { OrderedListOutlined } from '@ant-design/icons'
 import axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
@@ -25,7 +26,7 @@ const VirtualGoodsListPage = () => {
   const [pageSize] = useState(10)
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
-  const [switchLoading, setSwitchLoading] = useState({})
+  // const [switchLoading, setSwitchLoading] = useState({})
   const paginationProps = {
     pageSize,
     current: pageNumber,
@@ -54,9 +55,25 @@ const VirtualGoodsListPage = () => {
     })
   }
 
+  const handleSearch = () => {
+    setChangeTime(Date.now())
+  }
+
+  const handleReset = () => {
+    queryForm.resetFields()
+    setChangeTime(Date.now())
+  }
+
   const fetchGoods = useCallback(async () => {
     setLoading(true)
-    const searchURL = `/api/admin/v1/virtual-goods?currentPage=${pageNumber}&pageSize=${pageSize}`
+    let searchURL = `/api/admin/v1/virtual-goods?currentPage=${pageNumber}&pageSize=${pageSize}`
+    const queryValue = queryForm.getFieldsValue()
+    if(queryValue.categoryId){
+      searchURL += `&categoryId=${queryValue.categoryId}`
+    }
+    if(queryValue.name){
+      searchURL += `&name=${queryValue.name}`
+    }
     if(categoryArr.length === 0){
       await fetchAllCats()
     }
@@ -75,44 +92,67 @@ const VirtualGoodsListPage = () => {
         ),
       )
       .finally(() => setLoading(false))
-  }, [pageNumber, pageSize, t])
+  }, [categoryArr.length, pageNumber, pageSize, queryForm, t])
 
   const handleEditAction = (id) => {
     setSelectedId(id)
     setFormVisible(true)
   }
 
-  const handleUpdateStatusAction = (id, status) => {
-    setSwitchLoading({ id, loading: true })
+  const handleDeleteAction = (id) => {
     modal.confirm({
-      title: `${t('message.tips.changeStatus')}`,
+      title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
       okText: `${t('button.determine')}`,
-      okType: 'primary',
       cancelText: `${t('button.cancel')}`,
       onOk() {
-        axios
-          .post(`/api/admin/v1/virtual-goods/${id}/${status}`)
-          .then((res) => {
-            if (res.status === HttpStatus.OK) {
-              message.success(t('message.successInfo'))
-              setChangeTime(Date.now())
-            }
-          })
-          .catch((err) => {
-            console.error(err)
-            message.error(err.message)
-          })
-          .finally(() => {
-            setSwitchLoading({ id, loading: false })
-          })
-      },
-      onCancel() {
-        setSwitchLoading({ id, loading: false })
-        setChangeTime(Date.now())
-      },
+        axios.delete(`/api/admin/v1/virtual-goods/${id}`).then((res) => {
+          if (res.status === HttpStatus.OK) {
+            setChangeTime(Date.now())
+            message.success(`${t('message.archiveSuccessful')}`)
+          }
+        }).catch((err) => {
+          message.error(
+            `${t('message.error.failureReason')}${
+              err.response?.data?.message
+            }`,
+          )
+        })
+      }
     })
   }
+
+  // const handleUpdateStatusAction = (id, status) => {
+  //   setSwitchLoading({ id, loading: true })
+  //   modal.confirm({
+  //     title: `${t('message.tips.changeStatus')}`,
+  //     icon: <ExclamationCircleOutlined />,
+  //     okText: `${t('button.determine')}`,
+  //     okType: 'primary',
+  //     cancelText: `${t('button.cancel')}`,
+  //     onOk() {
+  //       axios
+  //         .post(`/api/admin/v1/virtual-goods/${id}/${status}`)
+  //         .then((res) => {
+  //           if (res.status === HttpStatus.OK) {
+  //             message.success(t('message.successInfo'))
+  //             setChangeTime(Date.now())
+  //           }
+  //         })
+  //         .catch((err) => {
+  //           console.error(err)
+  //           message.error(err.message)
+  //         })
+  //         .finally(() => {
+  //           setSwitchLoading({ id, loading: false })
+  //         })
+  //     },
+  //     onCancel() {
+  //       setSwitchLoading({ id, loading: false })
+  //       setChangeTime(Date.now())
+  //     },
+  //   })
+  // }
 
   const openCatListPage = () => {
     navigate(`/goods/category-list`)
@@ -138,21 +178,38 @@ const VirtualGoodsListPage = () => {
         initialValues={{ categoryId: '', name: '' }}
       >
       <Row>
-        <Col span={10}>
+        <Col span={8}>
           <Form.Item label={t('title.productCategory')} name="categoryId">
             <Select placeholder={t('message.placeholder.bookAuthor')} options={ categoryArr }></Select>
           </Form.Item>
         </Col>
-        <Col span={10}>
+        <Col span={8}>
           <Form.Item label={t('title.name')} name="name">
             <Input placeholder={t('message.placeholder.name')} />
           </Form.Item>
+        </Col>
+        <Col span={3}>
+          <Button
+            type="primary"
+            onClick={handleSearch}
+          >
+            {t('button.search')}
+          </Button>
+        </Col>
+        <Col span={3}>
+          <Button
+            type="default"
+            onClick={handleReset}
+          >
+            {t('button.reset')}
+          </Button>
         </Col>
       </Row>
       </Form>
       <ButtonWrapper>
         <Button
           type="default"
+          icon={<OrderedListOutlined />}
           onClick={openCatListPage}
         >
           {t('menu.productCategoryManagement')}
@@ -203,32 +260,32 @@ const VirtualGoodsListPage = () => {
             key: 'createdAt',
             dataIndex: 'createdAt',
           },
-          {
-            title: `${t('title.status')}`,
-            key: 'status',
-            dataIndex: 'status',
-            render: (text, record) => {
-              return (
-                <Switch
-                  checkedChildren={t('ONLINE')}
-                  unCheckedChildren={t('OFFLINE')}
-                  checked={text === 'ONLINE'}
-                  style={{
-                    width: '70px'
-                  }}
-                  loading={
-                    switchLoading.id === record.id && switchLoading.loading
-                  }
-                  onClick={(checked) =>
-                    handleUpdateStatusAction(
-                      record.id,
-                      checked ? 'online' : 'offline',
-                    )
-                  }
-                />
-              )
-            },
-          },
+          // {
+          //   title: `${t('title.status')}`,
+          //   key: 'status',
+          //   dataIndex: 'status',
+          //   render: (text, record) => {
+          //     return (
+          //       <Switch
+          //         checkedChildren={t('ONLINE')}
+          //         unCheckedChildren={t('OFFLINE')}
+          //         checked={text === 'ONLINE'}
+          //         style={{
+          //           width: '70px'
+          //         }}
+          //         loading={
+          //           switchLoading.id === record.id && switchLoading.loading
+          //         }
+          //         onClick={(checked) =>
+          //           handleUpdateStatusAction(
+          //             record.id,
+          //             checked ? 'online' : 'offline',
+          //           )
+          //         }
+          //       />
+          //     )
+          //   },
+          // },
           {
             title: `${t('title.operate')}`,
             key: 'action',
@@ -241,6 +298,12 @@ const VirtualGoodsListPage = () => {
                     type="link"
                   >
                     {t('button.edit')}
+                  </Button>
+                  <Button
+                    onClick={() => handleDeleteAction(record.id)}
+                    type="link"
+                  >
+                    {t('button.delete')}
                   </Button>
                   <Button
                     onClick={() => openAudioListPage(record.id)}

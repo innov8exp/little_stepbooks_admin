@@ -1,4 +1,4 @@
-import { App, Button, Card, message, Table, Image, Switch } from 'antd'
+import { App, Button, Card, message, Table, Image } from 'antd'
 import axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
@@ -20,7 +20,7 @@ const ActivityListPage = () => {
   const [pageSize] = useState(10)
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
-  const [switchLoading, setSwitchLoading] = useState({})
+  // const [switchLoading, setSwitchLoading] = useState({})
   const paginationProps = {
     pageSize,
     current: pageNumber,
@@ -55,37 +55,37 @@ const ActivityListPage = () => {
     setFormVisible(true)
   }
 
-  const handleUpdateStatusAction = (id, status) => {
-    setSwitchLoading({ id, loading: true })
-    modal.confirm({
-      title: `${t('message.tips.changeStatus')}`,
-      icon: <ExclamationCircleOutlined />,
-      okText: `${t('button.determine')}`,
-      okType: 'primary',
-      cancelText: `${t('button.cancel')}`,
-      onOk() {
-        axios
-          .post(`/api/admin/v1/physical-goods/${id}/${status}`)
-          .then((res) => {
-            if (res.status === HttpStatus.OK) {
-              message.success(t('message.successInfo'))
-              setChangeTime(Date.now())
-            }
-          })
-          .catch((err) => {
-            console.error(err)
-            message.error(err.message)
-          })
-          .finally(() => {
-            setSwitchLoading({ id, loading: false })
-          })
-      },
-      onCancel() {
-        setSwitchLoading({ id, loading: false })
-        setChangeTime(Date.now())
-      },
-    })
-  }
+  // const handleUpdateStatusAction = (id, status) => {
+  //   setSwitchLoading({ id, loading: true })
+  //   modal.confirm({
+  //     title: `${t('message.tips.changeStatus')}`,
+  //     icon: <ExclamationCircleOutlined />,
+  //     okText: `${t('button.determine')}`,
+  //     okType: 'primary',
+  //     cancelText: `${t('button.cancel')}`,
+  //     onOk() {
+  //       axios
+  //         .post(`/api/admin/v1/physical-goods/${id}/${status}`)
+  //         .then((res) => {
+  //           if (res.status === HttpStatus.OK) {
+  //             message.success(t('message.successInfo'))
+  //             setChangeTime(Date.now())
+  //           }
+  //         })
+  //         .catch((err) => {
+  //           console.error(err)
+  //           message.error(err.message)
+  //         })
+  //         .finally(() => {
+  //           setSwitchLoading({ id, loading: false })
+  //         })
+  //     },
+  //     onCancel() {
+  //       setSwitchLoading({ id, loading: false })
+  //       setChangeTime(Date.now())
+  //     },
+  //   })
+  // }
 
   const handleDeleteAction = (id) => {
     modal.confirm({

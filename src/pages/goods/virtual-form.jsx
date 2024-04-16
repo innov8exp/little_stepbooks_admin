@@ -84,8 +84,8 @@ const VirtualForm = ({ id, visible, categoryArr, onSave, onCancel }) => {
       onOk={okHandler}
     >
       <Form
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 14 }}
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 18 }}
         layout="horizontal"
         form={form}
         name="form_in_modal"
@@ -103,8 +103,8 @@ const VirtualForm = ({ id, visible, categoryArr, onSave, onCancel }) => {
         <Form.Item label={t('title.productCategory')} name="categoryId">
           <Select placeholder={t('message.placeholder.bookAuthor')} options={ categoryArr }></Select>
         </Form.Item>
-        <Form.Item label={t('title.productCategory')} name="toAddMonth">
-          <InputNumber min={1} max={120} defaultValue={1} />
+        <Form.Item label={t('title.totalMonth')} name="toAddMonth">
+          <InputNumber min={0} max={120} defaultValue={null} />
         </Form.Item>
       </Form>
     </Modal>
