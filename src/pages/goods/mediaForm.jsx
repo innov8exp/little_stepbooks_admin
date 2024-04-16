@@ -13,15 +13,17 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
   const params = useParams()
-  const collectionId = params?.activityId;
+  const goodsId = params?.id;
+  const getUrl = `/api/admin/v1/virtual-goods-${isAudio ? 'audio' : 'video'}/${id}`
+  const newUrl = `/api/admin/v1/virtual-goods-${isAudio ? 'audio' : 'video'}`
 
   useEffect(() => {
     if (id) {
       axios
-        .get(`/api/admin/v1/paired-read/${id}`)
+        .get(getUrl)
         .then((res) => {
           if (res.status === HttpStatus.OK) {
-            const { audioId, audioUrl, videoId, videoUrl, coverImgId, coverImgUrl } = res.data
+            const { audioId, audioUrl, videoId, videoUrl, coverId, coverUrl } = res.data
             const mediaArr = [];
             const coverImgArr = []
             let id, url; 
@@ -31,14 +33,14 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
             }else if(videoId){
               id = videoId
               url = videoUrl
-              if(coverImgId){
+              if(coverId){
                 coverImgArr.push({
-                  id: coverImgId,
-                  url: coverImgUrl,
-                  name: coverImgUrl?.split('/')?.pop(),
+                  id: coverId,
+                  url: coverUrl,
+                  name: coverUrl?.split('/')?.pop(),
                   response: {
-                    id: coverImgId,
-                    objectUrl: coverImgUrl,
+                    id: coverId,
+                    objectUrl: coverUrl,
                   }
                 })
               }
@@ -67,9 +69,9 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
 
   const createData = (values) => {
     axios
-      .post(`/api/admin/v1/paired-read`, {
+      .post(newUrl, {
         ...values,
-        collectionId
+        goodsId
       })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
@@ -84,7 +86,7 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
 
   const updateData = (values) => {
     axios
-      .put(`/api/admin/v1/paired-read/${id}`, {
+      .put(getUrl, {
         ...values
       })
       .then((res) => {
@@ -123,9 +125,9 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
         const { name, duration, mediaArr, coverImgArr } = values;
         // 准备默认值
         const sendData = {
-          type: isAudio ? 'AUDIO' : 'VIDEO',
           name,
-          duration
+          duration,
+          goodsId
         };
         if(mediaArr && mediaArr.length > 0){
           if(isAudio){
@@ -134,10 +136,10 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
           }else{
             sendData.videoId = mediaArr[0].response.id
             sendData.videoUrl = mediaArr[0].response.objectUrl
-            if(coverImgArr && coverImgArr.length > 0){
-              sendData.coverImgId = coverImgArr[0].response.id
-              sendData.coverImgUrl = coverImgArr[0].response.objectUrl
-            }
+          }
+          if(coverImgArr && coverImgArr.length > 0){
+            sendData.coverId = coverImgArr[0].response.id
+            sendData.coverUrl = coverImgArr[0].response.objectUrl
           }
         }
         if (id) {
@@ -146,7 +148,7 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
           createData(sendData)
         }
       })
-      .catch()
+      .catch(err => err)
   }
 
   return (
@@ -178,7 +180,7 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
             return e?.fileList
           }}
         >
-          <FileListUpload beforeUpload={beforeMediaUpload} domain={'DEFAULT'} accept={isAudio ? '.mp3,.m4a' : '.mp4'} maxCount={1} />
+          <FileListUpload beforeUpload={beforeMediaUpload} domain={'PRODUCT'} accept={isAudio ? '.mp3,.m4a' : '.mp4'} maxCount={1} />
         </Form.Item>
         <Form.Item name="duration" label={t('title.duration')}>
           <Input type="text" style={{ width: '150px' }} disabled />
@@ -187,7 +189,6 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
           <Input type="text" placeholder={t('message.placeholder.name')} />
         </Form.Item>
         {
-          !isAudio &&
           <Form.Item
             name="coverImgArr"
             label={t('title.cover')}
@@ -199,7 +200,7 @@ const MediaForm = ({ id, visible, isAudio, onSave, onCancel }) => {
               return e?.fileList
             }}
           >
-            <ImageListUpload domain={'DEFAULT'} maxCount={1} />
+            <ImageListUpload domain={'PRODUCT'} maxCount={1} />
           </Form.Item>
         }
       </Form>

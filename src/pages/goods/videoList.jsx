@@ -3,7 +3,8 @@ import axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect, useCallback } from 'react'
-import MediaForm from './audioForm'
+import MediaForm from './mediaForm'
+import BatchUploadList from '@/components/batch-upload'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import {
@@ -12,11 +13,12 @@ import {
 
 const VideoListPage = () => {
   const params = useParams()
-  const collectionId = params?.activityId;
+  const goodsId = params?.id;
   const { t } = useTranslation()
   const { modal } = App.useApp()
   const [changeTime, setChangeTime] = useState(Date.now())
   const [videoData, setVideoData] = useState()
+  const [batchVisible, setBatchVisible] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
   const [selectedId, setSelectedId] = useState()
   const [pageNumber, setPageNumber] = useState(1)
@@ -34,7 +36,7 @@ const VideoListPage = () => {
 
   const fetchGoodsVideos = useCallback(() => {
     setLoading(true)
-    const searchURL = `/api/admin/v1/virtual-goods-video?currentPage=${pageNumber}&pageSize=${pageSize}&collectionId=${collectionId}`
+    const searchURL = `/api/admin/v1/virtual-goods-video?currentPage=${pageNumber}&pageSize=${pageSize}&goodsId=${goodsId}`
     axios
       .get(searchURL)
       .then((res) => {
@@ -51,6 +53,10 @@ const VideoListPage = () => {
       )
       .finally(() => setLoading(false))
   }, [pageNumber, pageSize, t])
+
+  const handleBatchAddAction = () => {
+    setBatchVisible(true)
+  }
 
   const handleAddAction = () => {
     setSelectedId(null)
@@ -89,6 +95,42 @@ const VideoListPage = () => {
     })
   }
 
+  const onVideoAdd = (data) => {
+    const { sortIndex, photoId, photoUrl, videoId, videoUrl, name, duration } = data;
+    return new Promise(function (resolve, reject){
+      axios
+      .post(`/api/admin/v1/virtual-goods-video`, {
+        sortIndex,
+        goodsId,
+        name,
+        coverId: photoId,
+        coverUrl: photoUrl,
+        videoId,
+        videoUrl,
+        duration
+      })
+      .then((res) => {
+        if (res.status === HttpStatus.OK) {
+          resolve()
+        }else{
+          reject()
+        }
+      })
+      .catch((err) => {
+        reject(err)
+      })
+    })
+  }
+
+  const onBatchOk = () => {
+    setBatchVisible(false)
+    setChangeTime(Date.now())
+  }
+
+  const onBatchCancel = () => {
+    setBatchVisible(false)
+  }
+
   useEffect(() => {
     fetchGoodsVideos()
   }, [fetchGoodsVideos, pageNumber, changeTime])
@@ -97,10 +139,13 @@ const VideoListPage = () => {
   return (
     <Card title={t('button.videoManage')}>
       <ButtonWrapper>
-        <Button type="primary" onClick={handleAddAction}>
-            {t('button.addVideo')}
-        </Button>
-        </ButtonWrapper>
+          <Button type="primary" onClick={handleBatchAddAction}>
+              {t('button.batchAddVideo')}
+          </Button>
+          <Button style={{ marginLeft: '20px' }} type="primary" onClick={handleAddAction}>
+              {t('button.addVideo')}
+          </Button>
+      </ButtonWrapper>
       <Table
         columns={[
           {
@@ -184,6 +229,14 @@ const VideoListPage = () => {
           setChangeTime(Date.now())
         }}
         id={selectedId}
+      />
+      <BatchUploadList
+        visible={batchVisible}
+        mediaType='VIDEO'
+        domain={'PRODUCT'}
+        onAdd={onVideoAdd}
+        onOk={onBatchOk}
+        onCancel={onBatchCancel}
       />
     </Card>
   )
