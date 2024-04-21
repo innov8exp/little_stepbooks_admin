@@ -26,6 +26,11 @@ const ImageListUpload = ({
 
   const handleCancel = () => setPreviewOpen(false)
 
+  const handleChange = (e) => {
+    console.log(1111)
+    console.log(e)
+  }
+
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj)
@@ -45,6 +50,7 @@ const ImageListUpload = ({
         onPreview={handlePreview}
         action={`/api/admin/v1/medias/upload?permission=${permission}&domain=${domain}`}
         withCredentials
+        onChange={handleChange}
         {...props}
       >
         <Button icon={<UploadOutlined />}>

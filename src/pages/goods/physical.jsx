@@ -2,35 +2,49 @@ import { App, Button, Card, message, Table, Image } from 'antd'
 import axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
-import { useState, useEffect, useCallback } from 'react'
-import PhysicalForm from './physical-form'
+import { useState, useEffect } from 'react'
+import EditForm from '@/components/edit-form'
 import { useTranslation } from 'react-i18next'
 import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
 
-const ActivityListPage = () => {
+const PhysicalListPage = () => {
   const { t } = useTranslation()
   const { modal } = App.useApp()
-  const [changeTime, setChangeTime] = useState(Date.now())
-  const [goodsData, setGoodsData] = useState()
-  const [formVisible, setFormVisible] = useState(false)
-  const [selectedId, setSelectedId] = useState()
+  const [listData, setListData] = useState([])
+  const [ediVisible, setEdiVisible] = useState(false)
+  const [editData, setEditData] = useState({})
   const [pageNumber, setPageNumber] = useState(1)
-  const [pageSize] = useState(10)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [total, setTotal] = useState(0)
-  // const [switchLoading, setSwitchLoading] = useState({})
+  const pageSize = 10;
   const paginationProps = {
     pageSize,
     current: pageNumber,
     total,
     onChange: (current) => {
       setPageNumber(current)
+      loadListData()
     }
   }
 
-  const fetchGoods = useCallback(() => {
+  // 页面创建后加载一遍数据
+  useEffect(() => {
+    const searchURL = `/api/admin/v1/physical-goods?currentPage=1&pageSize=10`
+    axios.get(searchURL).then((res) => {
+      if (res && res.status === HttpStatus.OK) {
+        const { records, total } = res.data;
+        setListData(records)
+        setTotal(total)
+        setLoading(false)
+      }
+    }).catch(() => {
+      setLoading(false)
+    })
+  }, [])
+
+  const loadListData = function () {
     setLoading(true)
     const searchURL = `/api/admin/v1/physical-goods?currentPage=${pageNumber}&pageSize=${pageSize}`
     axios
@@ -38,7 +52,7 @@ const ActivityListPage = () => {
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
-          setGoodsData(responseObject.records)
+          setListData(responseObject.records)
           setTotal(responseObject.total)
         }
       })
@@ -47,45 +61,20 @@ const ActivityListPage = () => {
           `${t('message.error.failureReason')}${err.response?.data?.message}`,
         ),
       )
-      .finally(() => setLoading(false))
-  }, [pageNumber, pageSize, t])
-
-  const handleEditAction = (id) => {
-    setSelectedId(id)
-    setFormVisible(true)
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
-  // const handleUpdateStatusAction = (id, status) => {
-  //   setSwitchLoading({ id, loading: true })
-  //   modal.confirm({
-  //     title: `${t('message.tips.changeStatus')}`,
-  //     icon: <ExclamationCircleOutlined />,
-  //     okText: `${t('button.determine')}`,
-  //     okType: 'primary',
-  //     cancelText: `${t('button.cancel')}`,
-  //     onOk() {
-  //       axios
-  //         .post(`/api/admin/v1/physical-goods/${id}/${status}`)
-  //         .then((res) => {
-  //           if (res.status === HttpStatus.OK) {
-  //             message.success(t('message.successInfo'))
-  //             setChangeTime(Date.now())
-  //           }
-  //         })
-  //         .catch((err) => {
-  //           console.error(err)
-  //           message.error(err.message)
-  //         })
-  //         .finally(() => {
-  //           setSwitchLoading({ id, loading: false })
-  //         })
-  //     },
-  //     onCancel() {
-  //       setSwitchLoading({ id, loading: false })
-  //       setChangeTime(Date.now())
-  //     },
-  //   })
-  // }
+  const handleAddAction = () => {
+    setEdiVisible(true)
+    setEditData({})
+  }
+
+  const handleEditAction = (item) => {
+    setEdiVisible(true)
+    setEditData(item)
+  }
 
   const handleDeleteAction = (id) => {
     modal.confirm({
@@ -99,7 +88,7 @@ const ActivityListPage = () => {
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success(t('message.successInfo'))
-              setChangeTime(Date.now())
+              loadListData()
             }
           })
           .catch((err) => {
@@ -110,19 +99,12 @@ const ActivityListPage = () => {
     })
   }
 
-  useEffect(() => {
-    fetchGoods()
-  }, [fetchGoods, pageNumber, changeTime])
-
   return (
     <Card title={t('menu.physicalGoodsList')}>
       <ButtonWrapper>
         <Button
           type="primary"
-          onClick={() => {
-            setSelectedId(undefined)
-            setFormVisible(true)
-          }}
+          onClick={handleAddAction}
         >
           {t('button.create')}
         </Button>
@@ -155,32 +137,6 @@ const ActivityListPage = () => {
             key: 'createdAt',
             dataIndex: 'createdAt',
           },
-          // {
-          //   title: `${t('title.status')}`,
-          //   key: 'status',
-          //   dataIndex: 'status',
-          //   render: (text, record) => {
-          //     return (
-          //       <Switch
-          //         checkedChildren={t('ONLINE')}
-          //         unCheckedChildren={t('OFFLINE')}
-          //         checked={text === 'ONLINE'}
-          //         style={{
-          //           width: '70px'
-          //         }}
-          //         loading={
-          //           switchLoading.id === record.id && switchLoading.loading
-          //         }
-          //         onClick={(checked) =>
-          //           handleUpdateStatusAction(
-          //             record.id,
-          //             checked ? 'online' : 'offline',
-          //           )
-          //         }
-          //       />
-          //     )
-          //   },
-          // },
           {
             title: `${t('title.operate')}`,
             key: 'action',
@@ -189,7 +145,7 @@ const ActivityListPage = () => {
               return (
                 <div>
                   <Button
-                    onClick={() => handleEditAction(record.id)}
+                    onClick={() => handleEditAction(record)}
                     type="link"
                   >
                     {t('button.edit')}
@@ -206,21 +162,29 @@ const ActivityListPage = () => {
           },
         ]}
         rowKey={(record) => record.id}
-        dataSource={goodsData}
+        dataSource={listData}
         loading={loading}
         pagination={paginationProps}
       />
-      <PhysicalForm
-        visible={formVisible}
-        onCancel={() => setFormVisible(false)}
+      <EditForm
+        visible={ediVisible}
+        apiPath='physical-goods'
+        domain='PRODUCT'
+        title='title.physicalGoods'
+        formData={editData}
+        formKeys={[
+          { type:'input', key: 'name'},
+          { type:'textarea', key: 'description'},
+          { type:'photo', key: 'coverUrl', groupKeys:['coverId']},
+        ]}
+        onCancel={() => setEdiVisible(false)}
         onSave={() => {
-          setFormVisible(false)
-          setChangeTime(Date.now())
+          setEdiVisible(false)
+          loadListData()
         }}
-        id={selectedId}
       />
     </Card>
   )
 }
 
-export default ActivityListPage
+export default PhysicalListPage

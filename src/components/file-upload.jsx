@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { LoadingOutlined, UploadOutlined } from '@ant-design/icons';
-import { message, Upload, Button } from 'antd';
+import { Upload, Button } from 'antd';
 import PropTypes from 'prop-types'
-
-const ImageUpload = ({
+const FileUpload = ({
   domain = 'DEFAULT',
   permission = 'PUBLIC',
   value = null,
+  accept = null,
+  isMedia = false,
   onChange = (e) => {
     console.log(e)
   }
 }) => {
   const [loading, setLoading] = useState(false);
-  const [fileList, setFileList] = useState(value ? [{ url: value, response: { objectUrl: value } }] : []);
+  const [duration, setDuration] = useState(null);
+  const [fileList, setFileList] = useState([]);
   const [resUrl, setResUrl] = useState(); // 上一次上传的服务器获取的链接
 
   useEffect(() => {
     if(value){
-      value != resUrl && setFileList([{ url: value, response: { objectUrl: value } }])
+      value != resUrl && setFileList([{ 
+        url: value,
+        name: value.split('/').slice(-1)[0],
+        response: { objectUrl: value }
+      }])
     }else{
       setFileList([])
     }
@@ -35,6 +41,7 @@ const ImageUpload = ({
       onChange({
         url: response.objectUrl,
         id: response.id,
+        duration
       })
       setLoading(false)
     }
@@ -50,23 +57,29 @@ const ImageUpload = ({
   }
 
   const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!');
+    if(!isMedia){
+        return Promise.resolve(file)
     }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
-    }
-    return isJpgOrPng && isLt2M;
+    const url = URL.createObjectURL(file);
+    // audio可获取视频或音频的时长
+    const audioCtx = new Audio(url);
+    return new Promise((resolve) => {
+        audioCtx.addEventListener("loadedmetadata", () => {
+            resolve(file)
+            const duration = Math.ceil(audioCtx.duration);
+            let minute = Math.floor(duration / 60)
+            minute = minute > 9 ? minute : '0' + minute;
+            let second = duration % 60
+            second = second > 9 ? second : '0' + second;
+            setDuration(`${minute}:${second}`)
+        })
+    })
   }
-
   return (
     <Upload
       name="file"
-      accept='.jpg,.jpeg,.png,.gif'
-      listType="picture"
-      maxCount={1}
+      accept={accept}
+      listType="text"
       fileList={fileList}
       showUploadList={true}
       action={`/api/admin/v1/medias/upload?permission=${permission}&domain=${domain}`}
@@ -74,14 +87,16 @@ const ImageUpload = ({
       onChange={handleChange}
       onRemove={handleRemove}
     >
-      { fileList.length > 0 ? null : <Button icon={loading ? <LoadingOutlined /> : <UploadOutlined />}>Upload</Button> }
-    </Upload>
-  )
+    { fileList.length > 0 ? null : <Button icon={loading ? <LoadingOutlined /> : <UploadOutlined />}>Upload</Button> }
+  </Upload>
+  );
 };
-ImageUpload.propTypes = {
+FileUpload.propTypes = {
   domain: PropTypes.string,
   permission: PropTypes.string,
   value: PropTypes.string,
+  accept: PropTypes.string,
+  isMedia: PropTypes.bool,
   onChange: PropTypes.func
 }
-export default ImageUpload;
+export default FileUpload;

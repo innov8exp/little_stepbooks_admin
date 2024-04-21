@@ -2,11 +2,11 @@ import { App, Button, Card, message, Table, Image } from 'antd'
 import axios from 'axios'
 import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
-import { useState, useEffect, useCallback } from 'react'
-import MediaForm from './mediaForm'
-import BatchUploadList from '@/components/batch-upload'
+import { useState, useEffect } from 'react'
+import EditForm from '@/components/edit-form'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
+import BatchUploadList from '@/components/batch-upload'
 import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
@@ -16,25 +16,40 @@ const VideoListPage = () => {
   const goodsId = params?.id;
   const { t } = useTranslation()
   const { modal } = App.useApp()
-  const [changeTime, setChangeTime] = useState(Date.now())
-  const [videoData, setVideoData] = useState()
+  const [listData, setListData] = useState([])
   const [batchVisible, setBatchVisible] = useState(false)
-  const [formVisible, setFormVisible] = useState(false)
-  const [selectedId, setSelectedId] = useState()
+  const [ediVisible, setEdiVisible] = useState(false)
+  const [editData, setEditData] = useState({})
   const [pageNumber, setPageNumber] = useState(1)
-  const [pageSize] = useState(10)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [total, setTotal] = useState(0)
+  const pageSize = 10;
   const paginationProps = {
     pageSize,
     current: pageNumber,
     total,
     onChange: (current) => {
       setPageNumber(current)
+      loadListData()
     }
   }
 
-  const fetchGoodsVideos = useCallback(() => {
+  // 页面创建后加载一遍数据
+  useEffect(() => {
+    const searchURL = `/api/admin/v1/virtual-goods-video?currentPage=1&pageSize=10&goodsId=${goodsId}`
+    axios.get(searchURL).then((res) => {
+      if (res && res.status === HttpStatus.OK) {
+        const { records, total } = res.data;
+        setListData(records)
+        setTotal(total)
+        setLoading(false)
+      }
+    }).catch(() => {
+      setLoading(false)
+    })
+  }, [goodsId])
+
+  const loadListData = function () {
     setLoading(true)
     const searchURL = `/api/admin/v1/virtual-goods-video?currentPage=${pageNumber}&pageSize=${pageSize}&goodsId=${goodsId}`
     axios
@@ -42,7 +57,7 @@ const VideoListPage = () => {
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
-          setVideoData(responseObject.records)
+          setListData(responseObject.records)
           setTotal(responseObject.total)
         }
       })
@@ -51,21 +66,19 @@ const VideoListPage = () => {
           `${t('message.error.failureReason')}${err.response?.data?.message}`,
         ),
       )
-      .finally(() => setLoading(false))
-  }, [pageNumber, pageSize, t])
-
-  const handleBatchAddAction = () => {
-    setBatchVisible(true)
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   const handleAddAction = () => {
-    setSelectedId(null)
-    setFormVisible(true)
+    setEdiVisible(true)
+    setEditData({})
   }
 
   const handleEditAction = (item) => {
-    setSelectedId(item.id)
-    setFormVisible(true)
+    setEdiVisible(true)
+    setEditData(item)
   }
 
   const handleDeleteAction = (id) => {
@@ -76,20 +89,16 @@ const VideoListPage = () => {
       okType: 'primary',
       cancelText: `${t('button.cancel')}`,
       onOk() {
-        axios
-          .delete(`/api/admin/v1/virtual-goods-video/${id}`)
+        axios.delete(`/api/admin/v1/physical-goods/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
-              setChangeTime(Date.now())
-              message.success(`${t('message.archiveSuccessful')}`)
+              message.success(t('message.successInfo'))
+              loadListData()
             }
           })
           .catch((err) => {
-            message.error(
-              `${t('message.error.failureReason')}${
-                err.response?.data?.message
-              }`,
-            )
+            console.error(err)
+            message.error(err.message)
           })
       },
     })
@@ -124,22 +133,19 @@ const VideoListPage = () => {
 
   const onBatchOk = () => {
     setBatchVisible(false)
-    setChangeTime(Date.now())
+    loadListData()
   }
 
   const onBatchCancel = () => {
     setBatchVisible(false)
   }
 
-  useEffect(() => {
-    fetchGoodsVideos()
-  }, [fetchGoodsVideos, pageNumber, changeTime])
-
-
   return (
-    <Card title={t('button.videoManage')}>
+    <Card title={t('menu.virtualVideoList')}>
       <ButtonWrapper>
-          <Button type="primary" onClick={handleBatchAddAction}>
+          <Button type="primary" onClick={() => {
+            setBatchVisible(true)
+          }}>
               {t('button.batchAddVideo')}
           </Button>
           <Button style={{ marginLeft: '20px' }} type="primary" onClick={handleAddAction}>
@@ -154,37 +160,37 @@ const VideoListPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: `${t('title.name')}`,
+            title: `${t('name')}`,
             key: 'name',
             dataIndex: 'name',
           },
           {
-            title: `${t('title.duration')}`,
+            title: `${t('coverImage')}`,
+            key: 'coverUrl',
+            dataIndex: 'coverUrl',
+            render: (text) => <Image height={50} src={text} />,
+          },
+          {
+            title: `${t('duration')}`,
             key: 'duration',
             dataIndex: 'duration',
           },
           {
-            title: `${t('title.video')}`,
+            title: `${t('video')}`,
             key: 'videoUrl',
             dataIndex: 'videoUrl',
             render: (text, record) => {
                 return(
                     <video
-                    style={ {
-                        width: '240px',
-                        height: '135px'
-                    } }
-                    src={ record.videoUrl }
-                    controls
+                      style={ {
+                          width: '160px',
+                          height: '90px'
+                      }}
+                      src={ record.videoUrl }
+                      controls
                     ></video>
                 )
             }
-          },
-          {
-            title: `${t('title.cover')}`,
-            key: 'coverUrl',
-            dataIndex: 'coverUrl',
-            render: (text) => text && <Image height={50} src={text} />,
           },
           {
             title: `${t('title.creationTime')}`,
@@ -194,7 +200,7 @@ const VideoListPage = () => {
           {
             title: `${t('title.operate')}`,
             key: 'action',
-            width: 160,
+            width: 80,
             render: (text, record) => {
               return (
                 <div>
@@ -216,19 +222,9 @@ const VideoListPage = () => {
           },
         ]}
         rowKey={(record) => record.id}
-        dataSource={videoData}
+        dataSource={listData}
         loading={loading}
         pagination={paginationProps}
-      />
-      <MediaForm
-        isAudio={false}
-        visible={formVisible}
-        onCancel={() => setFormVisible(false)}
-        onSave={() => {
-          setFormVisible(false)
-          setChangeTime(Date.now())
-        }}
-        id={selectedId}
       />
       <BatchUploadList
         visible={batchVisible}
@@ -237,6 +233,25 @@ const VideoListPage = () => {
         onAdd={onVideoAdd}
         onOk={onBatchOk}
         onCancel={onBatchCancel}
+      />
+      <EditForm
+        visible={ediVisible}
+        apiPath='virtual-goods-video'
+        domain='PRODUCT'
+        title='title.virtualVideo'
+        formData={editData}
+        appendData={{ goodsId }}
+        formKeys={[
+          { type:'input', key: 'name'},
+          { type:'photo', key: 'coverUrl', groupKeys:['coverId']},
+          { type:'video', key: 'videoUrl', groupKeys:['videoId', 'duration']},
+          { type:'number', min: 1, max: null, key: 'sortIndex' },
+        ]}
+        onCancel={() => setEdiVisible(false)}
+        onSave={() => {
+          setEdiVisible(false)
+          loadListData()
+        }}
       />
     </Card>
   )
