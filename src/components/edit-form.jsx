@@ -1,4 +1,5 @@
-import { Form, Input, Modal, message, Select, InputNumber } from 'antd'
+import { useState } from 'react'
+import { Form, Input, Modal, message, Select, InputNumber, Checkbox } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
@@ -10,17 +11,20 @@ import FileUpload from './file-upload'
 const labelMap = {
   title: 'title',
   name: 'name',
+  skuName: 'name',
   description: 'description',
   coverUrl: 'coverImage',
   detailUrl: 'detailImage',
   audioUrl: 'audio',
   videoUrl: 'video',
   sortIndex: 'sortNumber',
+  tags: 'tags',
 }
 
 const placeholderMap = {
   title: 'message.check.title',
   name: 'message.check.name',
+  skuName: 'message.check.name',
   description: 'message.check.desc',
 }
 
@@ -31,7 +35,9 @@ const itemPropTypes = {
   max: PropTypes.number,
   key: PropTypes.string,
   groupKeys: PropTypes.array,
-  options: PropTypes.array
+  options: PropTypes.array,
+  mode: PropTypes.string,
+  format: PropTypes.func,
 }
 
 const EditForm = ({ 
@@ -54,12 +60,23 @@ const EditForm = ({
   const url = `/api/admin/v1/${apiPath}` + (isAdd ? '' : `/${formData.id}`)
   const method = isAdd ? 'post' : 'put'
   const showTitle = t(title) + t('CONNECT_MARK1') + t(isAdd ? 'button.create' : 'button.edit')
+  // 存在一些冗余的字段需要独立维护，通过 hiddenData 对象进行维护
+  // 视频、音频、图片资源需要追加对应的 id 字段， 视频、音频保持追加 duration 字段
+  // check 表单同时维护id、name
+  const hiddenFormData = {};
+  formKeys.forEach(item => {
+    item.groupKeys && item.groupKeys.forEach(key => {
+      hiddenFormData[key] = formData[key]
+    })
+  })
+  console.log()
 
   if(visible && !isAdd){
     setTimeout(() => {
       form.setFieldsValue({
         ...formData
       })
+      console.log(formData)
     }, 0)
   }
 
@@ -70,7 +87,12 @@ const EditForm = ({
 
   const saveData = () => {
     form.validateFields().then(values => {
-      const data = Object.assign(values, appendData)
+      formKeys.forEach(item => {
+        if(item.format){ // 假如传递的某一个参数项存在数值的format函数，需要对其表单传递的值进行转换
+          values[item.key] = item.format(values[item.key])
+        }
+      })
+      const data = Object.assign(values, hiddenFormData, appendData)
       axios.request({
         url,
         method,
@@ -84,7 +106,8 @@ const EditForm = ({
       }).catch(() => {
         message.error(`save data failed, server error`)
       })
-    }).catch(() => {
+    }).catch((err) => {
+      console.log(err)
       message.error('请完善表单信息')
     })
   }
@@ -96,7 +119,9 @@ const EditForm = ({
     max,
     key,
     groupKeys,
-    options
+    options,
+    mode,
+    // ...props
   }) => {
     placeholder =  t(placeholder || placeholderMap[key] || key)
     if(type === 'input' || type === 'hidden'){
@@ -111,33 +136,62 @@ const EditForm = ({
     if(type === 'photo'){
       return (<ImageUpload domain={domain} permission={permission} value={formData[key]} onChange={res => {
         form.setFieldValue(key, res.url)
-        groupKeys && groupKeys.forEach(key => {
-          form.setFieldValue(key, res.id)
-        })
+        if(groupKeys) {
+          Object.assign(hiddenFormData, {
+            [groupKeys[0]]: res.id
+          })
+        }
       }} />)
     }
     if(type === 'select'){
-      return (<Select placeholder={placeholder} options={options} />)
+      return (<Select placeholder={placeholder} mode={mode} options={options} />)
+    }
+    if(type === 'checkbox'){
+      return (
+        <Checkbox></Checkbox>
+      )
+    }
+    if(type === 'checkbox.group'){
+      return (
+        <Checkbox.Group options={options} onChange={valueArr => {
+          form.setFieldValue(key, valueArr)
+          if(groupKeys) {
+            const arr = [];
+            const optionMap = {};
+            options.forEach(option => {
+              optionMap[option.value] = option.name
+            })
+            valueArr && valueArr.forEach(val => {
+              arr.push(optionMap[val])
+            })
+            Object.assign(hiddenFormData, {
+              [groupKeys[0]]: arr
+            })
+          }
+        }} />
+      )
     }
     if(type === 'audio' || type === 'video'){
       const accept = type === 'audio' ? '.mp3,.m4a' : '.mp4'
       return (<FileUpload domain={domain} permission={permission} fileUrl={formData[key]} accept={accept} isMedia={true} onChange={res => {
         form.setFieldValue(key, res.url)
-        groupKeys && groupKeys.forEach(key => {
-          if(key === 'duration'){
-            form.setFieldValue(key, res.duration)
-          }else{
-            form.setFieldValue(key, res.id)
-          }
-        })
+        if(groupKeys){
+          const newData = {}
+          groupKeys.forEach(gKey => {
+            newData[gKey] = gKey === 'duration' ? res.duration : res.id
+          })
+          Object.assign(hiddenFormData, newData)
+        }
       }} />)
     }
     if(type === 'file'){
       return (<FileUpload domain={domain} permission={permission} fileUrl={formData[key]} onChange={res => {
         form.setFieldValue(key, res.url)
-        groupKeys && groupKeys.forEach(key => {
-          form.setFieldValue(key, res.id)
-        })
+        if(groupKeys){
+          Object.assign(hiddenFormData, {
+            [groupKeys[0]]: res.id
+          })
+        }
       }} />)
     }
     return null
@@ -146,16 +200,16 @@ const EditForm = ({
   BuildFormItem.propTypes = itemPropTypes;
 
   const  BuildFormList = () => {
-    let allKeys = [...formKeys];
-    // 对于视频、音频、图片资源需要追加对应的 id 字段， 视频、音频保持追加 duration 字段
-    formKeys.forEach(item => {
-      if(item.groupKeys){
-        allKeys = allKeys.concat(item.groupKeys.map(key => ({ key, type: 'hidden' })))
-      }
-    })
-    return allKeys.map(item => {
+    // let allKeys = [...formKeys];
+    // // 对于视频、音频、图片资源需要追加对应的 id 字段， 视频、音频保持追加 duration 字段
+    // formKeys.forEach(item => {
+    //   if(item.groupKeys){
+    //     allKeys = allKeys.concat(item.groupKeys.map(key => ({ key, type: 'hidden' })))
+    //   }
+    // })
+    return formKeys.map(item => {
       return (
-        <Form.Item key={item.key} name={item.key} label={t(item.label || labelMap[item.key] || item.key)} hidden={item.type === 'hidden'}>
+        <Form.Item key={item.key} name={item.key} label={t(item.label || labelMap[item.key] || item.key)}>
           { BuildFormItem(item) }
         </Form.Item>
       )

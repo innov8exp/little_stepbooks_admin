@@ -24,8 +24,7 @@ const PhysicalListPage = () => {
     current: pageNumber,
     total,
     onChange: (current) => {
-      setPageNumber(current)
-      loadListData()
+      loadListData(current)
     }
   }
 
@@ -44,7 +43,8 @@ const PhysicalListPage = () => {
     })
   }, [])
 
-  const loadListData = function () {
+  const loadListData = function (currentPage) {
+    currentPage = currentPage || pageNumber
     setLoading(true)
     const searchURL = `/api/admin/v1/physical-goods?currentPage=${pageNumber}&pageSize=${pageSize}`
     axios
@@ -52,6 +52,7 @@ const PhysicalListPage = () => {
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
+          setPageNumber(currentPage)
           setListData(responseObject.records)
           setTotal(responseObject.total)
         }

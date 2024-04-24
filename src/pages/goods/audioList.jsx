@@ -29,8 +29,7 @@ const AudioListPage = () => {
     current: pageNumber,
     total,
     onChange: (current) => {
-      setPageNumber(current)
-      loadListData()
+      loadListData(current)
     }
   }
 
@@ -49,14 +48,16 @@ const AudioListPage = () => {
     })
   }, [goodsId])
 
-  const loadListData = function () {
+  const loadListData = function (currentPage) {
     setLoading(true)
-    const searchURL = `/api/admin/v1/virtual-goods-audio?currentPage=${pageNumber}&pageSize=${pageSize}&goodsId=${goodsId}`
+    currentPage = currentPage || pageNumber
+    const searchURL = `/api/admin/v1/virtual-goods-audio?currentPage=${currentPage}&pageSize=${pageSize}&goodsId=${goodsId}`
     axios
       .get(searchURL)
       .then((res) => {
         if (res && res.status === HttpStatus.OK) {
           const responseObject = res.data
+          setPageNumber(currentPage)
           setListData(responseObject.records)
           setTotal(responseObject.total)
         }
