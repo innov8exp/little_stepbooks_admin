@@ -370,6 +370,7 @@
   "button.batchAddVideo": "批量添加视频",
   "button.selectAudioAndImg": "选择音频和封面",
   "button.selectVideoAndImg": "选择视频和封面",
+  "message.dataHasNotChanged": "数据不存在变更",
   "message.noDetailImg": "暂无图片，点击选择图片上传",
   "message.check.title": "请输入标题",
   "message.check.name": "请输入名称",

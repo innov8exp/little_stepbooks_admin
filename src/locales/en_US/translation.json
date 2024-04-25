@@ -369,6 +369,7 @@
   "button.batchAddVideo": "Batch Add Video",
   "button.selectAudioAndImg": "Select Audio And Img",
   "button.selectVideoAndImg": "Select Video And Img",
+  "message.dataHasNotChanged": "Data has not changed",
   "message.noDetailImg": "No images available. Click to upload",
   "message.check.title": "Please enter a title",
   "message.check.name": "Please enter a name",

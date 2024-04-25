@@ -1,4 +1,4 @@
-import { App, Button, Card, message, Table, Image, Form, Row, Col, Input } from 'antd'
+import { App, Button, Card, message, Table, Image, Form, Row, Input } from 'antd'
 import {
   ExclamationCircleOutlined,
   SearchOutlined,
@@ -24,8 +24,7 @@ const ProductListPage = () => {
   const [total, setTotal] = useState(0)
   const [queryForm] = Form.useForm()
   const [classifications, setClassifications] = useState([])
-  const [editDetailImgId, setEditDetailImgId] = useState(null)
-  const [detailImgName, setDetailImgName] = useState(null)
+  const [editDetailImgForm, setEditDetailImgForm] = useState({})
   const pageSize = 10;
   const paginationProps = {
     pageSize,
@@ -126,21 +125,13 @@ const ProductListPage = () => {
     })
   }
 
-  const handleDetailImageEdit = ({ skuName, detailImgId }) => {
-    setEditDetailImgId(detailImgId)
-    setDetailImgName(`${skuName}的详情图`)
+  const handleDetailImageEdit = (item) => {
+    setEditDetailImgForm({
+      id: item.id,
+      detailImgId: item.detailImgId,
+      detailImgName: `${item.skuName}的详情图`
+    })
     setDetailImageEditVisible(true)
-    // if(detailImgId){
-    //   setEditDetailImgId(detailImgId)
-    //   setDetailImageEditVisible(true)
-    // }else{
-    //   axios.post('/api/admin/v1/detail-image', { name: `${skuName}的详情图` }).then(res => {
-    //     if (res && res.status === HttpStatus.OK) {
-    //       setEditDetailImgId(res.data.id)
-    //       setDetailImageEditVisible(true)
-    //     }
-    //   })
-    // }
   }
 
   const onDetailImgCancel = () => {
@@ -148,7 +139,14 @@ const ProductListPage = () => {
   }
 
   const onDetailImgSave = (id) => {
-
+    if(!editDetailImgForm.detailImgId){ // 编辑的对象不存在详情图关联
+      axios.put(`/api/admin/v1/products/${editDetailImgForm.id}/simple-update`, { detailImgId: id }).then(() => {
+        setDetailImageEditVisible(false)
+        loadListData()
+      })
+    }else{
+      setDetailImageEditVisible(false)
+    }
   }
 
   // 商品价格、上下线
@@ -289,8 +287,8 @@ const ProductListPage = () => {
       />
       <DetailImages
         visible={detailImageEditVisible}
-        id={editDetailImgId}
-        detailName={detailImgName}
+        id={editDetailImgForm.detailImgId}
+        detailName={editDetailImgForm.detailImgName}
         onSave={onDetailImgSave}
         onCancel={onDetailImgCancel}
       />

@@ -19,23 +19,22 @@ const DetailImages = ({ id, visible, detailName, onSave, onCancel }) => {
   const [imgArr, setImgArr] = useState([])
   const oneInputRef = useRef(null);
   const batchInputRef = useRef(null);
-  const dataMapBeforeSave = {};
   let insertStart = 0;
   
   useEffect(() => {
     if (id) {
       axios.get(`/api/admin/v1/detail-image-cut?detailImgId=${id}`).then(res => {
         if (res && res.status === HttpStatus.OK) {
-          setImgArr(res.data.map(item => {
-            dataMapBeforeSave[item.imgId] = item;
-            return { ...item, status: 'show' }
-          }))
+          const arr = res.data.map(item => {
+            return { ...item, isDelete: false }
+          })
+          setImgArr(arr)
         }
       }).catch((err) => message.error(`load error:${err.message}`))
     }else{
       setImgArr([])
     }
-  }, [dataMapBeforeSave, id, visible])
+  }, [id, visible])
 
   const onOneImgPicker = (e) => {
     console.log(e)
@@ -50,7 +49,7 @@ const DetailImages = ({ id, visible, detailName, onSave, onCancel }) => {
         arr.push({
           imgUrl: URL.createObjectURL(file),
           file,
-          status: 'show'
+          isDelete: false
         })
     }
     const newArr = imgArr.slice()
@@ -84,16 +83,123 @@ const DetailImages = ({ id, visible, detailName, onSave, onCancel }) => {
   const onDelete = (idx) => {
     setImgArr(imgArr.map((item, index) => {
       if(index === idx){
-        return { ...item, status: 'delete' }
+        return { ...item, isDelete: true }
       }else{
         return item
       }
     }))
   }
 
+  const update = (item, data) => {
+    return new Promise(function (resolve, reject) {
+      axios.put(`/api/admin/v1/detail-image-cut/${item.id}`, data).then(res => {
+        if (res && res.status === HttpStatus.OK){
+          resolve({
+            ...item,
+            ...data,
+            file: null
+          })
+        }else{
+          reject()
+        }
+      }).catch(err => reject(err))
+    })
+  }
+  const add = (data) => {
+    return new Promise(function (resolve, reject) {
+      axios.post(`/api/admin/v1/detail-image-cut`, data).then(res => {
+        if (res && res.status === HttpStatus.OK){
+          resolve(res)
+        }else{
+          reject()
+        }
+      }).catch(err => reject(err))
+    })
+  }
+
+  const uploadImg = (file) => {
+    return new Promise(function (resolve, reject) {
+      const form = new FormData()
+      form.append('file', file)
+      axios({
+          method:'post',
+          url: '/api/admin/v1/medias/upload?permission=PUBLIC&domain=PRODUCT',
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          data: form
+      }).then(res => {
+        if (res && res.status === HttpStatus.OK) {
+          const { objectUrl, id } = res.data;
+          resolve({
+            imgId: id,
+            imgUrl: objectUrl
+          })
+        }else{
+          reject(res.message)
+        }
+      }).catch((err) => reject(err))
+    })
+  }
+
+  const updateByLocalImg = (item, sortIndex) => {
+    return new Promise(function (resolve, reject) {
+      uploadImg(item.file).then(({ imgId, imgUrl }) => {
+        update(item, {
+          imgId,
+          imgUrl,
+          sortIndex
+        }).then(res => resolve(res)).catch(err => reject(err))
+      }).catch((err) => reject(err))
+    })
+  }
+
+  const addByLocalImg = (item, sortIndex, detailImgId) => {
+    return new Promise(function (resolve, reject) {
+      uploadImg(item.file).then(({ imgId, imgUrl }) => {
+        add({
+          sortIndex,
+          detailImgId,
+          imgId,
+          imgUrl
+        }).then(res => resolve(res)).catch(err => reject(err))
+      }).catch((err) => reject(err))
+    })
+  }
+
   const saveData = (detailImgId) => {
     const tasks = [];
-    onSave(detailImgId)
+    imgArr.filter(item => {
+      if(item.isDelete){
+        if(item.id){ // 已存在的数据调用接口删除
+          tasks.push(axios.delete(`/api/admin/v1/detail-image-cut/${item.id}`))
+        }
+        return false
+      }else{
+        return true
+      }
+    }).forEach((item, index) => {
+      // 是已存在的图片资源，更新排序值或url
+      if(item.id){
+        if(item.file){ // 使用本地的文件来做替换
+          tasks.push(updateByLocalImg(item, index))
+        }else if(item.sortIndex != index){ // 有过排序上的调整，更新排序
+          tasks.push(update(item, { sortIndex: index }))
+        }
+      }else{
+        tasks.push(addByLocalImg(item, index, detailImgId))
+      }
+    })
+    if(tasks.length > 0){
+      Promise.all(tasks).then(() => {
+        onSave(detailImgId)
+      }).catch(err => {
+        console.log(err)
+      })
+    }else{
+      message.info(t('message.dataHasNotChanged'))
+      onCancel()
+    }
   }
 
   const onOk = () => {
@@ -102,14 +208,14 @@ const DetailImages = ({ id, visible, detailName, onSave, onCancel }) => {
     }else{
       axios.post('/api/admin/v1/detail-image', { name: detailName }).then(res => {
         if (res && res.status === HttpStatus.OK) {
-          saveData(res.data.id, true)
+          saveData(res.data.id)
         }
       })
     }
   }
 
   const ImgList = () => {
-    if(imgArr.some(item => item.status === 'show')){
+    if(imgArr.some(item => !item.isDelete)){
       return imgArr.map((item, index) => ImgContainer(item, index))
     }else{
       return (
@@ -124,9 +230,9 @@ const DetailImages = ({ id, visible, detailName, onSave, onCancel }) => {
   }
 
   const ImgContainer = (item, index) => {
-    if(item.status === 'show'){
+    if(!item.isDelete){
       return (
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative' }} key={index}>
           <div style={{ width: 420 }}>
             <img src={item.imgUrl} alt="step" style={{ display: 'block', width: '100%', height: 'auto' }} />
             <div style={{ fontSize: 20, textAlign: 'center', lineHeight: 2, cursor: 'pointer' }} onClick={() => onBatchAdd(index + 1)}>
