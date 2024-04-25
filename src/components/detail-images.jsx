@@ -20,10 +20,11 @@ const DetailImages = ({ id, visible, detailName, onSave, onCancel }) => {
   const oneInputRef = useRef(null);
   const batchInputRef = useRef(null);
   let insertStart = 0;
+  let editIndex = 0;
   
   useEffect(() => {
     if (id) {
-      axios.get(`/api/admin/v1/detail-image-cut?detailImgId=${id}`).then(res => {
+      axios.get(`/api/admin/v1/detail-image-cut?detailImgId=${id}&currentPage=1&pageSize=100`).then(res => {
         if (res && res.status === HttpStatus.OK) {
           const arr = res.data.map(item => {
             return { ...item, isDelete: false }
@@ -37,7 +38,19 @@ const DetailImages = ({ id, visible, detailName, onSave, onCancel }) => {
   }, [id, visible])
 
   const onOneImgPicker = (e) => {
-    console.log(e)
+    const file = e.target.files[0]
+    setImgArr(imgArr.map((item, index) => {
+      if(editIndex === index){
+        return {
+          ...item,
+          imgId: null,
+          imgUrl: URL.createObjectURL(file),
+          file
+        }
+      }else{
+        return item
+      }
+    }))
   }
 
   const onImgPickerChange = (e) => {
@@ -45,7 +58,6 @@ const DetailImages = ({ id, visible, detailName, onSave, onCancel }) => {
     const files = e.target.files
     for (let i = 0; i < files.length; i++) {
         const file = files[i]
-        URL.createObjectURL(file)
         arr.push({
           imgUrl: URL.createObjectURL(file),
           file,
@@ -64,7 +76,8 @@ const DetailImages = ({ id, visible, detailName, onSave, onCancel }) => {
   }
 
   // 编辑其中一张照片
-  const onEdit = item => {
+  const onEdit = index => {
+    editIndex = index
     oneInputRef.current.click()
   }
 
@@ -244,7 +257,7 @@ const DetailImages = ({ id, visible, detailName, onSave, onCancel }) => {
               <ArrowUpOutlined onClick={() => onSortClick(index, -1)}  />
             </div>
             <div>
-              <EditOutlined onClick={() => onEdit(item)} />
+              <EditOutlined onClick={() => onEdit(index)} />
             </div>
             <div style={{ color: '#f00' }}>
               <DeleteOutlined onClick={() => onDelete(index)} />

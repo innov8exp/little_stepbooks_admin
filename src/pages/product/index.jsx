@@ -140,7 +140,7 @@ const ProductListPage = () => {
 
   const onDetailImgSave = (id) => {
     if(!editDetailImgForm.detailImgId){ // 编辑的对象不存在详情图关联
-      axios.put(`/api/admin/v1/products/${editDetailImgForm.id}/simple-update`, { detailImgId: id }).then(() => {
+      axios.put(`/api/admin/v1/products/${editDetailImgForm.id}/simple-update?detailImgId=${id}`).then(() => {
         setDetailImageEditVisible(false)
         loadListData()
       })
