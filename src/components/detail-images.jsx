@@ -1,4 +1,4 @@
-import { Modal, message, Row, Col, Button } from 'antd'
+import { Modal, message } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import PropTypes from 'prop-types'

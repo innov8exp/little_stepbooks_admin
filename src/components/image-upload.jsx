@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { LoadingOutlined, UploadOutlined } from '@ant-design/icons';
-import { message, Upload, Button } from 'antd';
+import { message, Upload, Button, Image } from 'antd';
 import PropTypes from 'prop-types'
-
+const getBase64 = (file) =>
+    new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+});
 const ImageUpload = ({
   domain = 'DEFAULT',
   permission = 'PUBLIC',
@@ -11,27 +17,45 @@ const ImageUpload = ({
     console.log(e)
   }
 }) => {
+  const initData = value ? [{ 
+    url: value,
+    name: value.split('/').slice(-1)[0],
+    response: { 
+      objectUrl: value
+    }
+  }] : [];
   const [loading, setLoading] = useState(false);
-  const [fileList, setFileList] = useState(value ? [{ url: value, response: { objectUrl: value } }] : []);
-  const [resUrl, setResUrl] = useState(); // 上一次上传的服务器获取的链接
+  const [fileList, setFileList] = useState(initData);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
 
   useEffect(() => {
     if(value){
-      value != resUrl && setFileList([{ url: value, response: { objectUrl: value } }])
-    }else{
+      if(fileList.length > 0 && value === fileList[0].response.objectUrl){
+        return
+      }
+      setFileList(initData)
+    }else if(fileList.length > 0){
       setFileList([])
     }
-  }, [value, resUrl])
+  }, [value])
+
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+  };
 
   const handleChange = function(info) {
-    const {file: { status, response }, fileList} = info
-    setFileList(fileList)
+    const {file: { status, response }, fileList: newFileList} = info
+    setFileList(newFileList)
     if (status === 'uploading') {
       setLoading(true);
       return;
     }
     if (status === 'done') {
-      setResUrl(response.objectUrl)
       onChange({
         url: response.objectUrl,
         id: response.id,
@@ -42,7 +66,6 @@ const ImageUpload = ({
 
   const handleRemove = function(){
     setLoading(false);
-    setResUrl(null)
     onChange({
       url: null,
       id: null
@@ -62,20 +85,36 @@ const ImageUpload = ({
   }
 
   return (
-    <Upload
-      name="file"
-      accept='.jpg,.jpeg,.png,.gif'
-      listType="picture"
-      maxCount={1}
-      fileList={fileList}
-      showUploadList={true}
-      action={`/api/admin/v1/medias/upload?permission=${permission}&domain=${domain}`}
-      beforeUpload={beforeUpload}
-      onChange={handleChange}
-      onRemove={handleRemove}
-    >
-      { fileList.length > 0 ? null : <Button icon={loading ? <LoadingOutlined /> : <UploadOutlined />}>Upload</Button> }
-    </Upload>
+    <>
+      <Upload
+        name="file"
+        accept='.jpg,.jpeg,.png,.gif'
+        listType="picture"
+        maxCount={1}
+        fileList={fileList}
+        showUploadList={true}
+        action={`/api/admin/v1/medias/upload?permission=${permission}&domain=${domain}`}
+        onPreview={handlePreview}
+        beforeUpload={beforeUpload}
+        onChange={handleChange}
+        onRemove={handleRemove}
+      >
+        { fileList.length > 0 ? null : <Button icon={loading ? <LoadingOutlined /> : <UploadOutlined />}>Upload</Button> }
+      </Upload>
+      {previewImage && (
+        <Image
+          wrapperStyle={{
+            display: 'none',
+          }}
+          preview={{
+            visible: previewOpen,
+            onVisibleChange: (visible) => setPreviewOpen(visible),
+            afterOpenChange: (visible) => !visible && setPreviewImage(''),
+          }}
+          src={previewImage}
+        />
+      )}
+    </>
   )
 };
 ImageUpload.propTypes = {

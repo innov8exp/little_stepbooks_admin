@@ -93,10 +93,15 @@ const ProductListPage = () => {
     axios.get('/api/admin/v1/products/' + id).then(res => {
       if (res && res.status === HttpStatus.OK) {
         setEdiVisible(true)
+        const { medias, tags } = res.data;
         setEditData({
           id,
           ...res.data,
-          tags: res.data.tags ? res.data.tags.split(',') : null
+          medias: medias ? medias.map(item => ({
+            imgId: item.mediaId,
+            imgUrl: item.mediaUrl
+          })) : [],
+          tags: tags ? tags.split(',') : null
         })
       }
     })
@@ -267,6 +272,10 @@ const ProductListPage = () => {
           { type:'textarea', key: 'description'},
           { type:'photo', key: 'coverImgUrl', label: 'coverImage', groupKeys:['coverImgId']},
           { type:'video', key: 'videoUrl', groupKeys:['videoId']},
+          { type:'photo-list', key: 'medias', label: 'topBanner', format: value => value.map(item => ({
+            mediaId: item.imgId,
+            mediaUrl: item.imgUrl
+          }))},
           { type:'checkbox.group', key: 'classificationIds', label: 'title.classification', options: classifications },
           { type:'checkbox.group', key: 'parsedSalesPlatforms', label: 'title.salesPlatforms', options: [
             { value: 'MINI_PROGRAM', label: t('MINI_PROGRAM') },

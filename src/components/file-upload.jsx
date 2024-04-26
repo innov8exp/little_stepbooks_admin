@@ -12,32 +12,36 @@ const FileUpload = ({
     console.log(e)
   }
 }) => {
+  const initData = value ? [{ 
+    url: value,
+    name: value.split('/').slice(-1)[0],
+    response: { 
+      objectUrl: value
+    }
+  }] : [];
   const [loading, setLoading] = useState(false);
   const [duration, setDuration] = useState(null);
-  const [fileList, setFileList] = useState([]);
-  const [resUrl, setResUrl] = useState(); // 上一次上传的服务器获取的链接
+  const [fileList, setFileList] = useState(initData);
 
   useEffect(() => {
     if(value){
-      value != resUrl && setFileList([{ 
-        url: value,
-        name: value.split('/').slice(-1)[0],
-        response: { objectUrl: value }
-      }])
-    }else{
+      if(fileList.length > 0 && value === fileList[0].response.objectUrl){
+        return
+      }
+      setFileList(initData)
+    }else if(fileList.length > 0){
       setFileList([])
     }
-  }, [value, resUrl])
+  }, [value])
 
   const handleChange = function(info) {
-    const {file: { status, response }, fileList} = info
-    setFileList(fileList)
+    const {file: { status, response }, fileList: newFileList } = info
+    setFileList(newFileList)
     if (status === 'uploading') {
       setLoading(true);
       return;
     }
     if (status === 'done') {
-      setResUrl(response.objectUrl)
       onChange({
         url: response.objectUrl,
         id: response.id,
@@ -49,7 +53,6 @@ const FileUpload = ({
 
   const handleRemove = function(){
     setLoading(false);
-    setResUrl(null)
     onChange({
       url: null,
       id: null

@@ -6,6 +6,7 @@ import HttpStatus from 'http-status-codes'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import ImageUpload from './image-upload'
+import ImagesUpload from './images-upload'
 import FileUpload from './file-upload'
 
 const labelMap = {
@@ -69,14 +70,13 @@ const EditForm = ({
       hiddenFormData[key] = formData[key]
     })
   })
-  console.log()
 
+  // 编辑显示的模式下，在下一个 event loop 对表单进行重置 
   if(visible && !isAdd){
     setTimeout(() => {
       form.setFieldsValue({
         ...formData
       })
-      console.log(formData)
     }, 0)
   }
 
@@ -121,6 +121,7 @@ const EditForm = ({
     groupKeys,
     options,
     mode,
+    maxCount,
     // ...props
   }) => {
     placeholder =  t(placeholder || placeholderMap[key] || key)
@@ -141,6 +142,11 @@ const EditForm = ({
             [groupKeys[0]]: res.id
           })
         }
+      }} />)
+    }
+    if(type === 'photo-list'){
+      return (<ImagesUpload domain={domain} permission={permission} value={formData[key]} maxCount={maxCount} onChange={res => {
+        form.setFieldValue(key, res)
       }} />)
     }
     if(type === 'select'){
@@ -200,13 +206,6 @@ const EditForm = ({
   BuildFormItem.propTypes = itemPropTypes;
 
   const  BuildFormList = () => {
-    // let allKeys = [...formKeys];
-    // // 对于视频、音频、图片资源需要追加对应的 id 字段， 视频、音频保持追加 duration 字段
-    // formKeys.forEach(item => {
-    //   if(item.groupKeys){
-    //     allKeys = allKeys.concat(item.groupKeys.map(key => ({ key, type: 'hidden' })))
-    //   }
-    // })
     return formKeys.map(item => {
       return (
         <Form.Item key={item.key} name={item.key} label={t(item.label || labelMap[item.key] || item.key)}>
@@ -247,6 +246,7 @@ EditForm.propTypes = {
   domain: PropTypes.string,
   permission: PropTypes.string,
   formData: PropTypes.object,
+  maxCount: PropTypes.number,
   formKeys: PropTypes.arrayOf(PropTypes.shape(itemPropTypes)),
   appendData: PropTypes.object,
   onSave: PropTypes.func,
