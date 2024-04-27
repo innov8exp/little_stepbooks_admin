@@ -243,7 +243,7 @@ const VirtualGoodsListPage = () => {
             dataIndex: 'description',
           },
           {
-            title: `${t('title.productCategory')}`,
+            title: `${t('title.totalMonth')}`,
             key: 'toAddMonth',
             dataIndex: 'toAddMonth'
           },
