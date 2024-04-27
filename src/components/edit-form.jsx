@@ -35,6 +35,7 @@ const itemPropTypes = {
   min: PropTypes.number,
   max: PropTypes.number,
   key: PropTypes.string,
+  prefix: PropTypes.string,
   groupKeys: PropTypes.array,
   options: PropTypes.array,
   mode: PropTypes.string,
@@ -122,6 +123,7 @@ const EditForm = ({
     options,
     mode,
     maxCount,
+    prefix,
     // ...props
   }) => {
     placeholder =  t(placeholder || placeholderMap[key] || key)
@@ -132,7 +134,7 @@ const EditForm = ({
       return (<TextArea rows={3} placeholder={placeholder} />)
     }
     if(type === 'number'){
-      return (<InputNumber min={min} max={max} defaultValue={formData[key]} />)
+      return (<InputNumber style={{ width: 200 }} min={min} max={max} prefix={prefix} defaultValue={formData[key]} />)
     }
     if(type === 'photo'){
       return (<ImageUpload domain={domain} permission={permission} value={formData[key]} onChange={res => {

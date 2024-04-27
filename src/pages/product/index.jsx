@@ -1,4 +1,4 @@
-import { App, Button, Card, message, Table, Image, Form, Row, Input } from 'antd'
+import { App, Button, Card, message, Table, Image, Form, Row, Input, Select, Switch } from 'antd'
 import {
   ExclamationCircleOutlined,
   SearchOutlined,
@@ -9,12 +9,14 @@ import { ButtonWrapper } from '@/components/styled'
 import DetailImages from '@/components/detail-images'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import EditForm from '@/components/edit-form'
 import { useTranslation } from 'react-i18next'
 
 const ProductListPage = () => {
   const { t } = useTranslation()
   const { modal } = App.useApp()
+  const navigate = useNavigate()
   const [listData, setListData] = useState([])
   const [ediVisible, setEdiVisible] = useState(false)
   const [detailImageEditVisible, setDetailImageEditVisible] = useState(false)
@@ -25,6 +27,7 @@ const ProductListPage = () => {
   const [queryForm] = Form.useForm()
   const [classifications, setClassifications] = useState([])
   const [editDetailImgForm, setEditDetailImgForm] = useState({})
+  const [switchLoading, setSwitchLoading] = useState({})
   const pageSize = 10;
   const paginationProps = {
     pageSize,
@@ -58,8 +61,14 @@ const ProductListPage = () => {
   const loadListData = function (currentPage) {
     currentPage = currentPage || pageNumber
     setLoading(true)
-    // const queryValue = queryForm.getFieldsValue()
-    const searchURL = `/api/admin/v1/products?currentPage=${currentPage}&pageSize=${pageSize}`
+    let queryStr = ''
+    const queryData = queryForm.getFieldsValue()
+    for (const key in queryData) {
+      if(queryData[key]){
+        queryStr += `&${key}=${encodeURIComponent(queryData[key])}`
+      }
+    }
+    const searchURL = `/api/admin/v1/products?currentPage=${currentPage}&pageSize=${pageSize}` + queryStr
     axios
       .get(searchURL)
       .then((res) => {
@@ -145,7 +154,7 @@ const ProductListPage = () => {
 
   const onDetailImgSave = (id) => {
     if(!editDetailImgForm.detailImgId){ // 编辑的对象不存在详情图关联
-      axios.put(`/api/admin/v1/products/${editDetailImgForm.id}/simple-update?detailImgId=${id}`).then(() => {
+      axios.put(`/api/admin/v1/products/${editDetailImgForm.id}/change-detail-img?detailImgId=${id}`).then(() => {
         setDetailImageEditVisible(false)
         loadListData()
       })
@@ -154,9 +163,40 @@ const ProductListPage = () => {
     }
   }
 
+  const handleUpdateStatusAction = (id, status) => {
+    setSwitchLoading({ id, loading: true })
+    modal.confirm({
+      title: `${t('message.tips.changeStatus')}`,
+      icon: <ExclamationCircleOutlined />,
+      okText: `${t('button.determine')}`,
+      okType: 'primary',
+      cancelText: `${t('button.cancel')}`,
+      onOk() {
+        axios
+          .put(`/api/admin/v1/products/${id}/status/${status}`)
+          .then((res) => {
+            if (res.status === HttpStatus.OK) {
+              message.success(t('message.successInfo'))
+              loadListData()
+            }
+          })
+          .catch((err) => {
+            console.error(err)
+            message.error(err.message)
+          })
+          .finally(() => {
+            setSwitchLoading({ id, loading: false })
+          })
+      },
+      onCancel() {
+        setSwitchLoading({ id, loading: false })
+      }
+    })
+  }
+
   // 商品价格、上下线
   const handleSkuClick = id => {
-
+    navigate('/product-sku-list/' + id)
   }
 
   return (
@@ -165,6 +205,12 @@ const ProductListPage = () => {
         <Row>
             <Form.Item label={t('title.skuName')} name="skuName">
               <Input placeholder={t('message.placeholder.skuName')} />
+            </Form.Item>
+            <Form.Item label={t('title.status')} name="status" style={{ margin: '0 15px', width: 200 }}>
+              <Select placeholder={t('message.placeholder.pleaseSelect')} options={[
+                { value: 'ON_SHELF', label: t('ON_SHELF') },
+                { value: 'OFF_SHELF', label: t('OFF_SHELF') }
+              ]} />
             </Form.Item>
             <Button icon={<SearchOutlined />} type="primary" onClick={() => loadListData()} style={{ margin: '0 15px' }}>{t('button.search')} </Button>
             <Button icon={<UndoOutlined />} onClick={handleReset}>{t('button.reset')} </Button>
@@ -217,6 +263,32 @@ const ProductListPage = () => {
                     controls
                   ></video>
                   : ''
+              )
+            },
+          },
+          {
+            title: `${t('title.status')}`,
+            key: 'status',
+            dataIndex: 'status',
+            render: (text, record) => {
+              return (
+                <Switch
+                  checkedChildren={t('ON_SHELF')}
+                  unCheckedChildren={t('OFF_SHELF')}
+                  checked={text === 'ON_SHELF'}
+                  style={{
+                    width: '70px'
+                  }}
+                  loading={
+                    switchLoading.id === record.id && switchLoading.loading
+                  }
+                  onClick={(checked) =>
+                    handleUpdateStatusAction(
+                      record.id,
+                      checked ? 'ON_SHELF' : 'OFF_SHELF',
+                    )
+                  }
+                />
               )
             },
           },
