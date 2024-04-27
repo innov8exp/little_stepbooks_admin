@@ -104,7 +104,7 @@ const VirtualForm = ({ id, visible, categoryArr, onSave, onCancel }) => {
           <Select placeholder={t('message.placeholder.bookAuthor')} options={ categoryArr }></Select>
         </Form.Item>
         <Form.Item label={t('title.totalMonth')} name="toAddMonth">
-          <InputNumber min={0} max={120} defaultValue={null} />
+          <InputNumber min={1} max={240} defaultValue={12} />
         </Form.Item>
       </Form>
     </Modal>
