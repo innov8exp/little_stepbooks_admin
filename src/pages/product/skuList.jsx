@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import EditForm from '@/components/edit-form'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
@@ -22,6 +23,7 @@ const SkuListPage = () => {
   const [loading, setLoading] = useState(true)
   const [total, setTotal] = useState(0)
   const [switchLoading, setSwitchLoading] = useState({})
+  const navigate = useNavigate()
   const pageSize = 10;
   const paginationProps = {
     pageSize,
@@ -81,8 +83,12 @@ const SkuListPage = () => {
     setEditData(item)
   }
 
-  const handleUpdateStatusAction = (item, status) => {
-    setSwitchLoading({ id: item.id, loading: true })
+  const handleGoodsAction = ({ id, spuId }) => {
+    navigate(`/sku-goods-list/${id}/${spuId}`)
+  }
+
+  const handleUpdateStatusAction = (id, status) => {
+    setSwitchLoading({ id, loading: true })
     modal.confirm({
       title: `${t('message.tips.changeStatus')}`,
       icon: <ExclamationCircleOutlined />,
@@ -91,7 +97,7 @@ const SkuListPage = () => {
       cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
-          .put(`/api/admin/v1/sku/${item.id}`, { status })
+          .post(`/api/admin/v1/sku/${id}/${status}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success(t('message.successInfo'))
@@ -103,11 +109,11 @@ const SkuListPage = () => {
             message.error(err.message)
           })
           .finally(() => {
-            setSwitchLoading({ id: item.id, loading: false })
+            setSwitchLoading({ id, loading: false })
           })
       },
       onCancel() {
-        setSwitchLoading({ id: item.id, loading: false })
+        setSwitchLoading({ id, loading: false })
       }
     })
   }
@@ -187,8 +193,8 @@ const SkuListPage = () => {
                   }
                   onClick={(checked) =>
                     handleUpdateStatusAction(
-                      record,
-                      checked ? 'ON_SHELF' : 'OFF_SHELF',
+                      record.id,
+                      checked ? 'online' : 'offline',
                     )
                   }
                 />
@@ -204,6 +210,12 @@ const SkuListPage = () => {
                 <div>
                   <Button
                     onClick={() => handleEditAction(record)}
+                    type="link"
+                  >
+                    {t('button.edit')}
+                  </Button>
+                  <Button
+                    onClick={() => handleGoodsAction(record)}
                     type="link"
                   >
                     {t('button.edit')}

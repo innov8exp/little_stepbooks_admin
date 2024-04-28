@@ -39,6 +39,7 @@ import GoodsCategory from '@/pages/goods/category'
 import GoodsAudioList from '@/pages/goods/audioList'
 import GoodsVideoList from '@/pages/goods/videoList'
 import ProductSkuList from '@/pages/product/skuList'
+import SkuGoodsList from '@/pages/product/skuGoodsList'
 import User from '@/pages/user'
 
 import { createBrowserRouter } from 'react-router-dom'
@@ -61,6 +62,7 @@ const contentRoutes = {
 
   PRODUCT_LIST: { path: '/product-list', element: <Product /> },
   PRODUCT_SKU_LIST: { path: '/product-sku-list/:id', element: <ProductSkuList /> },
+  SKU_GOODS_LIST: { path: '/sku-goods-list/:skuId/:spuId', element: <SkuGoodsList /> },
   PRODUCT_FORM: { path: '/product-form', element: <ProductForm /> },
   PRODUCT_VIEW: { path: '/product-view', element: <ProductView /> },
   
