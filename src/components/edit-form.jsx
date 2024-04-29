@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Form, Input, Modal, message, Select, InputNumber, Checkbox } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import axios from 'axios'
@@ -43,6 +42,7 @@ const itemPropTypes = {
 }
 
 const EditForm = ({ 
+  disabled = false,
   visible,
   formData,
   title = 'FORM',
@@ -61,7 +61,7 @@ const EditForm = ({
   const isAdd = formData && formData.id ? false : true
   const url = `/api/admin/v1/${apiPath}` + (isAdd ? '' : `/${formData.id}`)
   const method = isAdd ? 'post' : 'put'
-  const showTitle = t(title) + t('CONNECT_MARK1') + t(isAdd ? 'button.create' : 'button.edit')
+  const showTitle = t(title) + t('CONNECT_MARK1') + t(disabled ? 'view' : (isAdd ? 'button.create' : 'button.edit'))
   // 存在一些冗余的字段需要独立维护，通过 hiddenData 对象进行维护
   // 视频、音频、图片资源需要追加对应的 id 字段， 视频、音频保持追加 duration 字段
   // check 表单同时维护id、name
@@ -131,7 +131,7 @@ const EditForm = ({
       return (<Input type="text" placeholder={placeholder} />)
     }
     if(type === 'textarea'){
-      return (<TextArea rows={3} placeholder={placeholder} />)
+      return (<TextArea placeholder={placeholder} />)
     }
     if(type === 'number'){
       return (<InputNumber style={{ width: 200 }} min={min} max={max} prefix={prefix} defaultValue={formData[key]} />)
@@ -226,12 +226,14 @@ const EditForm = ({
       cancelText={t('button.cancel')}
       onCancel={handleCancel}
       onOk={saveData}
+      footer={ disabled ? null : undefined }
     >
       <Form
         labelCol={{ span: labelSpan }}
         layout="horizontal"
         form={form}
         name="form_in_modal"
+        disabled={ disabled }
       >
         <BuildFormList />
       </Form>
@@ -240,6 +242,7 @@ const EditForm = ({
 }
 
 EditForm.propTypes = {
+  disabled: PropTypes.bool,
   visible: PropTypes.bool,
   apiPath: PropTypes.string.isRequired,
   title: PropTypes.string,

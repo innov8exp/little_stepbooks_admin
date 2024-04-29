@@ -54,11 +54,11 @@ const GoodsSelector = ({
     setName(e.target.value)
   }
 
-  const loadListData = function (currentPage) {
+  const loadListData = function (currentPage, ignoreName) {
     currentPage = currentPage || pageNumber
     setLoading(true)
     let searchURL = `/api/admin/v1/${isPhysical ? 'physical-goods' : 'virtual-category'}?currentPage=${pageNumber}&pageSize=${pageSize}`
-    if(name){
+    if(!ignoreName && name){
       searchURL += `&name=${encodeURIComponent(name)}`
     }
     axios
@@ -79,6 +79,11 @@ const GoodsSelector = ({
       .finally(() => {
         setLoading(false)
       })
+  }
+
+  const onReset = function () {
+    setName(null)
+    loadListData(null, true)
   }
 
   const physicalTableCol = [
@@ -105,6 +110,7 @@ const GoodsSelector = ({
     },
     {
       title: `${t('title.operate')}`,
+      align: 'center',
       key: 'action',
       width: 140,
       render: (text, record) => {
@@ -181,14 +187,14 @@ const GoodsSelector = ({
     <Modal
       open={visible}
       width={900}
-      title={t('menu.physicalGoodsList')}
+      title={t(isPhysical ? 'menu.physicalGoodsList' : 'menu.virtualGoodsList')}
       onCancel={onCancel}
       footer={null}
     >
       <div style={{ marginBottom: 12 }}>
         <Input value={name} placeholder={t('message.placeholder.skuName')} style={{ width: 200 }} onChange={onNameChange} />
         <Button icon={<SearchOutlined />} type="primary" onClick={() => loadListData()} style={{ margin: '0 15px' }}>{t('button.search')} </Button>
-        <Button icon={<UndoOutlined />} onClick={() => setName(null)}>{t('button.reset')} </Button>
+        <Button icon={<UndoOutlined />} onClick={onReset}>{t('button.reset')} </Button>
       </div>
       <Table
         columns={isPhysical ? physicalTableCol : virtualTableCol}

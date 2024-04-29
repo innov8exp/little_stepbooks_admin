@@ -131,11 +131,13 @@ const SkuGoodsPage = () => {
             title: `${t('name')}`,
             key: 'goodsName',
             dataIndex: 'goodsName',
+            render: (text, record) => record.goodsName || record.categoryName
           },
           {
-            title: `${t('description')}`,
-            key: 'goodsDescription',
-            dataIndex: 'goodsDescription',
+            title: `${t('goodsType')}`,
+            key: 'type',
+            dataIndex: 'type',
+            render: (text, record) => t(record.categoryId ? 'virtualGoods' : 'physicalGoods')
           },
           {
             title: `${t('title.operate')}`,

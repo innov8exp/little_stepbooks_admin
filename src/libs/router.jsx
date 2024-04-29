@@ -28,8 +28,6 @@ import OrderInventoryLog from '@/pages/order-inventory-log'
 import OrderForm from '@/pages/order/form'
 import RefundRequest from '@/pages/order/refund-request'
 import Product from '@/pages/product'
-import ProductForm from '@/pages/product/form'
-import ProductView from '@/pages/product/view'
 import Profile from '@/pages/profile'
 import Promotion from '@/pages/promotion'
 import Recommend from '@/pages/recommend'
@@ -63,8 +61,6 @@ const contentRoutes = {
   PRODUCT_LIST: { path: '/product-list', element: <Product /> },
   PRODUCT_SKU_LIST: { path: '/product-sku-list/:id', element: <ProductSkuList /> },
   SKU_GOODS_LIST: { path: '/sku-goods-list/:skuId/:spuId', element: <SkuGoodsList /> },
-  PRODUCT_FORM: { path: '/product-form', element: <ProductForm /> },
-  PRODUCT_VIEW: { path: '/product-view', element: <ProductView /> },
   
   VIRTUAL_GOODS_LIST: { path: '/goods/virtual-list', element: <VirtualGoods /> },
   PHYSICAL_GOODS_LIST: { path: '/goods/physical-list', element: <PhysicalGoods /> },

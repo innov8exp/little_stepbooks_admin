@@ -303,11 +303,12 @@ const ProductListPage = () => {
                     onClick={() => handleEditAction(record.id)}
                     type="link"
                   >
-                    {t('button.edit')}
+                    {t(record.status === 'ON_SHELF' ? 'view' : 'button.edit')}
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
                     type="link"
+                    disabled={record.status === 'ON_SHELF'}
                   >
                     {t('button.delete')}
                   </Button>
@@ -334,6 +335,7 @@ const ProductListPage = () => {
         pagination={paginationProps}
       />
       <EditForm
+        disabled={(editData && editData.status === 'ON_SHELF') ? true : false}
         visible={ediVisible}
         apiPath='products'
         domain='PRODUCT'
