@@ -1,9 +1,17 @@
 import { App, Button, Card, message, Table } from 'antd'
-import { querySkuPhysicalGoods, querySkuVirtualGoods } from '@/api'
+import {
+  querySkuPhysicalGoods,
+  querySkuVirtualGoods,
+  addSkuPhysicalGoods,
+  addSkuVirtualGoods,
+  deleteSkuPhysicalGoods,
+  deleteSkuVirtualGoods
+} from '@/api'
 import { ButtonWrapper } from '@/components/styled'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
+import GoodsSelector from './goodsSelector'
 import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
@@ -17,7 +25,8 @@ const SkuGoodsPage = () => {
   const [phyGoodsArr, setPhyGoodsArr] = useState([])
   const [virGoodsArr, setVirGoodsArr] = useState([])
   const [allGoodsArr, setAllGoodsArr] = useState([])
-  const [editVisible, setEditVisible] = useState(false)
+  const [addVisible, setAddVisible] = useState(false)
+  const [isPhysical, setIsPhysical] = useState(false)
   const [loading, setLoading] = useState(true)
 
   // 页面创建后加载一遍数据
@@ -53,11 +62,12 @@ const SkuGoodsPage = () => {
     })
   }
 
-  const handleAddAction = () => {
-    setEditVisible(true)
+  const handleAddAction = (isPhy) => {
+    setIsPhysical(isPhy)
+    setAddVisible(true)
   }
 
-  const handleDeleteAction = (id) => {
+  const handleDeleteAction = (record) => {
     modal.confirm({
       title: `${t('message.tips.delete')}`,
       icon: <ExclamationCircleOutlined />,
@@ -65,18 +75,48 @@ const SkuGoodsPage = () => {
       okType: 'primary',
       cancelText: `${t('button.cancel')}`,
       onOk() {
-        
+        const task = record.categoryId ? deleteSkuVirtualGoods(record.id) : deleteSkuPhysicalGoods(record.id)
+        task.then(() => {
+          record.categoryId ? loadVirData() : loadPhyData()
+        })
       },
     })
+  }
+
+  const onPhySelect = (item) => {
+    addSkuPhysicalGoods({
+      spuId,
+      skuId,
+      goodsId: item.id
+    }).then(() => {
+      setAddVisible(false)
+      loadPhyData()
+    })
+  }
+
+  const onVirSelect = ({ categoryId, redeemCondition }) => {
+    addSkuVirtualGoods({
+      spuId,
+      skuId,
+      categoryId,
+      redeemCondition
+    }).then(() => {
+      setAddVisible(false)
+      loadVirData()
+    })
+  }
+
+  const onGoodsSelectCancel = () => {
+    setAddVisible(false)
   }
 
   return (
     <Card title={t('skuRelationWidthGoods')}>
       <ButtonWrapper>
-          <Button type="primary" onClick={handleAddAction}>
+          <Button type="primary" onClick={() => handleAddAction(true)}>
               {t('bindPhysicalGoods')}
           </Button>
-          <Button style={{ marginLeft: '20px' }} type="primary" onClick={handleAddAction}>
+          <Button style={{ marginLeft: '20px' }} type="primary" onClick={() => handleAddAction(false)}>
               {t('bindVirtualGoods')}
           </Button>
       </ButtonWrapper>
@@ -89,13 +129,13 @@ const SkuGoodsPage = () => {
           },
           {
             title: `${t('name')}`,
-            key: 'name',
-            dataIndex: 'name',
+            key: 'goodsName',
+            dataIndex: 'goodsName',
           },
           {
             title: `${t('description')}`,
-            key: 'description',
-            dataIndex: 'description',
+            key: 'goodsDescription',
+            dataIndex: 'goodsDescription',
           },
           {
             title: `${t('title.operate')}`,
@@ -105,7 +145,7 @@ const SkuGoodsPage = () => {
               return (
                 <div>
                   <Button
-                    onClick={() => handleDeleteAction(record.id)}
+                    onClick={() => handleDeleteAction(record)}
                     type="link"
                   >
                     {t('button.delete')}
@@ -118,6 +158,13 @@ const SkuGoodsPage = () => {
         rowKey={(record) => record.id}
         dataSource={allGoodsArr}
         loading={loading}
+      />
+      <GoodsSelector
+        visible={addVisible}
+        isPhysical={isPhysical}
+        onPhySelect={onPhySelect}
+        onVirSelect={onVirSelect}
+        onCancel={onGoodsSelectCancel}
       />
     </Card>
   )

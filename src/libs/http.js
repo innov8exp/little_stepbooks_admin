@@ -2,6 +2,7 @@ import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 
 function http (method, url, data) {
+    url = `/api/admin/v1/${url}`
     // 对于 undefined | null | '' 当作无效传参抛弃
     for (const key in data) {
         const value = data[key];

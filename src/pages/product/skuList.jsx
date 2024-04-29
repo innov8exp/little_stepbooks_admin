@@ -218,7 +218,7 @@ const SkuListPage = () => {
                     onClick={() => handleGoodsAction(record)}
                     type="link"
                   >
-                    {t('button.edit')}
+                    {t('bindGoods')}
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
