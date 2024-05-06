@@ -2,7 +2,6 @@ import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, Card, message, App, Table, Image } from 'antd'
 import useFetch from '@/hooks/useFetch'
 import axios from 'axios'
-import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState } from 'react'
 import AdvertisementForm from './form'
@@ -48,18 +47,17 @@ const AdvertisementPage = () => {
   }
 
   return (
-    <Card title={t('title.advertisingSettings')}>
-      <ButtonWrapper>
-        <Button
-          type="primary"
-          onClick={() => {
-            setSelectedId(undefined)
-            setFormVisible(true)
-          }}
-        >
-          {t('button.create')}
-        </Button>
-      </ButtonWrapper>
+    <Card title={t('title.advertisingSettings')} extra={
+      <Button
+        type="primary"
+        onClick={() => {
+          setSelectedId(undefined)
+          setFormVisible(true)
+        }}
+      >
+        {t('button.create')}
+      </Button>
+    }>
       <Table
         columns={[
           {

@@ -100,38 +100,33 @@ const AudioListPage = () => {
     if(activityData && activityData.length > 0){
       if(activityData[0].type === 'VIDEO'){
         return (
-          <ButtonWrapper>
-            <Button type="primary" onClick={() => handleAddAction(false)}>
-              {t('button.addVideo')}
-            </Button>
-          </ButtonWrapper>
+          <Button type="primary" onClick={() => handleAddAction(false)}>
+            {t('button.addVideo')}
+          </Button>
         )
       }else{
         return (
-          <ButtonWrapper>
-            <Button type="primary" onClick={() => handleAddAction(true)}>
-              {t('button.addAudio')}
-            </Button>
-          </ButtonWrapper>
+          <Button type="primary" onClick={() => handleAddAction(true)}>
+            {t('button.addAudio')}
+          </Button>
         )
       }
     }else{
       return (
-        <ButtonWrapper>
+        <div>
           <Button type="primary" onClick={() => handleAddAction(true)} style={{ marginRight: '20px' }}>
             {t('button.addAudio')}
           </Button>
           <Button type="primary" onClick={() => handleAddAction(false)}>
             {t('button.addVideo')}
           </Button>
-      </ButtonWrapper>
+      </div>
       )
     }
   }
 
   return (
-    <Card title={t('button.mediaManage')}>
-      <AddButtonWrapper />
+    <Card title={t('button.mediaManage')} extra={<AddButtonWrapper />}>
       <Table
         columns={[
           {

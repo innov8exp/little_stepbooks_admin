@@ -1,6 +1,5 @@
 import ViewItem from '@/components/view-item'
 import useQuery from '@/hooks/useQuery'
-import { Routes } from '@/libs/router'
 import { LeftCircleOutlined } from '@ant-design/icons'
 import {
   Button,
@@ -90,7 +89,7 @@ const BookQRCodeView = () => {
             type="link"
             size="large"
             icon={<LeftCircleOutlined />}
-            onClick={() => navigate(Routes.BOOK_QRCODE_LIST.path)}
+            onClick={() => navigate(`/books`)}
           />
           {t('title.bookViewing')}
         </>

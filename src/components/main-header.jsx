@@ -1,6 +1,5 @@
 import EnvFlag from '@/components/env-flag'
 import useSession from '@/hooks/useSession'
-import { Routes } from '@/libs/router'
 import i18n from '@/locales/i18n'
 import useLanguage from '@/stores/useLanguage'
 import {
@@ -77,7 +76,7 @@ const MainHeader = ({ onToggleClick }) => {
       key: '1',
       icon: <UserOutlined />,
       label: (
-        <Link to={Routes.PROFILE.path}>
+        <Link to="/profile">
           <HeaderMenuItem>{i18n.t('title.personalInformation')}</HeaderMenuItem>
         </Link>
       ),

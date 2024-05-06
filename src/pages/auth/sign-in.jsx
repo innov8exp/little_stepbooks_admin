@@ -10,7 +10,6 @@ import {
 } from '@/components/auth-styled'
 import useSession from '@/hooks/useSession'
 import Config from '@/libs/config'
-import { Routes } from '@/libs/router'
 import { Button, Form, Input, message } from 'antd'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -62,7 +61,7 @@ const SignInPage = () => {
             label={
               <LabelWrapper>
                 <LabelText>{`${t('title.password')}`}</LabelText>
-                <Link to={Routes.FORGET_PASSWORD.path}>{`${t(
+                <Link to="/forget-password">{`${t(
                   'title.forgotPassword',
                 )}`}</Link>
               </LabelWrapper>

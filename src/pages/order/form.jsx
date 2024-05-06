@@ -1,7 +1,6 @@
 import ViewItem from '@/components/view-item'
 import useFetch from '@/hooks/useFetch'
 import useQuery from '@/hooks/useQuery'
-import { Routes } from '@/libs/router'
 import { formatMoney } from '@/libs/util'
 import { LeftCircleOutlined } from '@ant-design/icons'
 import {
@@ -231,7 +230,7 @@ const OrderForm = () => {
                           <Button
                             onClick={() =>
                               navigate(
-                                `${Routes.PRODUCT_VIEW.path}?id=${record.productId}`,
+                                `/order-form?id=${record.productId}`,
                               )
                             }
                             type="link"

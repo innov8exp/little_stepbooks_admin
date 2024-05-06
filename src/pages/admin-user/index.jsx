@@ -21,44 +21,19 @@ const AdminUserPage = () => {
     setFormVisible(true)
   }
 
-  // const handleDeleteAction = (id) => {
-  //   confirm({
-  //     title: `${t('message.tips.delete')}`,
-  //     icon: <ExclamationCircleOutlined />,
-  //     okText: `${t('button.determine')}`,
-  //     okType: 'primary',
-  //     cancelText: `${t('button.cancel')}`,
-  //     onOk() {
-  //       axios
-  //         .delete(`/api/admin/v1/admin-users/${id}`)
-  //         .then((res) => {
-  //           if (res.status === HttpStatus.OK) {
-  //             message.success(t('message.successInfo'))
-  //             setChangeTime(Date.now())
-  //           }
-  //         })
-  //         .catch((err) => {
-  //           console.error(err)
-  //           message.error(err.message)
-  //         })
-  //     },
-  //   })
-  // }
-
   return (
     <>
-      <Card title={t('title.userManagement')}>
-        <ButtonWrapper>
-          <Button
-            type="primary"
-            onClick={() => {
-              setSelectedId(undefined)
-              setFormVisible(true)
-            }}
-          >
-            {t('button.create')}
-          </Button>
-        </ButtonWrapper>
+      <Card title={t('title.userManagement')} extra={
+        <Button
+          type="primary"
+          onClick={() => {
+            setSelectedId(undefined)
+            setFormVisible(true)
+          }}
+        >
+          {t('button.create')}
+        </Button>
+      }>
         <Table
           columns={[
             {

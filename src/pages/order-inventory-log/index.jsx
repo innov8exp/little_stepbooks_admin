@@ -4,7 +4,6 @@ import {
   QueryBtnWrapper,
   StyledRightCondition,
 } from '@/components/styled'
-import { Routes } from '@/libs/router'
 import { SearchOutlined, UndoOutlined } from '@ant-design/icons'
 import {
   Button,
@@ -90,11 +89,11 @@ const OrderInventoryLogPage = () => {
   }
 
   const handleProductViewAction = (id) => {
-    navigate(`${Routes.PRODUCT_VIEW.path}?id=${id}`)
+    navigate(`/order-detail?id=${id}`)
   }
 
   const handleOrderViewAction = (id) => {
-    navigate(`${Routes.ORDER_FORM.path}?id=${id}`)
+    navigate(`/order-form?id=${id}`)
   }
 
   useEffect(() => {

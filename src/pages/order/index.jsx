@@ -1,4 +1,3 @@
-import { Routes } from '@/libs/router'
 import {
   CopyOutlined,
   ExclamationCircleOutlined,
@@ -140,10 +139,6 @@ const OrderPage = () => {
     queryForm.resetFields()
   }
 
-  // const handleEditAction = (id) => {
-  //   navigate(`${Routes.ORDER_FORM.path}?id=${id}`)
-  // }
-
   const handleShipAction = (id) => {
     setSelectedId(id)
     setFormVisible(true)
@@ -178,7 +173,7 @@ const OrderPage = () => {
   }
 
   const handleViewAction = (id) => {
-    navigate(`${Routes.ORDER_FORM.path}?id=${id}`)
+    navigate(`/order-form?id=${id}`)
   }
 
   const handleCopyAction = (orderCode) => {
@@ -189,34 +184,6 @@ const OrderPage = () => {
   const handleApproveRefundRequest = (id) => {
     setRefundApproveFormVisible(true)
     setSelectedId(id)
-  }
-
-  const handleMockRefundPaymentAction = (id) => {
-    modal.confirm({
-      title: `${t('message.tips.mock')}`,
-      icon: <ExclamationCircleOutlined />,
-      okText: `${t('button.determine')}`,
-      okType: 'primary',
-      cancelText: `${t('button.cancel')}`,
-      onOk() {
-        axios
-          .put(`/api/admin/v1/orders/${id}/mock/refund-callback`)
-          .then((res) => {
-            if (res.status === HttpStatus.OK) {
-              const timestamp = new Date().getTime()
-              setChangeTimestamp(timestamp)
-              message.success(t('message.successInfo'))
-            }
-          })
-          .catch((err) => {
-            message.error(
-              `${t('message.error.failureReason')}${
-                err.response?.data?.message
-              }`,
-            )
-          })
-      },
-    })
   }
 
   useEffect(() => {

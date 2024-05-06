@@ -1,6 +1,5 @@
 import { App, Button, Card, message, Table, Image, Switch } from 'antd'
 import axios from 'axios'
-import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -98,8 +97,7 @@ const ActivityListPage = () => {
   }, [fetchActivities, pageNumber, changeTime])
 
   return (
-    <Card title={t('menu.activityList')}>
-      <ButtonWrapper>
+    <Card title={t('menu.activityList')} extra={
         <Button
           type="primary"
           onClick={() => {
@@ -109,7 +107,7 @@ const ActivityListPage = () => {
         >
           {t('button.create')}
         </Button>
-      </ButtonWrapper>
+    }>
       <Table
         columns={[
           {

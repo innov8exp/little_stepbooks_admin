@@ -1,7 +1,6 @@
 import { App, Button, Card, message, Table, Row, Col, Form, Input, Select } from 'antd'
 import { OrderedListOutlined } from '@ant-design/icons'
 import axios from 'axios'
-import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -171,7 +170,27 @@ const VirtualGoodsListPage = () => {
   }, [fetchGoods, pageNumber, changeTime])
 
   return (
-    <Card title={t('menu.virtualGoodsList')}>
+    <Card title={t('menu.virtualGoodsList')} extra={
+      <div>
+        <Button
+          type="default"
+          icon={<OrderedListOutlined />}
+          onClick={openCatListPage}
+        >
+          {t('menu.productCategoryManagement')}
+        </Button>
+        <Button
+          style={{ marginLeft: '20px' }}
+          type="primary"
+          onClick={() => {
+            setSelectedId(undefined)
+            setFormVisible(true)
+          }}
+        >
+          {t('button.create')}
+        </Button>
+      </div>
+    }>
       <Form
         wrapperCol={{ span: 18 }}
         form={queryForm}
@@ -206,25 +225,6 @@ const VirtualGoodsListPage = () => {
         </Col>
       </Row>
       </Form>
-      <ButtonWrapper>
-        <Button
-          type="default"
-          icon={<OrderedListOutlined />}
-          onClick={openCatListPage}
-        >
-          {t('menu.productCategoryManagement')}
-        </Button>
-        <Button
-          style={{ marginLeft: '20px' }}
-          type="primary"
-          onClick={() => {
-            setSelectedId(undefined)
-            setFormVisible(true)
-          }}
-        >
-          {t('button.create')}
-        </Button>
-      </ButtonWrapper>
       <Table
         columns={[
           {

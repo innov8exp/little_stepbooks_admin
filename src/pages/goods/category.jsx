@@ -82,18 +82,17 @@ const CategoryListPage = () => {
   }, [fetchCategories, pageNumber, changeTime])
 
   return (
-    <Card title={t('menu.courseCategoryList')}>
-      <ButtonWrapper>
-        <Button
-          type="primary"
-          onClick={() => {
-            setSelectedId(undefined)
-            setFormVisible(true)
-          }}
-        >
-          {t('button.create')}
-        </Button>
-      </ButtonWrapper>
+    <Card title={t('menu.courseCategoryList')} extra={
+      <Button
+        type="primary"
+        onClick={() => {
+          setSelectedId(undefined)
+          setFormVisible(true)
+        }}
+      >
+        {t('button.create')}
+      </Button>
+    }>
       <Table
         columns={[
           {

@@ -1,22 +1,13 @@
 import { Breadcrumb, Layout, Menu } from 'antd'
-
-import {
-  BookOutlined,
-  // CommentOutlined,
-  DashboardOutlined,
-  FundProjectionScreenOutlined,
-  // MailOutlined,
-  SettingOutlined,
-  ShoppingOutlined,
-  // SmileOutlined,
-  UserOutlined,
-} from '@ant-design/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import Header from './components/main-header'
-import { Routes } from './libs/router'
+import { menus, breadcrumbMap } from './router/index'
+import {
+  HomeOutlined
+} from '@ant-design/icons'
 
 const { Sider, Content } = Layout
 
@@ -46,273 +37,66 @@ const Logo = styled.div`
 const AdminLayout = () => {
   const { t } = useTranslation()
 
-  function getItem(label, key, icon, children) {
-    return {
-      key,
-      icon,
-      children,
-      label,
+  const menuItems = menus.map((item, index1) => {
+    const menuItem = {
+      key: `${index1}`,
+      label: item.path ? <Link to={item.path}>{t(item.label)}</Link> : t(item.label),
+      icon: item.icon,
+      children: item.children
     }
-  }
-
-  const MenuItems = [
-    getItem(t('menu.dashboard'), '1', <DashboardOutlined />, [
-      getItem(
-        <Link to={Routes.USER_REPORT.path}>{t('menu.userReport')}</Link>,
-        '11',
-        <DashboardOutlined />,
-      ),
-      getItem(
-        <Link to={Routes.ORDER_REPORT.path}>{t('menu.orderReport')}</Link>,
-        '12',
-        <DashboardOutlined />,
-      ),
-    ]),
-
-    getItem(t('menu.user'), '2', <UserOutlined />, [
-      getItem(
-        <Link to={Routes.USER_LIST.path}>{t('menu.userList')}</Link>,
-        '21',
-        <UserOutlined />,
-      ),
-    ]),
-
-    // 产品管理
-    getItem(t('menu.sku'), '3', <BookOutlined />, [
-      getItem(
-        <Link to={Routes.CLASSIFICATION_LIST.path}>
-          {t('menu.classificationManagement')}
-        </Link>,
-        '31',
-        <BookOutlined />,
-      ),
-      getItem(
-        <Link to="/books">{t('menu.book')}</Link>,
-        '32',
-        <BookOutlined />,
-      ),
-      getItem(
-        <Link to={Routes.PRODUCT_LIST.path}>{t('menu.skuList')}</Link>,
-        '33',
-        <BookOutlined />,
-      ),
-      getItem(
-        <Link to={Routes.PHYSICAL_GOODS_LIST.path}>{t('menu.physicalGoodsList')}</Link>,
-        '34',
-        <BookOutlined />,
-      ),
-      getItem(
-        <Link to={Routes.VIRTUAL_GOODS_LIST.path}>{t('menu.virtualGoodsList')}</Link>,
-        '35',
-        <BookOutlined />,
-      ),
-    ]),
-
-    // 库存管理
-    getItem(t('menu.inventory'), '4', <ShoppingOutlined />, [
-      getItem(
-        <Link to={Routes.INVENTORY_LIST.path}>{t('menu.inventoryList')}</Link>,
-        '41',
-        <ShoppingOutlined />,
-      ),
-
-      getItem(
-        <Link to={Routes.ORDER_INVENTORY_LOG_LIST.path}>
-          {t('menu.orderInventoryLogList')}
-        </Link>,
-        '42',
-        <ShoppingOutlined />,
-      ),
-    ]),
-
-    // 订单中心
-    getItem(t('menu.order'), '5', <ShoppingOutlined />, [
-      getItem(
-        <Link to={Routes.ORDER_LIST.path}>{t('menu.orderList')}</Link>,
-        '51',
-        <ShoppingOutlined />,
-      ),
-      getItem(
-        <Link to={Routes.REFUND_REQUEST.path}>{t('menu.refundRequest')}</Link>,
-        '52',
-        <ShoppingOutlined />,
-      ),
-      // getItem(
-      //   <Link to={Routes.COMMENT_LIST.path}>{t('menu.comment')}</Link>,
-      //   '43',
-      //   <CommentOutlined />,
-      // ),
-    ]),
-
-    // 运营管理
-    getItem(t('menu.operation'), '6', <FundProjectionScreenOutlined />, [
-      // getItem(
-      //   <Link to={Routes.PROMOTION_LIST.path}>{t('menu.promotionList')}</Link>,
-      //   '52',
-      //   <FundProjectionScreenOutlined />,
-      // ),
-      getItem(
-        <Link to={Routes.ADVERTISEMENT_LIST.path}>
-          {t('menu.advertisement')}
-        </Link>,
-        '61',
-        <FundProjectionScreenOutlined />,
-      ),
-      getItem(
-        <Link to={Routes.ACTIVITY_LIST.path}>
-          {t('menu.activityList')}
-        </Link>,
-        '62',
-        <FundProjectionScreenOutlined />,
-      ),
-      // getItem(
-      //   <Link to="/book2">{t('menu.push')}</Link>,
-      //   '55',
-      //   <MailOutlined />,
-      // ),
-      // getItem(
-      //   <Link to="/comment3">{t('menu.feedback')}</Link>,
-      //   '56',
-      //   <SmileOutlined />,
-      // ),
-    ]),
-
-    getItem(t('menu.system'), '7', <SettingOutlined />, [
-      // getItem(
-      //   <Link to="/category1">{t('menu.basic')}</Link>,
-      //   '61',
-      //   <SettingOutlined />,
-      // ),
-      // getItem(
-      //   <Link to="/book1">{t('menu.configuration')}</Link>,
-      //   '62',
-      //   <UserOutlined />,
-      // ),
-      getItem(
-        <Link to="/admin-user">{t('menu.adminUser')}</Link>,
-        '71',
-        <UserOutlined />,
-      ),
-    ]),
-  ]
-
-  function getBreadcrumbItem(router, parentLabel, label) {
-    return {
-      router,
-      label,
-      parentLabel,
+    if(menuItem.children){
+      menuItem.children = menuItem.children.map(({ label, path }, index2) => {
+        return {
+          key: `${index1}${index2}`,
+          label: <Link to={path}>{t(label)}</Link>,
+        }
+      })
     }
-  }
-
-  const BreadcrumbConfig = [
-    getBreadcrumbItem(
-      Routes.USER_REPORT.path,
-      t('menu.dashboard'),
-      t('menu.userReport'),
-    ),
-    getBreadcrumbItem(
-      Routes.ORDER_REPORT.path,
-      t('menu.dashboard'),
-      t('menu.orderReport'),
-    ),
-
-    getBreadcrumbItem(
-      Routes.USER_LIST.path,
-      t('menu.user'),
-      t('menu.userList'),
-    ),
-    // getBreadcrumbItem(Routes.TAG_LIST.path, t('menu.user'), t('menu.tag'), 6),
-
-    getBreadcrumbItem(
-      Routes.CLASSIFICATION_LIST.path,
-      t('menu.bookManage'),
-      t('menu.classificationManagement'),
-    ),
-
-    getBreadcrumbItem('/books', t('menu.bookManage'), t('menu.book')),
-
-    // getBreadcrumbItem(
-    //   Routes.BOOK_QRCODE_LIST.path,
-    //   t('menu.bookManage'),
-    //   t('menu.bookSetList'),
-    // ),
-
-    getBreadcrumbItem(
-      Routes.ORDER_LIST.path,
-      t('menu.order'),
-      t('menu.orderList'),
-    ),
-    getBreadcrumbItem(
-      Routes.COMMENT_LIST.path,
-      t('menu.order'),
-      t('menu.comment'),
-    ),
-
-    getBreadcrumbItem(
-      Routes.PRODUCT_LIST.path,
-      t('menu.product'),
-      t('menu.productList'),
-    ),
-    getBreadcrumbItem(
-      Routes.PROMOTION_LIST.path,
-      t('menu.product'),
-      t('menu.promotionList'),
-    ),
-    getBreadcrumbItem(
-      Routes.RECOMMEND_LIST.path,
-      t('menu.product'),
-      t('menu.recommend'),
-    ),
-    getBreadcrumbItem(
-      Routes.ADVERTISEMENT_LIST.path,
-      t('menu.product'),
-      t('menu.advertisement'),
-    ),
-    getBreadcrumbItem(
-      Routes.ACTIVITY_LIST.path,
-      t('menu.operation'),
-      t('menu.activityList'),
-    ),
-    getBreadcrumbItem('/activity/:activityId/audios', t('menu.operation'), t('menu.audioManage')),
-    getBreadcrumbItem('/book2', t('menu.product'), t('menu.push')),
-    getBreadcrumbItem('/comment3', t('menu.product'), t('menu.feedback')),
-
-    getBreadcrumbItem('/category1', t('menu.system'), t('menu.basic')),
-    getBreadcrumbItem('/book1', t('menu.system'), t('menu.configuration')),
-    getBreadcrumbItem('/comment1', t('menu.system'), t('menu.adminUser')),
-  ]
-
-  const [collapsed, setCollapsed] = useState(false)
-  const location = useLocation()
-  const pathSnippets = location.pathname.split('/').filter((i) => i)
-  const lastUrl = pathSnippets.map((_, index) => {
-    const url = `/${pathSnippets.slice(0, index + 1).join('/')}`
-    const lastUrl = BreadcrumbConfig.filter((item) => item.router == url)
-    return lastUrl
+    return menuItem
   })
 
-  // let count = 0;
-  const breadcrumbItems = [
-    {
-      title: <Link to="/">{t('page.index')}</Link>,
-      key: 'home',
-    },
-  ]
-
-  if (lastUrl.length > 0) {
-    lastUrl[0].map((item) => {
-      if (item.parentLabel && item.parentLabel !== t('page.index')) {
-        breadcrumbItems.push({
-          title: item.parentLabel,
-          key: item.parentLabel,
-        })
-      }
-      breadcrumbItems.push({
-        title: <Link to={item.router}>{item.label}</Link>,
-        key: item.label,
+  function buildBreadcrumbItems () {
+    const arr = [
+      { title: <Link to="/"><HomeOutlined /></Link> }
+    ]
+    let currentItem = breadcrumbMap[location.pathname]
+    if(!currentItem){ // 匹配不到配置项，尝试进行规则匹配
+      const pathArr = location.pathname.split('/')
+      let matchKey;
+      Object.keys(breadcrumbMap).some(key => {
+        const keyArr = key.split('/');
+        if(keyArr.length === pathArr.length){
+          let isSame = true
+          for (let i = 0; i < keyArr.length; i++) {
+            if(keyArr[i][0] != ':' && keyArr[i] != pathArr[i]){
+              isSame = false;
+              break;
+            }
+          }
+          if(isSame){
+            matchKey = key;
+          }
+          return isSame
+        }
+        return false
       })
-    })
+      if(matchKey){
+        currentItem = breadcrumbMap[matchKey]
+      }
+    }
+    if(currentItem && currentItem.path != '/'){
+      if(currentItem.parentPath){
+        const parentItem = breadcrumbMap[currentItem.parentPath];
+        arr.push({ title: <Link to={ parentItem.path }>{t(parentItem.label)}</Link> })
+      }
+      arr.push({ title: t(currentItem.label) })
+    }
+    return arr
   }
+
+  const [collapsed, setCollapsed] = useState(localStorage.getItem('menu_collapsed') == 1)
+  const location = useLocation()
+  const breadcrumbItems = buildBreadcrumbItems()
 
   return (
     <Layout style={{ height: '100vh' }}>
@@ -326,14 +110,17 @@ const AdminLayout = () => {
         <Logo>{collapsed ? t('project.nameSort') : t('project.name')}</Logo>
         <Menu
           theme="light"
-          defaultSelectedKeys={['1']}
+          defaultSelectedKeys={['0']}
           mode="inline"
-          items={MenuItems}
+          items={menuItems}
         />
       </Sider>
       <Layout>
         <Header
-          onToggleClick={(collapsedParam) => setCollapsed(collapsedParam)}
+          onToggleClick={(collapsedParam) => {
+            localStorage.setItem('menu_collapsed', collapsedParam ? 1 : 0)
+            setCollapsed(collapsedParam)
+          }}
         />
         <ContentHeader>
           <Breadcrumb items={breadcrumbItems} />

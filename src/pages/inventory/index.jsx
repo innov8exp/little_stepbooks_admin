@@ -1,4 +1,3 @@
-import { Routes } from '@/libs/router'
 import { SearchOutlined, UndoOutlined } from '@ant-design/icons'
 import {
   Button,
@@ -93,7 +92,7 @@ const InventoryPage = () => {
   }
 
   const handleViewAction = (id) => {
-    navigate(`${Routes.PRODUCT_VIEW.path}?id=${id}`)
+
   }
 
   useEffect(() => {

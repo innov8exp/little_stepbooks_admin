@@ -111,15 +111,16 @@ const SkuGoodsPage = () => {
   }
 
   return (
-    <Card title={t('skuRelationWidthGoods')}>
-      <ButtonWrapper>
+    <Card title={t('skuRelationWidthGoods')} extra={
+      <div>
           <Button type="primary" onClick={() => handleAddAction(true)}>
               {t('bindPhysicalGoods')}
           </Button>
           <Button style={{ marginLeft: '20px' }} type="primary" onClick={() => handleAddAction(false)}>
               {t('bindVirtualGoods')}
           </Button>
-      </ButtonWrapper>
+      </div>
+    }>
       <Table
         columns={[
           {

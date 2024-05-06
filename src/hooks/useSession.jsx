@@ -1,4 +1,3 @@
-import { Routes } from '@/libs/router'
 import useUserInfoStore from '@/stores/useUserInfoStore'
 import { message } from 'antd'
 import axios from 'axios'
@@ -18,7 +17,7 @@ const useSession = () => {
       console.log(err)
       if (err.response.status === HttpStatus.UNAUTHORIZED) {
         message.error('获取授权失败，请重新登录！')
-        navigate(Routes.SIGN_IN.path)
+        navigate('/sign-in')
       } else {
         message.error('服务器连接异常！')
       }
@@ -31,8 +30,7 @@ const useSession = () => {
     try {
       const resp = await axios.post('/api/admin/auth/login', { ...values })
       if (resp.status === HttpStatus.OK) {
-        window.location.href = Routes.DASHBOARD.path
-        // navigate(Routes.DASHBOARD.path, { replace: true })
+        window.location.href = '/'
       }
     } catch (error) {
       if (error.response.status === HttpStatus.UNAUTHORIZED) {
@@ -50,7 +48,7 @@ const useSession = () => {
       const resp = await axios.post('/api/admin/auth/logout')
       if (resp.status === HttpStatus.OK) {
         removeUserInfo()
-        navigate(Routes.SIGN_IN.path, { replace: true })
+        navigate('/sign-in', { replace: true })
       }
     } catch (error) {
       message.error(`登出失败，原因：${error.message}`)

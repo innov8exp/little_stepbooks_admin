@@ -1,6 +1,5 @@
 import { App, Button, Card, message, Table, Image } from 'antd'
 import axios from 'axios'
-import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
 import EditForm from '@/components/edit-form'
@@ -101,15 +100,11 @@ const PhysicalListPage = () => {
   }
 
   return (
-    <Card title={t('menu.physicalGoodsList')}>
-      <ButtonWrapper>
-        <Button
-          type="primary"
-          onClick={handleAddAction}
-        >
-          {t('button.create')}
-        </Button>
-      </ButtonWrapper>
+    <Card title={t('menu.physicalGoodsList')} extra={
+      <Button type="primary" onClick={handleAddAction}>
+        {t('button.create')}
+      </Button>
+    }>
       <Table
         columns={[
           {

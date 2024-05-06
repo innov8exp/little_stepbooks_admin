@@ -1,4 +1,4 @@
-import { Router } from '@/libs/router'
+import { Router } from '@/router'
 import { ConfigProvider, App as AntdApp } from 'antd'
 import en_US from 'antd/locale/en_US'
 import zh_CN from 'antd/locale/zh_CN'

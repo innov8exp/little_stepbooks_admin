@@ -12,7 +12,6 @@ import Config from '@/libs/config'
 import { Button, Form, Input, message } from 'antd'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Routes } from '@/libs/router'
 import { useTranslation } from 'react-i18next'
 
 const ForgetPasswordPage = () => {
@@ -55,7 +54,7 @@ const ForgetPasswordPage = () => {
             label={
               <LabelWrapper>
                 <LabelText>{`${t('title.email')}`}</LabelText>
-                <Link to={Routes.SIGN_IN.path}>{`${t(
+                <Link to="/sign-in">{`${t(
                   'title.returnLogin',
                 )}`}</Link>
               </LabelWrapper>

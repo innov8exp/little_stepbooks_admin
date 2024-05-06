@@ -1,6 +1,5 @@
 import { App, Button, Card, message, Table, Switch } from 'antd'
 import axios from 'axios'
-import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
 import EditForm from '@/components/edit-form'
@@ -142,12 +141,11 @@ const SkuListPage = () => {
   }
 
   return (
-    <Card title={t('menu.productList')}>
-      <ButtonWrapper>
-          <Button style={{ marginLeft: '20px' }} type="primary" onClick={handleAddAction}>
-              {t('button.create')}
-          </Button>
-      </ButtonWrapper>
+    <Card title={t('menu.productList')} extra={
+      <Button style={{ marginLeft: '20px' }} type="primary" onClick={handleAddAction}>
+          {t('button.create')}
+      </Button>
+    }>
       <Table
         columns={[
           {

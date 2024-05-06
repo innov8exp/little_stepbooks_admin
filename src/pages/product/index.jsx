@@ -5,7 +5,6 @@ import {
   UndoOutlined,
 } from '@ant-design/icons'
 import axios from 'axios'
-import { ButtonWrapper } from '@/components/styled'
 import DetailImages from '@/components/detail-images'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
@@ -200,7 +199,11 @@ const ProductListPage = () => {
   }
 
   return (
-    <Card title={t('menu.productList')}>
+    <Card title={t('menu.productList')} extra={
+      <Button type="primary" onClick={handleAddAction}  style={{ float: 'right' }}>
+        {t('button.create')}
+      </Button>
+    }>
       <Form form={queryForm}>
         <Row>
             <Form.Item label={t('title.skuName')} name="skuName">
@@ -216,14 +219,6 @@ const ProductListPage = () => {
             <Button icon={<UndoOutlined />} onClick={handleReset}>{t('button.reset')} </Button>
         </Row>
       </Form>
-      <ButtonWrapper>
-        <Button
-          type="primary"
-          onClick={handleAddAction}
-        >
-          {t('button.create')}
-        </Button>
-      </ButtonWrapper>
       <Table
         columns={[
           {

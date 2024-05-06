@@ -1,4 +1,3 @@
-import { Routes } from '@/libs/router'
 import { formatMoney } from '@/libs/util'
 import {
   ExclamationCircleOutlined,
@@ -105,10 +104,6 @@ const RefundRequestPage = () => {
     queryForm.resetFields()
   }
 
-  // const handleEditAction = (id) => {
-  //   navigate(`${Routes.ORDER_FORM.path}?id=${id}`)
-  // }
-
   const handleRejectAction = (id) => {
     setSelectedId(id)
     setRefundRejectFormVisible(true)
@@ -149,11 +144,11 @@ const RefundRequestPage = () => {
   }
 
   const handleOrderViewAction = (id) => {
-    navigate(`${Routes.ORDER_FORM.path}?id=${id}`)
+    navigate(`/order-form?id=${id}`)
   }
 
   const handleViewAction = (id) => {
-    navigate(`${Routes.REFUND_REQUEST_VIEW.path}?id=${id}`)
+    navigate(`/order-form?id=${id}`)
   }
 
   const handleCopyAction = (code) => {

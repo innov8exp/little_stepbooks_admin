@@ -47,18 +47,16 @@ const ClassificationPage = () => {
   }
 
   return (
-    <Card title={t('menu.classificationManagement')}>
-      <ButtonWrapper>
-        <Button
-          type="primary"
-          onClick={() => {
-            setSelectedId(undefined)
-            setFormVisible(true)
-          }}
-        >
-          {t('button.create')}
-        </Button>
-      </ButtonWrapper>
+    <Card title={t('menu.classificationManagement')} extra={
+    <Button
+      type="primary"
+      onClick={() => {
+        setSelectedId(undefined)
+        setFormVisible(true)
+      }}
+    >
+      {t('button.create')}
+    </Button>}>
       <Table
         columns={[
           {
