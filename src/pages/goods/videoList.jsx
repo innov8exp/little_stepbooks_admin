@@ -1,6 +1,5 @@
 import { App, Button, Card, message, Table, Image } from 'antd'
 import axios from 'axios'
-import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
 import EditForm from '@/components/edit-form'
@@ -142,17 +141,18 @@ const VideoListPage = () => {
   }
 
   return (
-    <Card title={t('menu.virtualVideoList')}>
-      <ButtonWrapper>
-          <Button type="primary" onClick={() => {
-            setBatchVisible(true)
-          }}>
-              {t('button.batchAddVideo')}
-          </Button>
-          <Button style={{ marginLeft: '20px' }} type="primary" onClick={handleAddAction}>
-              {t('button.addVideo')}
-          </Button>
-      </ButtonWrapper>
+    <Card title={t('menu.virtualVideoList')} extra={
+      <div>
+        <Button type="primary" onClick={() => {
+          setBatchVisible(true)
+        }}>
+            {t('button.batchAddVideo')}
+        </Button>
+        <Button style={{ marginLeft: '20px' }} type="default" onClick={handleAddAction}>
+            {t('button.addVideo')}
+        </Button>
+      </div>
+    }>
       <Table
         columns={[
           {

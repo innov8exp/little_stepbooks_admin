@@ -1,18 +1,16 @@
-import { App, Button, Card, message, Table, Switch } from 'antd'
+import { App, Button, Card, message, Table, Image, Switch } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
 import EditForm from '@/components/edit-form'
+import DetailImages from '@/components/detail-images'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
 import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
 
-const SkuListPage = () => {
-  const params = useParams()
-  const spuId = params?.id;
+const VirtualCatListPage = () => {
+  const apiPath = 'virtual-category'
   const { t } = useTranslation()
   const { modal } = App.useApp()
   const [listData, setListData] = useState([])
@@ -20,9 +18,10 @@ const SkuListPage = () => {
   const [editData, setEditData] = useState({})
   const [pageNumber, setPageNumber] = useState(1)
   const [loading, setLoading] = useState(true)
-  const [total, setTotal] = useState(0)
+  const [detailImageEditVisible, setDetailImageEditVisible] = useState(false)
+  const [editDetailImgForm, setEditDetailImgForm] = useState({})
   const [switchLoading, setSwitchLoading] = useState({})
-  const navigate = useNavigate()
+  const [total, setTotal] = useState(0)
   const pageSize = 10;
   const paginationProps = {
     pageSize,
@@ -35,7 +34,7 @@ const SkuListPage = () => {
 
   // 页面创建后加载一遍数据
   useEffect(() => {
-    const searchURL = `/api/admin/v1/sku?currentPage=1&pageSize=10&spuId=${spuId}`
+    const searchURL = `/api/admin/v1/${apiPath}?currentPage=1&pageSize=10`
     axios.get(searchURL).then((res) => {
       if (res && res.status === HttpStatus.OK) {
         const { records, total } = res.data;
@@ -46,12 +45,12 @@ const SkuListPage = () => {
     }).catch(() => {
       setLoading(false)
     })
-  }, [spuId])
+  }, [])
 
   const loadListData = function (currentPage) {
-    setLoading(true)
     currentPage = currentPage || pageNumber
-    const searchURL = `/api/admin/v1/sku?currentPage=${currentPage}&pageSize=${pageSize}&spuId=${spuId}`
+    setLoading(true)
+    const searchURL = `/api/admin/v1/${apiPath}?currentPage=${pageNumber}&pageSize=${pageSize}`
     axios
       .get(searchURL)
       .then((res) => {
@@ -82,8 +81,27 @@ const SkuListPage = () => {
     setEditData(item)
   }
 
-  const handleGoodsAction = ({ id, spuId }) => {
-    navigate(`/sku-goods-list/${id}/${spuId}`)
+  const handleDeleteAction = (id) => {
+    modal.confirm({
+      title: `${t('message.tips.delete')}`,
+      icon: <ExclamationCircleOutlined />,
+      okText: `${t('button.determine')}`,
+      okType: 'primary',
+      cancelText: `${t('button.cancel')}`,
+      onOk() {
+        axios.delete(`/api/admin/v1/${apiPath}/${id}`)
+          .then((res) => {
+            if (res.status === HttpStatus.OK) {
+              message.success(t('message.successInfo'))
+              loadListData()
+            }
+          })
+          .catch((err) => {
+            console.error(err)
+            message.error(err.message)
+          })
+      },
+    })
   }
 
   const handleUpdateStatusAction = (id, status) => {
@@ -96,7 +114,7 @@ const SkuListPage = () => {
       cancelText: `${t('button.cancel')}`,
       onOk() {
         axios
-          .post(`/api/admin/v1/sku/${id}/${status}`)
+          .post(`/api/admin/v1/${apiPath}/${id}/${status}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success(t('message.successInfo'))
@@ -117,33 +135,35 @@ const SkuListPage = () => {
     })
   }
 
-  const handleDeleteAction = (id) => {
-    modal.confirm({
-      title: `${t('message.tips.delete')}`,
-      icon: <ExclamationCircleOutlined />,
-      okText: `${t('button.determine')}`,
-      okType: 'primary',
-      cancelText: `${t('button.cancel')}`,
-      onOk() {
-        axios.delete(`/api/admin/v1/sku/${id}`)
-          .then((res) => {
-            if (res.status === HttpStatus.OK) {
-              message.success(t('message.successInfo'))
-              loadListData()
-            }
-          })
-          .catch((err) => {
-            console.error(err)
-            message.error(err.message)
-          })
-      },
+  const handleDetailImageEdit = (item) => {
+    setEditDetailImgForm({
+      ...item,
+      detailImgName: `${item.name}的详情图`
     })
+    setDetailImageEditVisible(true)
+  }
+
+  const onDetailImgSave = (detailImgId) => {
+    if(!editDetailImgForm.detailImgId){ // 编辑的对象不存在详情图关联
+      axios.put(`/api/admin/v1/${apiPath}/${editDetailImgForm.id}`, {
+        detailImgId
+      }).then(() => {
+        setDetailImageEditVisible(false)
+        loadListData()
+      })
+    }else{
+      setDetailImageEditVisible(false)
+    }
+  }
+
+  const onDetailImgCancel = () => {
+    setDetailImageEditVisible(false)
   }
 
   return (
-    <Card title={t('productPrice')} extra={
-      <Button style={{ marginLeft: '20px' }} type="primary" onClick={handleAddAction}>
-          {t('button.create')}
+    <Card title={t('virtualGoodsCat')} extra={
+      <Button type="primary" onClick={handleAddAction}>
+        {t('button.create')}
       </Button>
     }>
       <Table
@@ -154,19 +174,21 @@ const SkuListPage = () => {
             render: (text, record, index) => index + 1,
           },
           {
-            title: `${t('name')}`,
-            key: 'skuName',
-            dataIndex: 'skuName',
+            title: `${t('title.name')}`,
+            key: 'name',
+            dataIndex: 'name',
           },
           {
-            title: `${t('originalPrice')}`,
-            key: 'originalPrice',
-            dataIndex: 'originalPrice',
+            title: `${t('title.cover')}`,
+            key: 'coverUrl',
+            dataIndex: 'coverUrl',
+            render: (text) => <Image height={50} src={text} />,
           },
           {
-            title: `${t('price')}`,
-            key: 'price',
-            dataIndex: 'price',
+            title: `${t('sortIndex')}`,
+            key: 'sortIndex',
+            dataIndex: 'sortIndex',
+            width: 80
           },
           {
             title: `${t('title.creationTime')}`,
@@ -182,7 +204,7 @@ const SkuListPage = () => {
                 <Switch
                   checkedChildren={t('ON_SHELF')}
                   unCheckedChildren={t('OFF_SHELF')}
-                  checked={text === 'ON_SHELF'}
+                  checked={text === 'ONLINE'}
                   style={{
                     width: '70px'
                   }}
@@ -202,21 +224,21 @@ const SkuListPage = () => {
           {
             title: `${t('title.operate')}`,
             key: 'action',
-            width: 80,
+            width: 90,
             render: (text, record) => {
               return (
                 <div>
+                  <Button
+                    onClick={() => handleDetailImageEdit(record)}
+                    type="link"
+                  >
+                    {t('detailImage')}
+                  </Button>
                   <Button
                     onClick={() => handleEditAction(record)}
                     type="link"
                   >
                     {t('button.edit')}
-                  </Button>
-                  <Button
-                    onClick={() => handleGoodsAction(record)}
-                    type="link"
-                  >
-                    {t('bindGoods')}
                   </Button>
                   <Button
                     onClick={() => handleDeleteAction(record.id)}
@@ -236,15 +258,14 @@ const SkuListPage = () => {
       />
       <EditForm
         visible={ediVisible}
-        apiPath='sku'
+        apiPath={apiPath}
         domain='PRODUCT'
-        title='productPrice'
+        title='virtualGoodsCat'
         formData={editData}
-        appendData={{ spuId }}
         formKeys={[
-          { type:'input', key: 'skuName', label: 'name' },
-          { type:'number', min: 0.01, max: null, prefix:'￥', key: 'originalPrice' },
-          { type:'number', min: 0.01, max: null, prefix:'￥', key: 'price' },
+          { type:'input', key: 'name'},
+          { type:'photo', key: 'coverUrl', groupKeys:['coverId']},
+          { type:'number', min: 0, max: 99999, key: 'sortIndex'},
         ]}
         onCancel={() => setEdiVisible(false)}
         onSave={() => {
@@ -252,8 +273,15 @@ const SkuListPage = () => {
           loadListData()
         }}
       />
+      <DetailImages
+        visible={detailImageEditVisible}
+        id={editDetailImgForm.detailImgId}
+        detailName={editDetailImgForm.detailImgName}
+        onSave={onDetailImgSave}
+        onCancel={onDetailImgCancel}
+      />
     </Card>
   )
 }
 
-export default SkuListPage
+export default VirtualCatListPage

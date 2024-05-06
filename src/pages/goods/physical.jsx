@@ -1,4 +1,4 @@
-import { App, Button, Card, message, Table, Image } from 'antd'
+import { App, Button, Card, message, Table, Image, Switch } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons'
 
 const PhysicalListPage = () => {
+  const apiPath = 'physical-goods'
   const { t } = useTranslation()
   const { modal } = App.useApp()
   const [listData, setListData] = useState([])
@@ -16,6 +17,7 @@ const PhysicalListPage = () => {
   const [editData, setEditData] = useState({})
   const [pageNumber, setPageNumber] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [switchLoading, setSwitchLoading] = useState({})
   const [total, setTotal] = useState(0)
   const pageSize = 10;
   const paginationProps = {
@@ -29,7 +31,7 @@ const PhysicalListPage = () => {
 
   // 页面创建后加载一遍数据
   useEffect(() => {
-    const searchURL = `/api/admin/v1/physical-goods?currentPage=1&pageSize=10`
+    const searchURL = `/api/admin/v1/${apiPath}?currentPage=1&pageSize=10`
     axios.get(searchURL).then((res) => {
       if (res && res.status === HttpStatus.OK) {
         const { records, total } = res.data;
@@ -45,7 +47,7 @@ const PhysicalListPage = () => {
   const loadListData = function (currentPage) {
     currentPage = currentPage || pageNumber
     setLoading(true)
-    const searchURL = `/api/admin/v1/physical-goods?currentPage=${pageNumber}&pageSize=${pageSize}`
+    const searchURL = `/api/admin/v1/${apiPath}?currentPage=${pageNumber}&pageSize=${pageSize}`
     axios
       .get(searchURL)
       .then((res) => {
@@ -84,7 +86,7 @@ const PhysicalListPage = () => {
       okType: 'primary',
       cancelText: `${t('button.cancel')}`,
       onOk() {
-        axios.delete(`/api/admin/v1/physical-goods/${id}`)
+        axios.delete(`/api/admin/v1/${apiPath}/${id}`)
           .then((res) => {
             if (res.status === HttpStatus.OK) {
               message.success(t('message.successInfo'))
@@ -96,6 +98,37 @@ const PhysicalListPage = () => {
             message.error(err.message)
           })
       },
+    })
+  }
+
+  const handleUpdateStatusAction = (id, status) => {
+    setSwitchLoading({ id, loading: true })
+    modal.confirm({
+      title: `${t('message.tips.changeStatus')}`,
+      icon: <ExclamationCircleOutlined />,
+      okText: `${t('button.determine')}`,
+      okType: 'primary',
+      cancelText: `${t('button.cancel')}`,
+      onOk() {
+        axios
+          .post(`/api/admin/v1/${apiPath}/${id}/${status}`)
+          .then((res) => {
+            if (res.status === HttpStatus.OK) {
+              message.success(t('message.successInfo'))
+              loadListData()
+            }
+          })
+          .catch((err) => {
+            console.error(err)
+            message.error(err.message)
+          })
+          .finally(() => {
+            setSwitchLoading({ id, loading: false })
+          })
+      },
+      onCancel() {
+        setSwitchLoading({ id, loading: false })
+      }
     })
   }
 
@@ -129,14 +162,46 @@ const PhysicalListPage = () => {
             render: (text) => <Image height={50} src={text} />,
           },
           {
+            title: `${t('sortIndex')}`,
+            key: 'sortIndex',
+            dataIndex: 'sortIndex',
+            width: 80
+          },
+          {
             title: `${t('title.creationTime')}`,
             key: 'createdAt',
             dataIndex: 'createdAt',
           },
           {
+            title: `${t('title.status')}`,
+            key: 'status',
+            dataIndex: 'status',
+            render: (text, record) => {
+              return (
+                <Switch
+                  checkedChildren={t('ON_SHELF')}
+                  unCheckedChildren={t('OFF_SHELF')}
+                  checked={text === 'ONLINE'}
+                  style={{
+                    width: '70px'
+                  }}
+                  loading={
+                    switchLoading.id === record.id && switchLoading.loading
+                  }
+                  onClick={(checked) =>
+                    handleUpdateStatusAction(
+                      record.id,
+                      checked ? 'online' : 'offline',
+                    )
+                  }
+                />
+              )
+            },
+          },
+          {
             title: `${t('title.operate')}`,
             key: 'action',
-            width: 140,
+            width: 90,
             render: (text, record) => {
               return (
                 <div>
@@ -164,7 +229,7 @@ const PhysicalListPage = () => {
       />
       <EditForm
         visible={ediVisible}
-        apiPath='physical-goods'
+        apiPath={apiPath}
         domain='PRODUCT'
         title='title.physicalGoods'
         formData={editData}
@@ -172,6 +237,7 @@ const PhysicalListPage = () => {
           { type:'input', key: 'name'},
           { type:'textarea', key: 'description'},
           { type:'photo', key: 'coverUrl', groupKeys:['coverId']},
+          { type:'number', min: 0, max: 99999, key: 'sortIndex'},
         ]}
         onCancel={() => setEdiVisible(false)}
         onSave={() => {

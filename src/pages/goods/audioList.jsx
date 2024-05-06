@@ -1,6 +1,5 @@
 import { App, Button, Card, message, Table, Image } from 'antd'
 import axios from 'axios'
-import { ButtonWrapper } from '@/components/styled'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
 import EditForm from '@/components/edit-form'
@@ -142,17 +141,18 @@ const AudioListPage = () => {
   }
 
   return (
-    <Card title={t('menu.virtualAudioList')}>
-      <ButtonWrapper>
-          <Button type="primary" onClick={() => {
-            setBatchVisible(true)
-          }}>
-              {t('button.batchAddAudio')}
-          </Button>
-          <Button style={{ marginLeft: '20px' }} type="primary" onClick={handleAddAction}>
-              {t('button.addAudio')}
-          </Button>
-      </ButtonWrapper>
+    <Card title={t('menu.virtualAudioList')} extra={
+      <div>
+        <Button type="primary" onClick={() => {
+          setBatchVisible(true)
+        }}>
+            {t('button.batchAddAudio')}
+        </Button>
+        <Button style={{ marginLeft: '20px' }} type="default" onClick={handleAddAction}>
+            {t('button.addAudio')}
+        </Button>
+      </div>
+    }>
       <Table
         columns={[
           {

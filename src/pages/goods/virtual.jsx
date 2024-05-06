@@ -25,7 +25,6 @@ const VirtualGoodsListPage = () => {
   const [pageSize] = useState(10)
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
-  // const [switchLoading, setSwitchLoading] = useState({})
   const paginationProps = {
     pageSize,
     current: pageNumber,
@@ -121,38 +120,6 @@ const VirtualGoodsListPage = () => {
     })
   }
 
-  // const handleUpdateStatusAction = (id, status) => {
-  //   setSwitchLoading({ id, loading: true })
-  //   modal.confirm({
-  //     title: `${t('message.tips.changeStatus')}`,
-  //     icon: <ExclamationCircleOutlined />,
-  //     okText: `${t('button.determine')}`,
-  //     okType: 'primary',
-  //     cancelText: `${t('button.cancel')}`,
-  //     onOk() {
-  //       axios
-  //         .post(`/api/admin/v1/virtual-goods/${id}/${status}`)
-  //         .then((res) => {
-  //           if (res.status === HttpStatus.OK) {
-  //             message.success(t('message.successInfo'))
-  //             setChangeTime(Date.now())
-  //           }
-  //         })
-  //         .catch((err) => {
-  //           console.error(err)
-  //           message.error(err.message)
-  //         })
-  //         .finally(() => {
-  //           setSwitchLoading({ id, loading: false })
-  //         })
-  //     },
-  //     onCancel() {
-  //       setSwitchLoading({ id, loading: false })
-  //       setChangeTime(Date.now())
-  //     },
-  //   })
-  // }
-
   const openCatListPage = () => {
     navigate(`/goods/category-list`)
   }
@@ -194,12 +161,12 @@ const VirtualGoodsListPage = () => {
       <Form
         wrapperCol={{ span: 18 }}
         form={queryForm}
-        initialValues={{ categoryId: '', name: '' }}
+        initialValues={{ categoryId: null, name: '' }}
       >
       <Row>
         <Col span={8}>
           <Form.Item label={t('title.productCategory')} name="categoryId">
-            <Select placeholder={t('message.placeholder.bookAuthor')} options={ categoryArr }></Select>
+            <Select placeholder={t('pleaseSelect')} options={ categoryArr }></Select>
           </Form.Item>
         </Col>
         <Col span={8}>
@@ -260,32 +227,6 @@ const VirtualGoodsListPage = () => {
             key: 'createdAt',
             dataIndex: 'createdAt',
           },
-          // {
-          //   title: `${t('title.status')}`,
-          //   key: 'status',
-          //   dataIndex: 'status',
-          //   render: (text, record) => {
-          //     return (
-          //       <Switch
-          //         checkedChildren={t('ONLINE')}
-          //         unCheckedChildren={t('OFFLINE')}
-          //         checked={text === 'ONLINE'}
-          //         style={{
-          //           width: '70px'
-          //         }}
-          //         loading={
-          //           switchLoading.id === record.id && switchLoading.loading
-          //         }
-          //         onClick={(checked) =>
-          //           handleUpdateStatusAction(
-          //             record.id,
-          //             checked ? 'online' : 'offline',
-          //           )
-          //         }
-          //       />
-          //     )
-          //   },
-          // },
           {
             title: `${t('title.operate')}`,
             key: 'action',

@@ -199,7 +199,7 @@ const ProductListPage = () => {
   }
 
   return (
-    <Card title={t('menu.productList')} extra={
+    <Card title={t('menu.skuList')} extra={
       <Button type="primary" onClick={handleAddAction}  style={{ float: 'right' }}>
         {t('button.create')}
       </Button>

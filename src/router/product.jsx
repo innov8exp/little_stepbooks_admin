@@ -1,8 +1,8 @@
-import Classification from '@/pages/classification'
+import Classification from '@/pages/product/classification'
 import Product from '@/pages/product'
 import VirtualGoods from '@/pages/goods/virtual'
 import PhysicalGoods from '@/pages/goods/physical'
-import GoodsCategory from '@/pages/goods/category'
+import VirtualCategory from '@/pages/goods/virtual-cat'
 import GoodsAudioList from '@/pages/goods/audioList'
 import GoodsVideoList from '@/pages/goods/videoList'
 import ProductSkuList from '@/pages/product/skuList'
@@ -27,13 +27,13 @@ import Promotion from '@/pages/promotion'
 const routes = [
     { path: '/classification-list', element: <Classification />, label: 'menu.classificationManagement', isMenu: true },
     { path: '/product-list', element: <Product />, label: 'menu.skuList', isMenu: true },
-    { path: '/goods/physical-list', element: <PhysicalGoods />, label: 'menu.physicalGoodsList', isMenu: true },
-    { path: '/goods/virtual-list', element: <VirtualGoods />, label: 'menu.virtualGoodsList', isMenu: true },
-    { path: '/goods/category-list', element: <GoodsCategory />, label: 'menu.virtualGoodsList', isMenu: true },
-    { path: '/product-sku-list/:id', element: <ProductSkuList />, label: 'menu.productList', parentPath: '/product-list' },
+    { path: '/goods/physical-list', element: <PhysicalGoods />, label: 'physicalGoods', isMenu: true },
+    { path: '/goods/category-list', element: <VirtualCategory />, label: 'virtualGoodsCat', isMenu: true },
+    { path: '/goods/virtual-list', element: <VirtualGoods />, label: 'virtualGoods', isMenu: true },
+    { path: '/product-sku-list/:id', element: <ProductSkuList />, label: 'productPrice', parentPath: '/product-list' },
     { path: '/sku-goods-list/:skuId/:spuId', element: <SkuGoodsList />, label: 'skuRelationWidthGoods', parentPath: '/product-list' },
-    { path: '/goods/:id/audio-list', element: <GoodsAudioList />, label: 'menu.virtualAudioList', parentPath: '/virtual-list' },
-    { path: '/goods/:id/video-list', element: <GoodsVideoList />, label: 'menu.virtualVideoList', parentPath: '/virtual-list' },
+    { path: '/goods/:id/audio-list', element: <GoodsAudioList />, label: 'menu.virtualAudioList', parentPath: '/goods/virtual-list' },
+    { path: '/goods/:id/video-list', element: <GoodsVideoList />, label: 'menu.virtualVideoList', parentPath: '/goods/virtual-list' },
     { 
         path: '/books', 
         element: <Book />,
