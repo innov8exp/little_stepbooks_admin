@@ -105,7 +105,8 @@ const VirtualCatSelector = ({
         key: 'action',
         width: 140,
         render: (text, record) => {
-          return <Button onClick={() => onSelect(record)} type="link" disabled={ record.id === currentData.id }>{t('select')}</Button>
+          const disabled = record.id === currentData.id || record.parentId === currentData.id
+          return <Button onClick={() => onSelect(record)} type="link" disabled={disabled}>{t('select')}</Button>
         },
     }
   ]
