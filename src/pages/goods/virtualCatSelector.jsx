@@ -1,4 +1,4 @@
-import { Button, message, Table, Modal, Input, Image } from 'antd'
+import { Button, message, Table, Modal, Input } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
@@ -9,13 +9,10 @@ import {
   UndoOutlined,
 } from '@ant-design/icons'
 
-const GoodsSelector = ({
+const VirtualCatSelector = ({
     visible = false,
-    isPhysical = true,
-    onPhySelect = () => {
-
-    },
-    onVirSelect = () => {
+    currentData = {},
+    onSelect = () => {
 
     },
     onCancel = () => {
@@ -57,7 +54,7 @@ const GoodsSelector = ({
   const loadListData = function (currentPage, ignoreName) {
     currentPage = currentPage || pageNumber
     setLoading(true)
-    let searchURL = `/api/admin/v1/${isPhysical ? 'physical-goods' : 'virtual-category'}?currentPage=${pageNumber}&pageSize=${pageSize}`
+    let searchURL = `/api/admin/v1/virtual-category?currentPage=${pageNumber}&pageSize=${pageSize}`
     if(!ignoreName && name){
       searchURL += `&name=${encodeURIComponent(name)}`
     }
@@ -86,7 +83,7 @@ const GoodsSelector = ({
     loadListData(null, true)
   }
 
-  const physicalTableCol = [
+  const virtualCatTableCol = [
     {
       title: '#',
       key: 'number',
@@ -103,96 +100,21 @@ const GoodsSelector = ({
       dataIndex: 'description',
     },
     {
-      title: `${t('title.cover')}`,
-      key: 'coverUrl',
-      dataIndex: 'coverUrl',
-      render: (text) => <Image height={50} src={text} />,
-    },
-    {
-      title: `${t('title.operate')}`,
-      align: 'center',
-      key: 'action',
-      width: 140,
-      render: (text, record) => {
-        return (
-          <div>
-            <Button
-              onClick={() => onPhySelect(record)}
-              type="link"
-            >
-              {t('select')}
-            </Button>
-          </div>
-        )
-      },
-    },
-  ]
-
-  const virtualTableCol = [
-    {
-      title: '#',
-      key: 'number',
-      render: (text, record, index) => index + 1,
-    },
-    {
-      title: `${t('title.name')}`,
-      key: 'name',
-      dataIndex: 'name',
-    },
-    {
-      title: `${t('title.description')}`,
-      key: 'description',
-      dataIndex: 'description',
-    },
-    {
-      title: `${t('redeemAfterPay')}`,
-      key: 'redeemAfterPay',
-      align: 'center',
-      width: 140,
-      render: (text, record) => {
-        return (
-          <div>
-            <Button
-              onClick={() => onVirSelect({
-                categoryId: record.id,
-                redeemCondition: 'PAYMENT_SUCCESS'
-              })}
-              type="link"
-            >
-              {t('select')}
-            </Button>
-          </div>
-        )
-      },
-    },
-    {
-      title: `${t('redeemAfterSign')}`,
-      key: 'redeemAfterSign',
-      align: 'center',
-      width: 140,
-      render: (text, record) => {
-        return (
-          <div>
-            <Button
-              onClick={() => onVirSelect({
-                categoryId: record.id,
-                redeemCondition: 'SIGN_SUCCESS'
-              })}
-              type="link"
-            >
-              {t('select')}
-            </Button>
-          </div>
-        )
-      },
-    },
+        title: `${t('title.operate')}`,
+        align: 'center',
+        key: 'action',
+        width: 140,
+        render: (text, record) => {
+          return <Button onClick={() => onSelect(record)} type="link" disabled={ record.id === currentData.id }>{t('select')}</Button>
+        },
+    }
   ]
 
   return (
     <Modal
       open={visible}
       width={900}
-      title={t(isPhysical ? 'menu.physicalGoodsList' : 'menu.virtualGoodsList')}
+      title={t('menu.virtualGoodsList')}
       onCancel={onCancel}
       footer={null}
     >
@@ -202,7 +124,7 @@ const GoodsSelector = ({
         <Button icon={<UndoOutlined />} onClick={onReset}>{t('button.reset')} </Button>
       </div>
       <Table
-        columns={isPhysical ? physicalTableCol : virtualTableCol}
+        columns={ virtualCatTableCol }
         rowKey={(record) => record.id}
         dataSource={listData}
         loading={loading}
@@ -212,12 +134,11 @@ const GoodsSelector = ({
   )
 }
 
-GoodsSelector.propTypes = {
+VirtualCatSelector.propTypes = {
     visible: PropTypes.bool,
-    isPhysical: PropTypes.bool,
-    onVirSelect: PropTypes.func,
-    onPhySelect: PropTypes.func,
+    currentData: PropTypes.object,
+    onSelect: PropTypes.func,
     onCancel: PropTypes.func,
   }
 
-export default GoodsSelector
+export default VirtualCatSelector

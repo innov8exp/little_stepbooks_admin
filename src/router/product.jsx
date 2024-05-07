@@ -29,7 +29,7 @@ const routes = [
     { path: '/product-list', element: <Product />, label: 'menu.skuList', isMenu: true },
     { path: '/goods/physical-list', element: <PhysicalGoods />, label: 'physicalGoods', isMenu: true },
     { path: '/goods/category-list', element: <VirtualCategory />, label: 'virtualGoodsCat', isMenu: true },
-    { path: '/goods/virtual-list', element: <VirtualGoods />, label: 'virtualGoods', isMenu: true },
+    { path: '/goods/virtual-list', element: <VirtualGoods />, label: 'virtualGoods', isMenu: true, parentPath: '/goods/category-list' },
     { path: '/product-sku-list/:id', element: <ProductSkuList />, label: 'productPrice', parentPath: '/product-list' },
     { path: '/sku-goods-list/:skuId/:spuId', element: <SkuGoodsList />, label: 'skuRelationWidthGoods', parentPath: '/product-list' },
     { path: '/goods/:id/audio-list', element: <GoodsAudioList />, label: 'menu.virtualAudioList', parentPath: '/goods/virtual-list' },

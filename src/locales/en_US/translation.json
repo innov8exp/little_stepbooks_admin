@@ -1,4 +1,9 @@
 {
+  "yes": "Yes",
+  "no": "No",
+  "freeOrNot": "Free Or Not",
+  "free": "Free",
+  "notFree": "Not Free",
   "profile": "Profile",
   "title": "Title",
   "name": "Name",
@@ -24,6 +29,8 @@
   "productPrice": "Product Price",
   "physicalGoods": "Physical Goods",
   "virtualGoods": "Physical Goods",
+  "addParent": "Add Parent",
+  "parentId": "Parent Id",
   "virtualGoodsCat": "Physical Goods Category",
   "bindPhysicalGoods": "Bind Physical Goods",
   "bindVirtualGoods": "Bind Virtual Goods",

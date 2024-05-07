@@ -1,4 +1,4 @@
-import { Form, Input, Modal, message, Select, InputNumber, Checkbox } from 'antd'
+import { Form, Input, Modal, message, Select, InputNumber, Checkbox, Switch } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
@@ -31,6 +31,8 @@ const placeholderMap = {
 const itemPropTypes = {
   type: PropTypes.string,
   placeholder: PropTypes.string,
+  checkedLabel: PropTypes.string,
+  unCheckedLabel: PropTypes.string,
   min: PropTypes.number,
   max: PropTypes.number,
   key: PropTypes.string,
@@ -62,18 +64,21 @@ const EditForm = ({
   const url = `/api/admin/v1/${apiPath}` + (isAdd ? '' : `/${formData.id}`)
   const method = isAdd ? 'post' : 'put'
   const showTitle = t(title) + t('CONNECT_MARK1') + t(disabled ? 'view' : (isAdd ? 'button.create' : 'button.edit'))
+  // 如果是新增行为，忽略排序字段的传参以及配置
+  const realFormKeys = isAdd ? formKeys.filter(item => item.key != 'sortIndex') : formKeys
+
   // 存在一些冗余的字段需要独立维护，通过 hiddenData 对象进行维护
   // 视频、音频、图片资源需要追加对应的 id 字段， 视频、音频保持追加 duration 字段
   // check 表单同时维护id、name
   const hiddenFormData = {};
-  formKeys.forEach(item => {
+  realFormKeys.forEach(item => {
     item.groupKeys && item.groupKeys.forEach(key => {
       hiddenFormData[key] = formData[key]
     })
   })
 
   // 编辑显示的模式下，在下一个 event loop 对表单进行重置 
-  if(visible && !isAdd){
+  if(visible){
     setTimeout(() => {
       form.setFieldsValue({
         ...formData
@@ -88,7 +93,7 @@ const EditForm = ({
 
   const saveData = () => {
     form.validateFields().then(values => {
-      formKeys.forEach(item => {
+      realFormKeys.forEach(item => {
         if(item.format){ // 假如传递的某一个参数项存在数值的format函数，需要对其表单传递的值进行转换
           values[item.key] = item.format(values[item.key])
         }
@@ -124,6 +129,8 @@ const EditForm = ({
     mode,
     maxCount,
     prefix,
+    checkedLabel,
+    unCheckedLabel
     // ...props
   }) => {
     placeholder =  t(placeholder || placeholderMap[key] || key)
@@ -134,7 +141,16 @@ const EditForm = ({
       return (<TextArea placeholder={placeholder} />)
     }
     if(type === 'number'){
-      return (<InputNumber style={{ width: 200 }} min={min} max={max} prefix={prefix} defaultValue={formData[key]} />)
+      return (<InputNumber style={{ width: 200 }} min={min} max={max} prefix={prefix} />)
+    }
+    if(type === 'boolean'){
+      return (
+        <Switch
+          checkedChildren={t(checkedLabel)}
+          unCheckedChildren={t(unCheckedLabel)}
+          style={{ width: 100 }}
+        />
+      )
     }
     if(type === 'photo'){
       return (<ImageUpload domain={domain} permission={permission} value={formData[key]} onChange={res => {
@@ -208,7 +224,7 @@ const EditForm = ({
   BuildFormItem.propTypes = itemPropTypes;
 
   const  BuildFormList = () => {
-    return formKeys.map(item => {
+    return realFormKeys.map(item => {
       return (
         <Form.Item key={item.key} name={item.key} label={t(item.label || labelMap[item.key] || item.key)}>
           { BuildFormItem(item) }

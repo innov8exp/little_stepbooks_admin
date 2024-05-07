@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import EditForm from '@/components/edit-form'
 import DetailImages from '@/components/detail-images'
 import { useTranslation } from 'react-i18next'
+import VirtualCatSelector from './virtualCatSelector'
 import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
@@ -18,6 +19,7 @@ const VirtualCatListPage = () => {
   const [editData, setEditData] = useState({})
   const [pageNumber, setPageNumber] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [parentSelectorVisible, setParentSelectorVisible] = useState(false)
   const [detailImageEditVisible, setDetailImageEditVisible] = useState(false)
   const [editDetailImgForm, setEditDetailImgForm] = useState({})
   const [switchLoading, setSwitchLoading] = useState({})
@@ -73,7 +75,9 @@ const VirtualCatListPage = () => {
 
   const handleAddAction = () => {
     setEdiVisible(true)
-    setEditData({})
+    setEditData({
+        free: false
+    })
   }
 
   const handleEditAction = (item) => {
@@ -135,6 +139,20 @@ const VirtualCatListPage = () => {
     })
   }
 
+  const handleParentIdClick = (record) => {
+    setEditData(record)
+    setParentSelectorVisible(true)
+  }
+
+  const onParentCatSelect = (item) => {
+    axios.put(`/api/admin/v1/${apiPath}/${editData.id}`, {
+        parentId: item.id
+    }).then(() => {
+        setParentSelectorVisible(false)
+        loadListData()
+    })
+  }
+
   const handleDetailImageEdit = (item) => {
     setEditDetailImgForm({
       ...item,
@@ -179,6 +197,11 @@ const VirtualCatListPage = () => {
             dataIndex: 'name',
           },
           {
+            title: `${t('title.description')}`,
+            key: 'description',
+            dataIndex: 'description',
+          },
+          {
             title: `${t('title.cover')}`,
             key: 'coverUrl',
             dataIndex: 'coverUrl',
@@ -189,6 +212,18 @@ const VirtualCatListPage = () => {
             key: 'sortIndex',
             dataIndex: 'sortIndex',
             width: 80
+          },
+          {
+            title: `${t('parentId')}`,
+            key: 'parentId',
+            dataIndex: 'parentId',
+            render: (text, record) => <Button type={ text ? 'text' : 'link' } onClick={() => handleParentIdClick(record)}>{text || t('addParent')}</Button>,
+          },
+          {
+            title: `${t('freeOrNot')}`,
+            key: 'free',
+            dataIndex: 'free',
+            render: (text) => text ? t('yes') : t('no'),
           },
           {
             title: `${t('title.creationTime')}`,
@@ -237,6 +272,7 @@ const VirtualCatListPage = () => {
                   <Button
                     onClick={() => handleEditAction(record)}
                     type="link"
+                    disabled={ record.status === 'ONLINE' }
                   >
                     {t('button.edit')}
                   </Button>
@@ -264,8 +300,10 @@ const VirtualCatListPage = () => {
         formData={editData}
         formKeys={[
           { type:'input', key: 'name'},
+          { type:'textarea', key: 'description'},
           { type:'photo', key: 'coverUrl', groupKeys:['coverId']},
           { type:'number', min: 0, max: 99999, key: 'sortIndex'},
+          { type:'boolean', checkedLabel: 'free', unCheckedLabel: 'notFree', key: 'free', label: 'freeOrNot'},
         ]}
         onCancel={() => setEdiVisible(false)}
         onSave={() => {
@@ -279,6 +317,12 @@ const VirtualCatListPage = () => {
         detailName={editDetailImgForm.detailImgName}
         onSave={onDetailImgSave}
         onCancel={onDetailImgCancel}
+      />
+      <VirtualCatSelector
+        visible={parentSelectorVisible}
+        currentData={editData}
+        onCancel={() => setParentSelectorVisible(false)}
+        onSelect={onParentCatSelect}
       />
     </Card>
   )
