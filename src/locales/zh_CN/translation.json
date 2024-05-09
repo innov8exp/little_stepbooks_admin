@@ -31,6 +31,8 @@
   "virtualGoods": "虚拟产品",
   "addParent": "添加父类",
   "parentId": "父类",
+  "showChildren": "显示子类",
+  "hideChildren": "隐藏子类",
   "virtualGoodsCat": "虚拟产品分类",
   "bindPhysicalGoods": "绑定实物产品",
   "bindVirtualGoods": "绑定虚拟产品",

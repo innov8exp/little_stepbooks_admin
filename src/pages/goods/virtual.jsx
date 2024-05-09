@@ -1,6 +1,7 @@
 import { App, Button, Card, message, Table, Row, Col, Form, Input, Select } from 'antd'
 import { OrderedListOutlined } from '@ant-design/icons'
 import axios from 'axios'
+import http from '@/libs/http'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -35,21 +36,17 @@ const VirtualGoodsListPage = () => {
   }
 
   const fetchAllCats = function (){
-    const url = `/api/admin/v1/virtual-category?currentPage=1&pageSize=1000`
-    return axios.get(url).then(res => {
-      if(res && res.status === HttpStatus.OK){
+    const url = `virtual-category/all-endpoints`
+    return http.get(url).then(data => {
         const arr = [];
         const map = {};
-        res.data.records.forEach(item => {
+        data.forEach(item => {
           arr.push({ value: item.id, label: item.name })
           map[item.id] = item.name
         })
         setCategoryArr(arr)
         setCategoryMap(map)
         return arr
-      }else{
-        return []
-      }
     })
   }
 

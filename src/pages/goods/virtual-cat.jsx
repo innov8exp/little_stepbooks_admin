@@ -1,16 +1,21 @@
 import { App, Button, Card, message, Table, Image, Switch } from 'antd'
-import axios from 'axios'
-import HttpStatus from 'http-status-codes'
+import http from '@/libs/http'
 import { useState, useEffect } from 'react'
 import EditForm from '@/components/edit-form'
 import DetailImages from '@/components/detail-images'
 import { useTranslation } from 'react-i18next'
-import VirtualCatSelector from './virtualCatSelector'
 import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
 
 const VirtualCatListPage = () => {
+  const defaultKeys = [
+    { type:'input', key: 'name'},
+    { type:'textarea', key: 'description'},
+    { type:'photo', key: 'coverUrl', groupKeys:['coverId']},
+    { type:'number', min: 0, max: 99999, key: 'sortIndex'},
+    { type:'boolean', checkedLabel: 'free', unCheckedLabel: 'notFree', key: 'free', label: 'freeOrNot'},
+  ]
   const apiPath = 'virtual-category'
   const { t } = useTranslation()
   const { modal } = App.useApp()
@@ -19,9 +24,10 @@ const VirtualCatListPage = () => {
   const [editData, setEditData] = useState({})
   const [pageNumber, setPageNumber] = useState(1)
   const [loading, setLoading] = useState(true)
-  const [parentSelectorVisible, setParentSelectorVisible] = useState(false)
+  const [includeChildren, setIncludeChildren] = useState(true)
   const [detailImageEditVisible, setDetailImageEditVisible] = useState(false)
   const [editDetailImgForm, setEditDetailImgForm] = useState({})
+  const [editFormKeys, setEditFormKeys] = useState(defaultKeys)
   const [switchLoading, setSwitchLoading] = useState({})
   const [total, setTotal] = useState(0)
   const pageSize = 10;
@@ -36,34 +42,28 @@ const VirtualCatListPage = () => {
 
   // 页面创建后加载一遍数据
   useEffect(() => {
-    const searchURL = `/api/admin/v1/${apiPath}?currentPage=1&pageSize=10`
-    axios.get(searchURL).then((res) => {
-      if (res && res.status === HttpStatus.OK) {
-        const { records, total } = res.data;
+    const searchURL = `${apiPath}?currentPage=1&pageSize=10&includeChildren=true`
+    http.get(searchURL).then((data) => {
+        const { records, total } = data;
         setListData(records)
         setTotal(total)
         setLoading(false)
-      }
     }).catch(() => {
       setLoading(false)
     })
   }, [])
 
-  const loadListData = function (currentPage) {
+  const loadListData = function (currentPage, include) {
     currentPage = currentPage || pageNumber
+    include = include != undefined ? include : includeChildren
     setLoading(true)
-    const searchURL = `/api/admin/v1/${apiPath}?currentPage=${pageNumber}&pageSize=${pageSize}`
-    axios
-      .get(searchURL)
-      .then((res) => {
-        if (res && res.status === HttpStatus.OK) {
-          const responseObject = res.data
-          setPageNumber(currentPage)
-          setListData(responseObject.records)
-          setTotal(responseObject.total)
-        }
-      })
-      .catch((err) =>
+    const searchURL = `${apiPath}?currentPage=${pageNumber}&pageSize=${pageSize}&includeChildren=${include}`
+    http.get(searchURL).then((data) => {
+        const responseObject = data
+        setPageNumber(currentPage)
+        setListData(responseObject.records)
+        setTotal(responseObject.total)
+      }).catch((err) =>
         message.error(
           `${t('message.error.failureReason')}${err.response?.data?.message}`,
         ),
@@ -73,14 +73,27 @@ const VirtualCatListPage = () => {
       })
   }
 
+  const reloadListData = function (include){
+    setIncludeChildren(include)
+    setPageNumber(1)
+    loadListData(1, include)
+  }
+
   const handleAddAction = () => {
-    setEdiVisible(true)
-    setEditData({
-        free: false
+    http.get(`${apiPath}?currentPage=1&pageSize=100&includeChildren=false`).then(data => {
+        const parentItem = { type:'select', key: 'parentId', options: data.records.map(item => ({ value: item.id, label: item.name }))}
+        const newKeys = defaultKeys.slice()
+        newKeys.splice(3, 0, parentItem)
+        setEditFormKeys(newKeys)
+        setEdiVisible(true)
+        setEditData({
+            free: false
+        })
     })
   }
 
   const handleEditAction = (item) => {
+    setEditFormKeys(defaultKeys)
     setEdiVisible(true)
     setEditData(item)
   }
@@ -93,16 +106,13 @@ const VirtualCatListPage = () => {
       okType: 'primary',
       cancelText: `${t('button.cancel')}`,
       onOk() {
-        axios.delete(`/api/admin/v1/${apiPath}/${id}`)
-          .then((res) => {
-            if (res.status === HttpStatus.OK) {
-              message.success(t('message.successInfo'))
-              loadListData()
-            }
+        http.delete(`${apiPath}/${id}`)
+          .then(() => {
+            message.success(t('message.successInfo'))
+            loadListData()
           })
           .catch((err) => {
-            console.error(err)
-            message.error(err.message)
+            message.error(err)
           })
       },
     })
@@ -117,17 +127,13 @@ const VirtualCatListPage = () => {
       okType: 'primary',
       cancelText: `${t('button.cancel')}`,
       onOk() {
-        axios
-          .post(`/api/admin/v1/${apiPath}/${id}/${status}`)
-          .then((res) => {
-            if (res.status === HttpStatus.OK) {
-              message.success(t('message.successInfo'))
-              loadListData()
-            }
+        http.post(`${apiPath}/${id}/${status}`)
+          .then(() => {
+            message.success(t('message.successInfo'))
+            loadListData()
           })
           .catch((err) => {
-            console.error(err)
-            message.error(err.message)
+            message.error(err)
           })
           .finally(() => {
             setSwitchLoading({ id, loading: false })
@@ -136,20 +142,6 @@ const VirtualCatListPage = () => {
       onCancel() {
         setSwitchLoading({ id, loading: false })
       }
-    })
-  }
-
-  const handleParentIdClick = (record) => {
-    setEditData(record)
-    setParentSelectorVisible(true)
-  }
-
-  const onParentCatSelect = (item) => {
-    axios.put(`/api/admin/v1/${apiPath}/${editData.id}`, {
-        parentId: item.id
-    }).then(() => {
-        setParentSelectorVisible(false)
-        loadListData()
     })
   }
 
@@ -163,7 +155,7 @@ const VirtualCatListPage = () => {
 
   const onDetailImgSave = (detailImgId) => {
     if(!editDetailImgForm.detailImgId){ // 编辑的对象不存在详情图关联
-      axios.put(`/api/admin/v1/${apiPath}/${editDetailImgForm.id}`, {
+      http.put(`${apiPath}/${editDetailImgForm.id}`, {
         detailImgId
       }).then(() => {
         setDetailImageEditVisible(false)
@@ -179,7 +171,18 @@ const VirtualCatListPage = () => {
   }
 
   return (
-    <Card title={t('virtualGoodsCat')} extra={
+    <Card title={(
+        <div>
+            <span>{t('virtualGoodsCat')}</span>
+            <Switch
+                checkedChildren={t('showChildren')}
+                unCheckedChildren={t('hideChildren')}
+                checked={includeChildren}
+                style={{ width: 100, marginLeft: 20 }}
+                onClick={reloadListData}
+            />
+        </div>
+    )} extra={
       <Button type="primary" onClick={handleAddAction}>
         {t('button.create')}
       </Button>
@@ -215,9 +218,8 @@ const VirtualCatListPage = () => {
           },
           {
             title: `${t('parentId')}`,
-            key: 'parentId',
-            dataIndex: 'parentId',
-            render: (text, record) => <Button type={ text ? 'text' : 'link' } onClick={() => handleParentIdClick(record)}>{text || t('addParent')}</Button>,
+            key: 'parentName',
+            dataIndex: 'parentName',
           },
           {
             title: `${t('freeOrNot')}`,
@@ -298,13 +300,7 @@ const VirtualCatListPage = () => {
         domain='PRODUCT'
         title='virtualGoodsCat'
         formData={editData}
-        formKeys={[
-          { type:'input', key: 'name'},
-          { type:'textarea', key: 'description'},
-          { type:'photo', key: 'coverUrl', groupKeys:['coverId']},
-          { type:'number', min: 0, max: 99999, key: 'sortIndex'},
-          { type:'boolean', checkedLabel: 'free', unCheckedLabel: 'notFree', key: 'free', label: 'freeOrNot'},
-        ]}
+        formKeys={editFormKeys}
         onCancel={() => setEdiVisible(false)}
         onSave={() => {
           setEdiVisible(false)
@@ -317,12 +313,6 @@ const VirtualCatListPage = () => {
         detailName={editDetailImgForm.detailImgName}
         onSave={onDetailImgSave}
         onCancel={onDetailImgCancel}
-      />
-      <VirtualCatSelector
-        visible={parentSelectorVisible}
-        currentData={editData}
-        onCancel={() => setParentSelectorVisible(false)}
-        onSelect={onParentCatSelect}
       />
     </Card>
   )

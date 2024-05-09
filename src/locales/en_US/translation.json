@@ -31,6 +31,8 @@
   "virtualGoods": "Physical Goods",
   "addParent": "Add Parent",
   "parentId": "Parent Id",
+  "showChildren": "Show Children",
+  "hideChildren": "Hide Children",
   "virtualGoodsCat": "Physical Goods Category",
   "bindPhysicalGoods": "Bind Physical Goods",
   "bindVirtualGoods": "Bind Virtual Goods",
