@@ -57,7 +57,7 @@ const GoodsSelector = ({
   const loadListData = function (currentPage, ignoreName) {
     currentPage = currentPage || pageNumber
     setLoading(true)
-    let searchURL = `/api/admin/v1/${isPhysical ? 'physical-goods' : 'virtual-category'}?currentPage=${pageNumber}&pageSize=${pageSize}`
+    let searchURL = `/api/admin/v1/${isPhysical ? 'physical-goods?' : 'virtual-category?includeChildren=true&'}currentPage=${pageNumber}&pageSize=${pageSize}`
     if(!ignoreName && name){
       searchURL += `&name=${encodeURIComponent(name)}`
     }
