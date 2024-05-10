@@ -36,7 +36,9 @@ const Logo = styled.div`
 `
 const AdminLayout = () => {
   const { t } = useTranslation()
-
+  const location = useLocation()
+  const [collapsed, setCollapsed] = useState(localStorage.getItem('menu_collapsed') == 1)
+  const [selectedKeys, setSelectedKeys] = useState(['0'])
   const menuItems = menus.map((item, index1) => {
     const menuItem = {
       key: `${index1}`,
@@ -54,6 +56,9 @@ const AdminLayout = () => {
     }
     return menuItem
   })
+
+  // let defaultSelectedKeys = ['0'];
+  
 
   function buildBreadcrumbItems () {
     const arr = [
@@ -94,8 +99,10 @@ const AdminLayout = () => {
     return arr
   }
 
-  const [collapsed, setCollapsed] = useState(localStorage.getItem('menu_collapsed') == 1)
-  const location = useLocation()
+  function onMenuClick ({ key }){
+    setSelectedKeys(key)
+  }
+
   const breadcrumbItems = buildBreadcrumbItems()
 
   return (
@@ -110,9 +117,10 @@ const AdminLayout = () => {
         <Logo>{collapsed ? t('project.nameSort') : t('project.name')}</Logo>
         <Menu
           theme="light"
-          defaultSelectedKeys={['0']}
+          selectedKeys={selectedKeys}
           mode="inline"
           items={menuItems}
+          onClick={onMenuClick}
         />
       </Sider>
       <Layout>

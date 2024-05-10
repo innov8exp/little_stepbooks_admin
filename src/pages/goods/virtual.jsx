@@ -41,7 +41,10 @@ const VirtualGoodsListPage = () => {
         const arr = [];
         const map = {};
         data.forEach(item => {
-          arr.push({ value: item.id, label: item.name })
+          arr.push({ 
+            value: item.id,
+            label: item.parent ? `${item.parent.name}-${item.name}` : item.name
+          })
           map[item.id] = item.name
         })
         setCategoryArr(arr)
