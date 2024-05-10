@@ -17,7 +17,7 @@ const VirtualGoodsListPage = () => {
   const navigate = useNavigate()
   const [changeTime, setChangeTime] = useState(Date.now())
   const [queryForm] = Form.useForm()
-  const [categoryMap, setCategoryMap] = useState()
+  const [searchCatArr, setSearchCatArr] = useState([])
   const [categoryArr, setCategoryArr] = useState([])
   const [goodsData, setGoodsData] = useState()
   const [formVisible, setFormVisible] = useState(false)
@@ -37,19 +37,17 @@ const VirtualGoodsListPage = () => {
 
   const fetchAllCats = function (){
     const url = `virtual-category/all-endpoints`
-    return http.get(url).then(data => {
-        const arr = [];
-        const map = {};
-        data.forEach(item => {
-          arr.push({ 
-            value: item.id,
-            label: item.parent ? `${item.parent.name}-${item.name}` : item.name
-          })
-          map[item.id] = item.name
-        })
-        setCategoryArr(arr)
-        setCategoryMap(map)
-        return arr
+    http.get(url).then(data => {
+        setCategoryArr(data.map(item => ({ 
+          value: item.id,
+          label: item.parent ? `${item.parent.name} - ${item.name}` : item.name
+        })))
+    })
+    http.get(`virtual-category?currentPage=1&pageSize=1000&includeChild=false`).then(res => {
+      setSearchCatArr(res.records.map(item => ({ 
+        value: item.id,
+        label: item.parent ? `${item.parent.name} - ${item.name}` : item.name
+      })))
     })
   }
 
@@ -64,7 +62,7 @@ const VirtualGoodsListPage = () => {
 
   const fetchGoods = useCallback(async () => {
     setLoading(true)
-    let searchURL = `/api/admin/v1/virtual-goods?currentPage=${pageNumber}&pageSize=${pageSize}`
+    let searchURL = `virtual-goods?currentPage=${pageNumber}&pageSize=${pageSize}`
     const queryValue = queryForm.getFieldsValue()
     if(queryValue.categoryId){
       searchURL += `&categoryId=${queryValue.categoryId}`
@@ -73,24 +71,18 @@ const VirtualGoodsListPage = () => {
       searchURL += `&name=${queryValue.name}`
     }
     if(categoryArr.length === 0){
-      await fetchAllCats()
+      fetchAllCats()
     }
-    axios
-      .get(searchURL)
-      .then((res) => {
-        if (res && res.status === HttpStatus.OK) {
-          const responseObject = res.data
-          setGoodsData(responseObject.records)
-          setTotal(responseObject.total)
-        }
-      })
-      .catch((err) =>
+    http.get(searchURL).then((data) => {
+        setGoodsData(data.records)
+        setTotal(data.total)
+      }).catch((err) =>
         message.error(
           `${t('message.error.failureReason')}${err.response?.data?.message}`,
         ),
       )
       .finally(() => setLoading(false))
-  }, [categoryArr.length, pageNumber, pageSize, queryForm, t])
+  }, [pageNumber, pageSize, queryForm, t])
 
   const handleEditAction = (id) => {
     setSelectedId(id)
@@ -166,7 +158,7 @@ const VirtualGoodsListPage = () => {
       <Row>
         <Col span={8}>
           <Form.Item label={t('title.productCategory')} name="categoryId">
-            <Select placeholder={t('pleaseSelect')} options={ categoryArr }></Select>
+            <Select placeholder={t('pleaseSelect')} options={ searchCatArr }></Select>
           </Form.Item>
         </Col>
         <Col span={8}>
@@ -219,7 +211,15 @@ const VirtualGoodsListPage = () => {
             key: 'categoryId',
             dataIndex: 'categoryId',
             render: (text, record) => {
-              return categoryMap[record.categoryId]
+              if(record.category){
+                if(record.category.parent){
+                  return `${record.category.parent.name} - ${record.category.name}`
+                }else{
+                  return record.category.name
+                }
+              }else{
+                return null
+              }
             }
           },
           {

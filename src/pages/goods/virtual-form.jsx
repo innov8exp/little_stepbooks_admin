@@ -62,7 +62,6 @@ const VirtualForm = ({ id, visible, categoryArr, onSave, onCancel }) => {
     form
       .validateFields()
       .then((values) => {
-        console.log(values)
         if (id) {
           updateData(values)
         } else {

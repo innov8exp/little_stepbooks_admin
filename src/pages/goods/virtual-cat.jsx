@@ -198,6 +198,7 @@ const VirtualCatListPage = () => {
             title: `${t('title.name')}`,
             key: 'name',
             dataIndex: 'name',
+            render: (text, record) => record.parent ? `${record.parent.name} - ${text}` : text,
           },
           {
             title: `${t('title.description')}`,
@@ -215,12 +216,6 @@ const VirtualCatListPage = () => {
             key: 'sortIndex',
             dataIndex: 'sortIndex',
             width: 80
-          },
-          {
-            title: `${t('parentId')}`,
-            key: 'parentId',
-            dataIndex: 'parentId',
-            render: (text, record) => record.parent ? record.parent.name : text,
           },
           {
             title: `${t('freeOrNot')}`,
