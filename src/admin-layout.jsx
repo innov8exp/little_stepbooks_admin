@@ -8,6 +8,8 @@ import { menus, breadcrumbMap } from './router/index'
 import {
   HomeOutlined
 } from '@ant-design/icons'
+import logo1 from '@/assets/images/logo.png'
+import logo2 from '@/assets/images/logo2.png'
 
 const { Sider, Content } = Layout
 
@@ -21,18 +23,6 @@ const ContentWrapper = styled(Content)`
   padding: 24px;
   background: #f0f2f5;
   overflow-y: auto;
-`
-
-const Logo = styled.div`
-  height: 64px;
-  color: #fff;
-  font-size: 18px;
-  font-weight: bold;
-  line-height: 64px;
-  text-align: center;
-  white-space: nowrap;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #f54a74;
 `
 const AdminLayout = () => {
   let defaultSelectedKeys = ['0'];
@@ -65,6 +55,23 @@ const AdminLayout = () => {
   })
   const [collapsed, setCollapsed] = useState(localStorage.getItem('menu_collapsed') == 1)
   const [selectedKeys, setSelectedKeys] = useState(defaultSelectedKeys)
+
+  function Logo () {
+    return (
+      <div style={{
+        height: 64,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+        boxShadow: '0 1px 4px rgba(0, 21, 41, 0.08)',
+        position: 'relative',
+        zIndex: 11
+      }}>
+        <img src={ collapsed ? logo1 : logo2 } style={{ height: 40 }} alt="stepbook" />
+      </div>
+    )
+  }
 
   function buildBreadcrumbItems () {
     const arr = [
