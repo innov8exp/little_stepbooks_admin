@@ -11,8 +11,8 @@ import {
 const VirtualCatListPage = () => {
   const defaultKeys = [
     { type:'input', key: 'name'},
-    { type:'textarea', key: 'description'},
-    { type:'photo', key: 'coverUrl', groupKeys:['coverId']},
+    { type:'textarea', key: 'description', required: false},
+    { type:'photo', key: 'coverUrl', groupKeys:['coverId'], required: false},
     { type:'number', min: 0, max: 99999, key: 'sortIndex'},
     { type:'boolean', checkedLabel: 'free', unCheckedLabel: 'notFree', key: 'free', label: 'freeOrNot'},
   ]

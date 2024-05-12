@@ -41,6 +41,8 @@ const itemPropTypes = {
   options: PropTypes.array,
   mode: PropTypes.string,
   format: PropTypes.func,
+  rules: PropTypes.array,
+  required: PropTypes.bool
 }
 
 const EditForm = ({ 
@@ -130,7 +132,7 @@ const EditForm = ({
     maxCount,
     prefix,
     checkedLabel,
-    unCheckedLabel
+    unCheckedLabel,
     // ...props
   }) => {
     placeholder =  t(placeholder || placeholderMap[key] || key)
@@ -225,8 +227,25 @@ const EditForm = ({
 
   const  BuildFormList = () => {
     return realFormKeys.map(item => {
+      // 优先使用传递的label，否则使用该组件配置的，都不存在尝试使用key
+      const label = t(item.label || labelMap[item.key] || item.key)
+
+      const preMsgMap = {
+        'input': 'pleaseEnter',
+        'textarea': 'pleaseEnter',
+        'number': 'pleaseEnter',
+        'select': 'pleaseSelect',
+        'checkbox': 'pleaseSelect',
+        'checkbox.group': 'pleaseSelect',
+        'boolean': 'pleaseSelect',
+      }
+      // 默认认为表单的全部字段为必传，除非某一条目配置 required: false
+      const rules = item.rules || [{
+        required: item.required === false ? false : true,
+        message: t(preMsgMap[item.type] || 'pleaseAdd') + label
+      }]
       return (
-        <Form.Item key={item.key} name={item.key} label={t(item.label || labelMap[item.key] || item.key)}>
+        <Form.Item key={item.key} name={item.key} label={label} rules={rules}>
           { BuildFormItem(item) }
         </Form.Item>
       )

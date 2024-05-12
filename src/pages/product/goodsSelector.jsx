@@ -138,6 +138,7 @@ const GoodsSelector = ({
       title: `${t('title.name')}`,
       key: 'name',
       dataIndex: 'name',
+      render: (text, record) => record.parent ? `${record.parent.name} - ${text}` : text,
     },
     {
       title: `${t('title.description')}`,

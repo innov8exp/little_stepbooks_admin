@@ -153,7 +153,7 @@ const ClassificationListPage = () => {
         formData={editData}
         formKeys={[
           { type:'input', key: 'classificationName', label: 'name', placeholder: 'message.check.name'},
-          { type:'textarea', key: 'description'},
+          { type:'textarea', key: 'description', required: false},
           { type:'number', min: 0, max: 120, key: 'minAge', label: 'title.minAge'},
           { type:'number', min: 0, max: 120, key: 'maxAge', label: 'title.maxAge'},
         ]}

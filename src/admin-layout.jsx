@@ -35,30 +35,36 @@ const Logo = styled.div`
   background-color: #f54a74;
 `
 const AdminLayout = () => {
+  let defaultSelectedKeys = ['0'];
   const { t } = useTranslation()
   const location = useLocation()
-  const [collapsed, setCollapsed] = useState(localStorage.getItem('menu_collapsed') == 1)
-  const [selectedKeys, setSelectedKeys] = useState(['0'])
   const menuItems = menus.map((item, index1) => {
+    const key = `${index1}`
     const menuItem = {
-      key: `${index1}`,
+      key,
       label: item.path ? <Link to={item.path}>{t(item.label)}</Link> : t(item.label),
       icon: item.icon,
       children: item.children
     }
+    if(location.pathname === item.path){
+      defaultSelectedKeys = [key]
+    }
     if(menuItem.children){
       menuItem.children = menuItem.children.map(({ label, path }, index2) => {
+        const key = `${index1}${index2}`
+        if(location.pathname === path){
+          defaultSelectedKeys = [key]
+        }
         return {
-          key: `${index1}${index2}`,
+          key,
           label: <Link to={path}>{t(label)}</Link>,
         }
       })
     }
     return menuItem
   })
-
-  // let defaultSelectedKeys = ['0'];
-  
+  const [collapsed, setCollapsed] = useState(localStorage.getItem('menu_collapsed') == 1)
+  const [selectedKeys, setSelectedKeys] = useState(defaultSelectedKeys)
 
   function buildBreadcrumbItems () {
     const arr = [

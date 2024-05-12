@@ -235,7 +235,7 @@ const PhysicalListPage = () => {
         formData={editData}
         formKeys={[
           { type:'input', key: 'name'},
-          { type:'textarea', key: 'description'},
+          { type:'textarea', key: 'description', required: false},
           { type:'photo', key: 'coverUrl', groupKeys:['coverId']},
           { type:'number', min: 0, max: 99999, key: 'sortIndex'},
         ]}

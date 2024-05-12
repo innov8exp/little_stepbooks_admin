@@ -94,7 +94,9 @@ const ProductListPage = () => {
 
   const handleAddAction = () => {
     setEdiVisible(true)
-    setEditData({})
+    setEditData({
+      medias: []
+    })
   }
 
   const handleEditAction = (id) => {
@@ -206,8 +208,8 @@ const ProductListPage = () => {
     }>
       <Form form={queryForm}>
         <Row>
-            <Form.Item label={t('title.skuName')} name="skuName">
-              <Input placeholder={t('message.placeholder.skuName')} />
+            <Form.Item label={t('name')} name="skuName">
+              <Input placeholder={t('message.placeholder.name')} />
             </Form.Item>
             <Form.Item label={t('title.status')} name="status" style={{ margin: '0 15px', width: 200 }}>
               <Select placeholder={t('message.placeholder.pleaseSelect')} options={[
@@ -336,17 +338,18 @@ const ProductListPage = () => {
         domain='PRODUCT'
         title='product'
         formData={editData}
+        labelSpan={5}
         formKeys={[
           { type:'input', key: 'skuName', label: 'name'},
           { type:'textarea', key: 'description'},
           { type:'photo', key: 'coverImgUrl', label: 'coverImage', groupKeys:['coverImgId']},
-          { type:'video', key: 'videoUrl', groupKeys:['videoId']},
+          { type:'video', key: 'videoUrl', groupKeys:['videoId'], required: false },
           { type:'photo-list', key: 'medias', label: 'topBanner', format: value => value.map(item => ({
             mediaId: item.imgId,
             mediaUrl: item.imgUrl
           }))},
           { type:'checkbox.group', key: 'classificationIds', label: 'title.classification', options: classifications },
-          { type:'checkbox.group', key: 'parsedSalesPlatforms', label: 'title.salesPlatforms', options: [
+          { type:'checkbox.group', key: 'parsedSalesPlatforms', label: 'platform', options: [
             { value: 'MINI_PROGRAM', label: t('MINI_PROGRAM') },
             { value: 'APP', label: t('APP') },
           ]},
