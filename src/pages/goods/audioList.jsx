@@ -1,6 +1,5 @@
 import { App, Button, Card, message, Table, Image } from 'antd'
-import axios from 'axios'
-import HttpStatus from 'http-status-codes'
+import http from '@/libs/http'
 import { useState, useEffect } from 'react'
 import EditForm from '@/components/edit-form'
 import { useTranslation } from 'react-i18next'
@@ -11,6 +10,7 @@ import {
 } from '@ant-design/icons'
 
 const AudioListPage = () => {
+  const apiPath = 'virtual-goods-audio'
   const params = useParams()
   const goodsId = params?.id;
   const { t } = useTranslation()
@@ -34,14 +34,12 @@ const AudioListPage = () => {
 
   // 页面创建后加载一遍数据
   useEffect(() => {
-    const searchURL = `/api/admin/v1/virtual-goods-audio?currentPage=1&pageSize=10&goodsId=${goodsId}`
-    axios.get(searchURL).then((res) => {
-      if (res && res.status === HttpStatus.OK) {
-        const { records, total } = res.data;
-        setListData(records)
-        setTotal(total)
-        setLoading(false)
-      }
+    const searchURL = `${apiPath}?currentPage=1&pageSize=10&goodsId=${goodsId}`
+    http.get(searchURL).then(data => {
+      const { records, total } = data
+      setListData(records)
+      setTotal(total)
+      setLoading(false)
     }).catch(() => {
       setLoading(false)
     })
@@ -50,25 +48,17 @@ const AudioListPage = () => {
   const loadListData = function (currentPage) {
     setLoading(true)
     currentPage = currentPage || pageNumber
-    const searchURL = `/api/admin/v1/virtual-goods-audio?currentPage=${currentPage}&pageSize=${pageSize}&goodsId=${goodsId}`
-    axios
-      .get(searchURL)
-      .then((res) => {
-        if (res && res.status === HttpStatus.OK) {
-          const responseObject = res.data
-          setPageNumber(currentPage)
-          setListData(responseObject.records)
-          setTotal(responseObject.total)
-        }
-      })
-      .catch((err) =>
-        message.error(
-          `${t('message.error.failureReason')}${err.response?.data?.message}`,
-        ),
-      )
-      .finally(() => {
-        setLoading(false)
-      })
+    const searchURL = `${apiPath}?currentPage=${currentPage}&pageSize=${pageSize}&goodsId=${goodsId}`
+    http.get(searchURL).then(data => {
+      const { records, total } = data
+      setPageNumber(currentPage)
+      setListData(records)
+      setTotal(total)
+      setLoading(false)
+    }).catch((err) => {
+      setLoading(false)
+      message.error(err)
+    })
   }
 
   const handleAddAction = () => {
@@ -89,17 +79,13 @@ const AudioListPage = () => {
       okType: 'primary',
       cancelText: `${t('button.cancel')}`,
       onOk() {
-        axios.delete(`/api/admin/v1/physical-goods/${id}`)
-          .then((res) => {
-            if (res.status === HttpStatus.OK) {
-              message.success(t('message.successInfo'))
-              loadListData()
-            }
-          })
-          .catch((err) => {
-            console.error(err)
-            message.error(err.message)
-          })
+        http.delete(`${apiPath}/${id}`).then(() => {
+          message.success(t('message.successInfo'))
+          loadListData()
+        }).catch((err) => {
+          console.error(err)
+          message.error(err.message)
+        })
       },
     })
   }
@@ -107,8 +93,7 @@ const AudioListPage = () => {
   const onAudioAdd = (data) => {
     const { sortIndex, photoId, photoUrl, audioId, audioUrl, name, duration } = data;
     return new Promise(function (resolve, reject){
-      axios
-      .post(`/api/admin/v1/virtual-goods-audio`, {
+      http.post(apiPath, {
         sortIndex,
         goodsId,
         name,
@@ -117,15 +102,9 @@ const AudioListPage = () => {
         audioId,
         audioUrl,
         duration
-      })
-      .then((res) => {
-        if (res.status === HttpStatus.OK) {
-          resolve()
-        }else{
-          reject()
-        }
-      })
-      .catch((err) => {
+      }).then(() => {
+        resolve()
+      }).catch(err => {
         reject(err)
       })
     })
@@ -237,7 +216,7 @@ const AudioListPage = () => {
       />
       <EditForm
         visible={ediVisible}
-        apiPath='virtual-goods-audio'
+        apiPath={apiPath}
         domain='PRODUCT'
         title='title.virtualAudio'
         formData={editData}

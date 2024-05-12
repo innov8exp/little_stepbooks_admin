@@ -24,8 +24,9 @@ const BatchUploadList = ({
       console.error(err)
     },
 }) => {
-    const inputAccept = (mediaType === 'AUDIO' ? '.mp3,.m4a' : '.mp4') + ',.png,.jpg,.jpeg'
     let uploadingCount = 0
+    const inputAccept = (mediaType === 'AUDIO' ? '.mp3,.m4a' : '.mp4') + ',.png,.jpg,.jpeg'
+    const [columns, setColumns] = useState([])
     const { t } = useTranslation()
     const { modal } = App.useApp()
     const [fileList, setFileList] = useState([])
@@ -51,6 +52,47 @@ const BatchUploadList = ({
                     document.getElementById('batch_media_input').click()
                 }
             })
+            const tableColumns = [
+                {
+                    title: `${t('title.sortIndex')}`,
+                    key: 'sortIndex',
+                    dataIndex: 'sortIndex',
+                },
+                {
+                    title: `${t('title.name')}`,
+                    key: 'name',
+                    dataIndex: 'name',
+                },
+                {
+                    title: `${t('title.cover')}`,
+                    key: 'coverUrl',
+                    dataIndex: 'coverUrl',
+                    render: (text) => text && <Image height={50} src={text} />,
+                },
+                {
+                    title: `${t('title.operate')}`,
+                    key: 'action',
+                    width: 100,
+                    render: (text, record, index) => {
+                        return (
+                            <Button onClick={() => handleDeleteAction(index)} type="link">
+                                {t('button.delete')}
+                            </Button>
+                        )
+                    },
+                },
+            ]
+            const insertItem = mediaType === 'AUDIO' ? {
+                title: `${t('title.audio')}`,
+                key: 'audioName',
+                dataIndex: 'audioName',
+            } : {
+                title: `${t('title.video')}`,
+                key: 'videoName',
+                dataIndex: 'videoName',
+            };
+            tableColumns.splice(2, 0, insertItem)
+            setColumns(tableColumns)
         }
     }, [visible])
 
@@ -84,7 +126,7 @@ const BatchUploadList = ({
 
     const fileUpload = (file) => {
         const fmData = new FormData()
-        const url = `/api/admin/v1/medias/upload?permission=${permission}& = 'DEFAULT'=${domain}`
+        const url = `/api/admin/v1/medias/upload?permission=${permission}&domain=${domain}`
         const options = {
             headers: { 'content-type': 'multipart/form-data' }
         }
@@ -223,46 +265,7 @@ const BatchUploadList = ({
                 </Button>
             </ButtonWrapper>
             <Table
-                columns={[
-                {
-                    title: `${t('title.sortIndex')}`,
-                    key: 'sortIndex',
-                    dataIndex: 'sortIndex',
-                },
-                {
-                    title: `${t('title.name')}`,
-                    key: 'name',
-                    dataIndex: 'name',
-                },
-                {
-                    title: `${t('title.audio')}`,
-                    key: 'audioName',
-                    dataIndex: 'audioName',
-                },
-                {
-                    title: `${t('title.video')}`,
-                    key: 'videoName',
-                    dataIndex: 'videoName',
-                },
-                {
-                    title: `${t('title.cover')}`,
-                    key: 'coverUrl',
-                    dataIndex: 'coverUrl',
-                    render: (text) => text && <Image height={50} src={text} />,
-                },
-                {
-                    title: `${t('title.operate')}`,
-                    key: 'action',
-                    width: 100,
-                    render: (text, record, index) => {
-                        return (
-                            <Button onClick={() => handleDeleteAction(index)} type="link">
-                                {t('button.delete')}
-                            </Button>
-                        )
-                    },
-                },
-                ]}
+                columns={columns}
                 rowKey={(record) => record.name}
                 dataSource={fileList}
                 loading={loading}
