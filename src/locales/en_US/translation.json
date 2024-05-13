@@ -7,6 +7,7 @@
   "profile": "Profile",
   "title": "Title",
   "name": "Name",
+  "spuName": "Spu Name",
   "description": "Description",
   "coverImage": "Cover image",
   "detailImage": "Detail image",

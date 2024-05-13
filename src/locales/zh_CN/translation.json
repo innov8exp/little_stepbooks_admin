@@ -7,6 +7,7 @@
   "profile": "个人信息",
   "title": "标题",
   "name": "名称",
+  "spuName": "商品名称",
   "description": "简介",
   "coverImage": "封面图",
   "detailImage": "详情图",

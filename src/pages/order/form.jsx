@@ -17,6 +17,7 @@ import {
   Tag,
   Timeline,
   message,
+  Image
 } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
@@ -53,7 +54,7 @@ const OrderForm = () => {
   )
 
   const productsResponse = useFetch(
-    `/api/admin/v1/orders/${queryId}/products`,
+    `/api/admin/v1/orders/${queryId}/skus`,
     [queryId, t],
   )
 
@@ -222,22 +223,15 @@ const OrderForm = () => {
                         render: (text, record, index) => index + 1,
                       },
                       {
-                        title: `${t('title.label.skuCode')}`,
-                        key: 'skuCode',
-                        dataIndex: 'skuCode',
-                        width: 260,
-                        render: (text, record) => (
-                          <Button
-                            onClick={() =>
-                              navigate(
-                                `/order-form?id=${record.productId}`,
-                              )
-                            }
-                            type="link"
-                          >
-                            {text}
-                          </Button>
-                        ),
+                        title: `${t('spuName')}`,
+                        key: 'spuName',
+                        dataIndex: 'spuName',
+                      },
+                      {
+                        title: `${t('title.price')}`,
+                        key: 'skuPrice',
+                        dataIndex: 'skuPrice',
+                        render: (text) => formatMoney(text),
                       },
                       {
                         title: `${t('title.label.skuName')}`,
@@ -245,16 +239,10 @@ const OrderForm = () => {
                         dataIndex: 'skuName',
                       },
                       {
-                        title: `${t('title.price')}`,
-                        key: 'price',
-                        dataIndex: 'price',
-                        render: (text) => formatMoney(text),
-                      },
-                      {
-                        title: `${t('title.label.productNature')}`,
-                        key: 'productNature',
-                        dataIndex: 'productNature',
-                        render: (text) => <Tag color="blue">{t(text)}</Tag>,
+                        title: `${t('title.cover')}`,
+                        key: 'spuCoverImgUrl',
+                        dataIndex: 'spuCoverImgUrl',
+                        render: (text) => <Image height={50} src={text} />,
                       },
                       {
                         title: `${t('title.label.quantity')}`,
