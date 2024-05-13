@@ -319,7 +319,7 @@ const OrderForm = () => {
                     pagination={false}
                   />
                 </Card>
-                {productNature === 'PHYSICAL' && (
+                {productNature !== 'VIRTUAL' && (
                   <Card
                     style={{
                       marginTop: 16,
