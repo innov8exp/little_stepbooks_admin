@@ -338,7 +338,7 @@ const OrderPage = () => {
                   return (
                     <div>
                       {record.state === 'PAID' &&
-                        record.productNature === 'PHYSICAL' && (
+                        record.productNature !== 'VIRTUAL' && (
                           <>
                             <Divider type="vertical" />
                             <Button
