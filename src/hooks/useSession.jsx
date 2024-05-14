@@ -1,3 +1,4 @@
+import md5 from 'js-md5'
 import useUserInfoStore from '@/stores/useUserInfoStore'
 import { message } from 'antd'
 import axios from 'axios'
@@ -28,7 +29,10 @@ const useSession = () => {
 
   const login = async (values) => {
     try {
-      const resp = await axios.post('/api/admin/auth/login', { ...values })
+      const resp = await axios.post('/api/admin/auth/login', {
+        email: values.email,
+        password: md5(values.password)
+      })
       if (resp.status === HttpStatus.OK) {
         window.location.href = '/'
       }

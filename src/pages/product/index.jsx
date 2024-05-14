@@ -1,4 +1,4 @@
-import { App, Button, Card, message, Table, Image, Form, Row, Input, Select, Switch } from 'antd'
+import { App, Button, Card, message, Table, Image, Form, Row, Input, Select, Switch, Tag } from 'antd'
 import {
   ExclamationCircleOutlined,
   SearchOutlined,
@@ -264,6 +264,18 @@ const ProductListPage = () => {
             },
           },
           {
+            title: `${t('tags')}`,
+            key: 'tags',
+            dataIndex: 'tags',
+            render: (text) => {
+              if(text){
+                return text.split(',').map(tag => <Tag key={tag}>{tag}</Tag>)
+              }else{
+                return null
+              }
+            },
+          },
+          {
             title: `${t('title.status')}`,
             key: 'status',
             dataIndex: 'status',
@@ -341,7 +353,7 @@ const ProductListPage = () => {
         labelSpan={5}
         formKeys={[
           { type:'input', key: 'skuName', label: 'name'},
-          { type:'textarea', key: 'description'},
+          { type:'textarea', key: 'description', required: false},
           { type:'photo', key: 'coverImgUrl', label: 'coverImage', groupKeys:['coverImgId']},
           { type:'video', key: 'videoUrl', groupKeys:['videoId'], required: false },
           { type:'photo-list', key: 'medias', label: 'topBanner', format: value => value.map(item => ({

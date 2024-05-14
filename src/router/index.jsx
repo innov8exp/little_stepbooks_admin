@@ -1,5 +1,6 @@
 import AdminLayout from '@/admin-layout'
 import ForgetPassword from '@/pages/auth/forget-password'
+import ChangePassword from '@/pages/auth/change-password'
 import SignIn from '@/pages/auth/sign-in'
 import Dashboard from '@/pages/dashboard'
 import Error from '@/pages/error'
@@ -30,6 +31,7 @@ const filterMenu = (routes) => routes.filter(item => item.isMenu).map(item => ({
 
 export const contentRoutes = [
     { path: '/', element: <Dashboard />, label: 'home', index: true },
+    { path: '/change-password', element: <ChangePassword />, label: 'changePassword' },
     ...userRoutes,
     ...productRoutes,
     ...orderRoutes,

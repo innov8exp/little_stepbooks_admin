@@ -81,7 +81,7 @@ const VirtualCatListPage = () => {
 
   const handleAddAction = () => {
     http.get(`${apiPath}?currentPage=1&pageSize=100&includeChildren=false`).then(data => {
-        const parentItem = { type:'select', key: 'parentId', placeholder: 'pleaseSelect', options: data.records.map(item => ({ value: item.id, label: item.name }))}
+        const parentItem = { type:'select', key: 'parentId', placeholder: 'pleaseSelect', required: false, options: data.records.map(item => ({ value: item.id, label: item.name }))}
         const newKeys = defaultKeys.slice()
         newKeys.splice(3, 0, parentItem)
         setEditFormKeys(newKeys)

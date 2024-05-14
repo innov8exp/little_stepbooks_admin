@@ -85,8 +85,8 @@ const MainHeader = ({ onToggleClick }) => {
       key: '2',
       icon: <SettingOutlined />,
       label: (
-        <Link to="/main/setting">
-          <HeaderMenuItem>{i18n.t('title.setting')}</HeaderMenuItem>
+        <Link to="/change-password">
+          <HeaderMenuItem>{i18n.t('changePassword')}</HeaderMenuItem>
         </Link>
       ),
     },

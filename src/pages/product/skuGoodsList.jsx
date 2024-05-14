@@ -7,7 +7,6 @@ import {
   deleteSkuPhysicalGoods,
   deleteSkuVirtualGoods
 } from '@/api'
-import { ButtonWrapper } from '@/components/styled'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
@@ -139,6 +138,18 @@ const SkuGoodsPage = () => {
             key: 'type',
             dataIndex: 'type',
             render: (text, record) => t(record.categoryId ? 'virtualGoods' : 'physicalGoods')
+          },
+          {
+            title: `${t('redeemAt')}`,
+            key: 'redeemCondition',
+            dataIndex: 'redeemCondition',
+            render: (text) => {
+              if(text){
+                return text === 'PAYMENT_SUCCESS' ? t('redeemAfterPay') : t('redeemAfterSign')
+              }else{
+                return '--'
+              }
+            }
           },
           {
             title: `${t('title.operate')}`,
