@@ -67,7 +67,7 @@ const ChangePasswordPage = () => {
           </Form.Item>
           <CustomFormItem
             name="newPwd"
-            label={t('title.password')}
+            label={t('title.newPassword')}
             rules={[
               {
                 required: true,
@@ -85,7 +85,7 @@ const ChangePasswordPage = () => {
               block
               style={{ borderRadius: '4px', height: '40px' }}
             >
-              {`${t('title.login')}`}
+              {`${t('button.determine')}`}
             </Button>
           </Form.Item>
         </Form>
