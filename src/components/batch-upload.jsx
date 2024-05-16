@@ -1,9 +1,19 @@
+import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
 import { Button, Modal, Table, Image, App } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import PropTypes from 'prop-types'
 import { ButtonWrapper } from '@/components/styled'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const BatchUploadList = ({
@@ -26,75 +36,86 @@ const BatchUploadList = ({
 }) => {
     let uploadingCount = 0
     const inputAccept = (mediaType === 'AUDIO' ? '.mp3,.m4a' : '.mp4') + ',.png,.jpg,.jpeg'
-    const [columns, setColumns] = useState([])
     const { t } = useTranslation()
     const { modal } = App.useApp()
     const [fileList, setFileList] = useState([])
     const [loading, setLoading] = useState(false)
-    const fileNameMap = {};
+
+    const Row = (props) => {
+        const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+          // eslint-disable-next-line react/prop-types
+          id: props['data-row-key'],
+        });
+        const style = {
+          // eslint-disable-next-line react/prop-types
+          ...props.style,
+          transform: CSS.Translate.toString(transform),
+          transition,
+          cursor: 'move',
+          ...(isDragging
+            ? {
+                position: 'relative',
+                zIndex: 9999,
+              }
+            : {}),
+        };
+        return <tr {...props} ref={setNodeRef} style={style} {...attributes} {...listeners} />;
+    };
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+          activationConstraint: {
+            // https://docs.dndkit.com/api-documentation/sensors/pointer#activation-constraints
+            distance: 1,
+          },
+        }),
+    );
+
+    const onDragEnd = ({ active, over }) => {
+        if (active.id !== over?.id) {
+            setFileList((prev) => {
+                const activeIndex = prev.findIndex((i) => i.key === active.id);
+                const overIndex = prev.findIndex((i) => i.key === over?.id);
+                return arrayMove(prev, activeIndex, overIndex).map((item, index) => ({
+                    ...item,
+                    sortIndex: index + 1
+                }))
+            });
+        }
+    };
 
     useEffect(() => {
         if (visible) {
-            uploadingCount = 0
             setFileList([])
-            const typeName = t(mediaType);
+            const title = <div>{t(mediaType === 'AUDIO' ? 'message.audioBatchNotice' : 'message.videoBatchNotice')}</div>
+            let arr = [
+                '三个小小人.mp4',
+                '三个小小人.jpg',
+                '中国古代神话.mp4',
+                '中国古代神话.jpg',
+                '孙子兵法.mp4',
+                '孙子兵法.jpg',
+            ]
+            if(mediaType === 'AUDIO'){
+                arr = arr.map(item => item.replace('mp4', 'mp3'))
+            }
+            const content = (
+                <div>
+                    { title }
+                    <div style={{ marginTop: 10, padding: 15, backgroundColor: '#f6f6f6' }}>
+                        {arr.map(name => <div key={name}>{name}</div>)}
+                    </div>
+                </div>
+            )
             modal.confirm({
                 width: 600,
-                content: 
-                    <div>
-                        <div style={{ lineHeight: 1.8 }}>请选择{typeName}和封面，同一{typeName}和其对应的封面命名需相同。<br /><span style={{ color: '#f00' }}>排序和名字通过下划线 “_” 相连</span></div>
-                        <div>
-                            <img src="/images/batch_sample.jpg" alt="" style={{ display: 'block', width: '100%', height: 'auto' }} />
-                        </div>
-                    </div>,
+                content,
                 okText: t(mediaType === 'AUDIO' ? 'button.selectAudioAndImg' : 'button.selectVideoAndImg'),
                 onOk: () => {
                     document.getElementById('batch_media_input').click()
                 }
             })
-            const tableColumns = [
-                {
-                    title: `${t('title.sortIndex')}`,
-                    key: 'sortIndex',
-                    dataIndex: 'sortIndex',
-                },
-                {
-                    title: `${t('title.name')}`,
-                    key: 'name',
-                    dataIndex: 'name',
-                },
-                {
-                    title: `${t('title.cover')}`,
-                    key: 'coverUrl',
-                    dataIndex: 'coverUrl',
-                    render: (text) => text && <Image height={50} src={text} />,
-                },
-                {
-                    title: `${t('title.operate')}`,
-                    key: 'action',
-                    width: 100,
-                    render: (text, record, index) => {
-                        return (
-                            <Button onClick={() => handleDeleteAction(index)} type="link">
-                                {t('button.delete')}
-                            </Button>
-                        )
-                    },
-                },
-            ]
-            const insertItem = mediaType === 'AUDIO' ? {
-                title: `${t('title.audio')}`,
-                key: 'audioName',
-                dataIndex: 'audioName',
-            } : {
-                title: `${t('title.video')}`,
-                key: 'videoName',
-                dataIndex: 'videoName',
-            };
-            tableColumns.splice(2, 0, insertItem)
-            setColumns(tableColumns)
         }
-    }, [visible])
+    }, [mediaType, modal, t, visible])
 
     // 检查上传任务
     const checkJobResult = () => {
@@ -109,8 +130,30 @@ const BatchUploadList = ({
 
     // 开始执行批量上传任务
     const startUploadJob = () => {
-        setLoading(true)
-        addUploadJob()
+        let emptyArr = [];
+        fileList.forEach(item => {
+            if(mediaType === 'AUDIO' && !item.audioName){
+                emptyArr.push(`《${item.name}》`)
+                return true
+            }
+            if(mediaType === 'VIDEO' && !item.videoName){
+                emptyArr.push(`《${item.name}》`)
+            }
+        })
+        if(emptyArr.length > 0){
+            const emptyMsg = <div>{t('pleaseAdd')}<span style={{ color: 'red' }}>{emptyArr.join('、')}</span>{t(mediaType === 'AUDIO' ? 'deAudioFile' : 'deVideoFile')}</div>
+            modal.error({
+                width: 600,
+                content: emptyMsg,
+                okText: t('button.determine'),
+                onOk: () => {
+                    document.getElementById('batch_media_input').click()
+                }
+            })
+        }else{
+            setLoading(true)
+            addUploadJob()
+        }
     }
 
     const addUploadJob = () => {
@@ -202,41 +245,52 @@ const BatchUploadList = ({
     }
 
     const handleAddAction = (e) => {
+        const nameMap = {}
+        fileList.forEach(item => {
+            nameMap[item.name] = item
+        })
         const files = e.target.files
         for (let i = 0; i < files.length; i++) {
             const file = files[i]
-            const fileName = file.name
-            let [index, name] = fileName.split('_');
-            if(!fileName.includes('_') || isNaN(index)){ // 存在命名不符合规范的
-                modal.error({
-                    content: <div>文件命名不符合规范，请参考：<span style={{ color: '#f00' }}>01_图片名.jpg</span> 格式命名，其中数字部分代表了排序，数字与名字通过下划线相连，封面名称与视频/音频命名相同。</div>
-                })
-                return;
-            }
-            index = index * 1;
-            name = name.split('.')[0];
-            if(!fileNameMap[name]){
-                fileNameMap[name] = { sortIndex: index * 1, status: 'pending', name }
+            // const fileName = file.name
+            // let [index, name] = fileName.split('_');
+            // if(!fileName.includes('_') || isNaN(index)){ // 存在命名不符合规范的
+            //     modal.error({
+            //         content: <div>文件命名不符合规范，请参考：<span style={{ color: '#f00' }}>01_图片名.jpg</span> 格式命名，其中数字部分代表了排序，数字与名字通过下划线相连，封面名称与视频/音频命名相同。</div>
+            //     })
+            //     return;
+            // }
+            // index = index * 1;
+            const nameArr = file.name.split('.');
+            const name = nameArr.slice(0, nameArr.length - 1).join('.');
+            if(!nameMap[name]){
+                nameMap[name] = { 
+                    key: name,
+                    name,
+                    status: 'pending',
+                }
             }
             if(file.type.includes('image/')){
-                fileNameMap[name].coverUrl = URL.createObjectURL(file)
-                fileNameMap[name].photo = file
-                fileNameMap[name].photoName = file.name
+                nameMap[name].coverUrl = URL.createObjectURL(file)
+                nameMap[name].photo = file
+                nameMap[name].photoName = file.name
             }else if(file.type.includes('video/')){
-                fileNameMap[name].video = file
-                fileNameMap[name].videoName = file.name
+                nameMap[name].video = file
+                nameMap[name].videoName = file.name
             }else if(file.type.includes('audio/')){
-                fileNameMap[name].audio = file
-                fileNameMap[name].audioName = file.name
+                nameMap[name].audio = file
+                nameMap[name].audioName = file.name
             }
         }
-        const arr = Object.keys(fileNameMap).map(name => fileNameMap[name])
-        arr.sort((a, b) => a.sortIndex - b.sortIndex)
+        const arr = Object.keys(nameMap).map((name, index) => ({
+            ...nameMap[name],
+            sortIndex: index + 1
+        }))
         setFileList(arr)
     }
 
-    const handleDeleteAction = (index) => {
-        const newList = fileList.filter((item, idx) => idx != index)
+    const handleDeleteAction = (delItem) => {
+        const newList = fileList.filter((item) => item.key != delItem.key)
         setFileList(newList)
     }
 
@@ -264,12 +318,57 @@ const BatchUploadList = ({
                     {t( mediaType === 'AUDIO' ? 'button.addAudio' : 'button.addVideo')}
                 </Button>
             </ButtonWrapper>
-            <Table
-                columns={columns}
-                rowKey={(record) => record.name}
-                dataSource={fileList}
-                loading={loading}
-            />
+            <DndContext sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+                <SortableContext
+                    items={fileList.map((i) => i.name)}
+                    strategy={verticalListSortingStrategy}
+                >
+                    <Table
+                        components={{
+                            body: { row: Row },
+                        }}
+                        rowKey="key"
+                        columns={[
+                            {
+                                title: `${t('title.sortIndex')}`,
+                                key: 'sortIndex',
+                                dataIndex: 'sortIndex',
+                            },
+                            {
+                                title: `${t('title.name')}`,
+                                key: 'name',
+                                dataIndex: 'name',
+                            },
+                            {
+                                title: `${t('audioOrVideo')}`,
+                                key: 'fileName',
+                                dataIndex: 'fileName',
+                                render: (text, record) => record.audioName || record.videoName,
+                            },
+                            {
+                                title: `${t('title.cover')}`,
+                                key: 'coverUrl',
+                                dataIndex: 'coverUrl',
+                                render: (text) => text && <Image height={50} src={text} />,
+                            },
+                            {
+                                title: `${t('title.operate')}`,
+                                key: 'action',
+                                width: 100,
+                                render: (text, record) => {
+                                    return (
+                                        <Button onClick={() => handleDeleteAction(record)} type="link">
+                                            {t('button.delete')}
+                                        </Button>
+                                    )
+                                },
+                            },
+                        ]}
+                        dataSource={fileList}
+                        loading={loading}
+                    />
+                </SortableContext>
+            </DndContext>
         </Modal>
     )
 }
