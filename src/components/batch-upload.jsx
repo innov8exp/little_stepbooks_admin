@@ -75,10 +75,7 @@ const BatchUploadList = ({
             setFileList((prev) => {
                 const activeIndex = prev.findIndex((i) => i.key === active.id);
                 const overIndex = prev.findIndex((i) => i.key === over?.id);
-                return arrayMove(prev, activeIndex, overIndex).map((item, index) => ({
-                    ...item,
-                    sortIndex: index + 1
-                }))
+                return arrayMove(prev, activeIndex, overIndex)
             });
         }
     };
@@ -86,7 +83,6 @@ const BatchUploadList = ({
     useEffect(() => {
         if (visible) {
             setFileList([])
-            const title = <div>{t(mediaType === 'AUDIO' ? 'message.audioBatchNotice' : 'message.videoBatchNotice')}</div>
             let arr = [
                 '三个小小人.mp4',
                 '三个小小人.jpg',
@@ -100,7 +96,7 @@ const BatchUploadList = ({
             }
             const content = (
                 <div>
-                    { title }
+                    <div>{t(mediaType === 'AUDIO' ? 'message.audioBatchNotice' : 'message.videoBatchNotice')}</div>
                     <div style={{ marginTop: 10, padding: 15, backgroundColor: '#f6f6f6' }}>
                         {arr.map(name => <div key={name}>{name}</div>)}
                     </div>
@@ -212,7 +208,7 @@ const BatchUploadList = ({
         setFileList(fileList.map(item => item))
         const resMap = {
             name: fileItem.name,
-            sortIndex: fileItem.sortIndex,
+            // sortIndex: fileItem.sortIndex, // 批量添加视频音频有数据库自动追加排序值
             duration: await getMediaDuration(fileItem.audio || fileItem.video)
         };
         if(fileItem.photo){
@@ -252,15 +248,6 @@ const BatchUploadList = ({
         const files = e.target.files
         for (let i = 0; i < files.length; i++) {
             const file = files[i]
-            // const fileName = file.name
-            // let [index, name] = fileName.split('_');
-            // if(!fileName.includes('_') || isNaN(index)){ // 存在命名不符合规范的
-            //     modal.error({
-            //         content: <div>文件命名不符合规范，请参考：<span style={{ color: '#f00' }}>01_图片名.jpg</span> 格式命名，其中数字部分代表了排序，数字与名字通过下划线相连，封面名称与视频/音频命名相同。</div>
-            //     })
-            //     return;
-            // }
-            // index = index * 1;
             const nameArr = file.name.split('.');
             const name = nameArr.slice(0, nameArr.length - 1).join('.');
             if(!nameMap[name]){
@@ -282,10 +269,7 @@ const BatchUploadList = ({
                 nameMap[name].audioName = file.name
             }
         }
-        const arr = Object.keys(nameMap).map((name, index) => ({
-            ...nameMap[name],
-            sortIndex: index + 1
-        }))
+        const arr = Object.keys(nameMap).map((name) => nameMap[name])
         setFileList(arr)
     }
 
@@ -333,6 +317,7 @@ const BatchUploadList = ({
                                 title: `${t('title.sortIndex')}`,
                                 key: 'sortIndex',
                                 dataIndex: 'sortIndex',
+                                render: (text, record, index) => index + 1,
                             },
                             {
                                 title: `${t('title.name')}`,
