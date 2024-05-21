@@ -18,11 +18,13 @@ const ChangePasswordPage = () => {
   const { loading, setLoading } = useSession()
 
   const onFinish = () => {
-    setLoading(true)
     form
-      .validateFields()
-      .then((values) => {
-        const url = `/api/admin/auth/change-password?oldPwd=${md5(values.oldPwd)}&newPwd=${md5(values.newPwd)}`
+    .validateFields()
+    .then((values) => {
+      const { oldPwd, newPwd, newPwdAgain } = values
+      if(newPwd === newPwdAgain){
+        const url = `/api/admin/auth/change-password?oldPwd=${md5(oldPwd)}&newPwd=${md5(newPwd)}`
+        setLoading(true)
         axios.post(url).then((res) => {
             if (res && res.status === HttpStatus.OK) {
                 message.success(t('changePasswordSuccess'))
@@ -32,8 +34,10 @@ const ChangePasswordPage = () => {
                 message.success(t('changePasswordFail'))
             }
         })
-      })
-      .catch(() => message.error(`${t('message.check.checkInputItems')}`))
+      }else{
+        message.error(t('message.check.isNotSamePassword'))
+      }
+    }).catch(() => message.error(`${t('message.check.checkInputItems')}`))
   }
   return (
     <div style={{
@@ -72,6 +76,18 @@ const ChangePasswordPage = () => {
               {
                 required: true,
                 message: `${t('message.check.enterPassword')}`,
+              },
+            ]}
+          >
+            <Input.Password size="large" />
+          </CustomFormItem>
+          <CustomFormItem
+            name="newPwdAgain"
+            label={t('title.newPasswordAgain')}
+            rules={[
+              {
+                required: true,
+                message: `${t('message.check.enterPasswordAgain')}`,
               },
             ]}
           >
