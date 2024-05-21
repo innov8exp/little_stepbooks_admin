@@ -166,19 +166,11 @@ const VirtualGoodsListPage = () => {
             <Input placeholder={t('message.placeholder.name')} />
           </Form.Item>
         </Col>
-        <Col span={3}>
-          <Button
-            type="primary"
-            onClick={handleSearch}
-          >
+        <Col span={4}>
+          <Button type="primary" onClick={handleSearch}>
             {t('button.search')}
           </Button>
-        </Col>
-        <Col span={3}>
-          <Button
-            type="default"
-            onClick={handleReset}
-          >
+          <Button type="default" onClick={handleReset} style={{ marginLeft: 20 }}>
             {t('button.reset')}
           </Button>
         </Col>
@@ -200,11 +192,6 @@ const VirtualGoodsListPage = () => {
             title: `${t('title.description')}`,
             key: 'description',
             dataIndex: 'description',
-          },
-          {
-            title: `${t('title.totalMonth')}`,
-            key: 'toAddMonth',
-            dataIndex: 'toAddMonth'
           },
           {
             title: `${t('title.productCategory')}`,

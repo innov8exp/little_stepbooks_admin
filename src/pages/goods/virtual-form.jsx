@@ -102,9 +102,6 @@ const VirtualForm = ({ id, visible, categoryArr, onSave, onCancel }) => {
         <Form.Item label={t('title.productCategory')} name="categoryId">
           <Select placeholder={t('pleaseSelect')} options={ categoryArr }></Select>
         </Form.Item>
-        <Form.Item label={t('title.totalMonth')} name="toAddMonth">
-          <InputNumber min={1} max={240} defaultValue={240} />
-        </Form.Item>
       </Form>
     </Modal>
   )
