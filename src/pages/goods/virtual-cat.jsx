@@ -2,9 +2,11 @@ import { App, Button, Card, message, Table, Image, Switch } from 'antd'
 import http from '@/libs/http'
 import { useState, useEffect } from 'react'
 import EditForm from '@/components/edit-form'
+import CatRelativeForm from './virtual-relative'
 import DetailImages from '@/components/detail-images'
 import { useTranslation } from 'react-i18next'
 import {
+  PlusOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
 
@@ -14,11 +16,17 @@ const VirtualCatListPage = () => {
     { type:'textarea', key: 'description', required: false},
     { type:'photo', key: 'coverUrl', groupKeys:['coverId'], required: false},
     { type:'number', min: 0, max: 99999, key: 'sortIndex'},
+    { type:'radio.group', key: 'status', label: 'title.status', options: [
+      { value: 'ONLINE', label: 'ON_SHELF' },
+      { value: 'OFFLINE', label: 'OFF_SHELF' },
+    ]},
     { type:'boolean', checkedLabel: 'free', unCheckedLabel: 'notFree', key: 'free', label: 'freeOrNot'},
   ]
   const apiPath = 'virtual-category'
   const { t } = useTranslation()
   const { modal } = App.useApp()
+  const [relativeVisible, setRelativeVisible] = useState(false)
+  const [currentRelative, setCurrentRelative] = useState({})
   const [listData, setListData] = useState([])
   const [ediVisible, setEdiVisible] = useState(false)
   const [editData, setEditData] = useState({})
@@ -153,6 +161,12 @@ const VirtualCatListPage = () => {
     setDetailImageEditVisible(true)
   }
 
+  const onCatRelativeRemove = (record) => {
+    http.delete(`/virtual-category-product/category/${record.id}`).then(() => {
+      loadListData()
+    })
+  }
+
   const onDetailImgSave = (detailImgId) => {
     if(!editDetailImgForm.detailImgId){ // 编辑的对象不存在详情图关联
       http.put(`${apiPath}/${editDetailImgForm.id}`, {
@@ -168,6 +182,25 @@ const VirtualCatListPage = () => {
 
   const onDetailImgCancel = () => {
     setDetailImageEditVisible(false)
+  }
+
+  const onRelativeClick = (record) => {
+    const data = {
+      categoryId: record.id,
+      categoryName: record.parent ? `${record.parent.name} - ${record.name}` : record.name,
+      id: null,
+      productId: null,
+      skuName: '',
+      displayTime: null
+    }
+    if(record.virtualCategoryProduct){
+      data.displayTime = record.virtualCategoryProduct.displayTime;
+      data.productId = record.virtualCategoryProduct.productId;
+      data.id = data.productId;
+      data.skuName = record.relativeProduct ? record.relativeProduct.skuName : data.productId;
+    }
+    setCurrentRelative(data)
+    setRelativeVisible(true)
   }
 
   return (
@@ -222,6 +255,25 @@ const VirtualCatListPage = () => {
             key: 'free',
             dataIndex: 'free',
             render: (text) => text ? t('yes') : t('no'),
+          },
+          {
+            title: `${t('relativeProduct')}`,
+            key: 'relativeProduct',
+            dataIndex: 'relativeProduct',
+            render: (text, record) => {
+              if(record.relativeProduct){
+                return (
+                  <>
+                    <div>{record.relativeProduct.skuName}</div>
+                    <div>
+                      <Button type='link' onClick={() => onCatRelativeRemove(record)}>{ t('remove') }</Button>
+                    </div>
+                  </>
+                )
+              }else{
+                return <Button icon={<PlusOutlined />} onClick={() => onRelativeClick(record)}></Button>
+              }
+            },
           },
           {
             title: `${t('title.creationTime')}`,
@@ -310,6 +362,20 @@ const VirtualCatListPage = () => {
         onSave={onDetailImgSave}
         onCancel={onDetailImgCancel}
       />
+      {
+        relativeVisible ? 
+        <CatRelativeForm
+          visible={relativeVisible}
+          currentData={currentRelative}
+          onSave={() => {
+            setRelativeVisible(false)
+            loadListData()
+          }}
+          onCancel={() => {
+            setRelativeVisible(false)
+          }}
+        /> : null
+      }
     </Card>
   )
 }

@@ -1,4 +1,4 @@
-import { Form, Input, Modal, message, Select, InputNumber, Checkbox, Switch } from 'antd'
+import { Form, Input, Modal, message, Select, InputNumber, Checkbox, Switch, Radio } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
@@ -195,6 +195,14 @@ const EditForm = ({
             })
           }
         }} />
+      )
+    }
+    if(type === 'radio.group'){
+      return (
+        <Radio.Group options={options.map(item => ({
+          ...item,
+          label: t(item.label)
+        }))} />
       )
     }
     if(type === 'audio' || type === 'video'){
