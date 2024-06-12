@@ -1,6 +1,7 @@
 import Advertisement from '@/pages/advertisement'
 import Activity from '@/pages/activity'
 import ActivityAudioList from '@/pages/activity/audioList'
+import DailyAudioListPage from '@/pages/activity/dailyAudioList'
 
 const routes = [
     { path: '/advertisement-list', element: <Advertisement />, label: 'menu.advertisement', isMenu: true },
@@ -10,6 +11,12 @@ const routes = [
         element: <ActivityAudioList />,
         label: 'button.mediaManage',
         parentPath: '/activity-list'
+    },
+    {
+        path: '/daily-audios-list',
+        element: <DailyAudioListPage />,
+        label: 'dailyAudio',
+        isMenu: true
     }
 ]
 
