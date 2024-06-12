@@ -15,7 +15,8 @@ const interceptor = axios.interceptors.response.use(
   (response) => response,
   (error) => {
     // Reject promise if usual error
-    if (error?.response?.status !== StatusCodes.UNAUTHORIZED) {
+    const isLoginAction = error?.config?.url === '/api/admin/auth/login'
+    if (isLoginAction || error?.response?.status !== StatusCodes.UNAUTHORIZED) {
       return Promise.reject(error)
     }
     const originalRequest = error.config

@@ -29,7 +29,7 @@ const SignInPage = () => {
   return (
     <AuthLayout>
       <AuthCard
-        bodyStyle={{ padding: '48px', margin: '0 auto' }}
+        bodyStyle={{ padding: '40px 48px', margin: '0 auto' }}
         bordered={false}
       >
         <CardHeader>
