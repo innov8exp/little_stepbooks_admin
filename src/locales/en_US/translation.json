@@ -19,6 +19,8 @@
   "startDate": "Start Date",
   "endDate": "End Date",
   "effectDate": "Effect Date",
+  "startEndDate": "Start & End Date",
+  "orderDownload": "Order Download",
   "video": "Video",
   "deAudioFile": " Audio File",
   "deVideoFile": " Video File",

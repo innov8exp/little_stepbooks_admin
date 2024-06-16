@@ -19,6 +19,8 @@
   "startDate": "开始日期",
   "endDate": "截止日期",
   "effectDate": "生效日期",
+  "startEndDate": "开始截止日期",
+  "orderDownload": "订单导出",
   "video": "视频",
   "deAudioFile": "的音频文件",
   "deVideoFile": "的视频文件",

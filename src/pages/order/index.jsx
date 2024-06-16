@@ -3,6 +3,7 @@ import {
   ExclamationCircleOutlined,
   SearchOutlined,
   UndoOutlined,
+  DownloadOutlined
 } from '@ant-design/icons'
 import {
   App,
@@ -17,9 +18,12 @@ import {
   Tag,
   message,
   Select,
+  DatePicker,
 } from 'antd'
+const { RangePicker } = DatePicker;
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
+import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react'
 import {
   ConditionLeftItem,
@@ -36,6 +40,11 @@ import ShipForm from './ship-form'
 import useFetch from '@/hooks/useFetch'
 
 const OrderPage = () => {
+  const dateFormat = 'YYYY-MM-DD'
+  const defaultDateValue = [
+    dayjs(new Date(new Date().setHours(0, 0, 0))),
+    dayjs(new Date(new Date().setHours(0, 0, 0)))
+  ]
   const { t } = useTranslation()
   const { modal } = App.useApp()
   const [queryForm] = Form.useForm()
@@ -48,8 +57,7 @@ const OrderPage = () => {
   const [loading, setLoading] = useState(false)
   const [queryCriteria, setQueryCriteria] = useState()
   const [formVisible, setFormVisible] = useState(false)
-  const [refundApproveFormVisible, setRefundApproveFormVisible] =
-    useState(false)
+  const [refundApproveFormVisible, setRefundApproveFormVisible] = useState(false)
   const [selectedId, setSelectedId] = useState()
   const orderStateRes = useFetch(`/api/admin/v1/orders/states`, [])
 
@@ -76,6 +84,9 @@ const OrderPage = () => {
     if (queryCriteria?.state) {
       searchURL += `&state=${queryCriteria.state}`
     }
+    if (queryCriteria?.startDate) {
+      searchURL += `&startDate=${queryCriteria.startDate}&endDate=${queryCriteria.endDate}`
+    }
     axios
       .get(searchURL)
       .then((res) => {
@@ -97,6 +108,8 @@ const OrderPage = () => {
     queryCriteria?.orderCode,
     queryCriteria?.state,
     queryCriteria?.username,
+    queryCriteria?.startDate,
+    queryCriteria?.endDate,
     t,
   ])
 
@@ -129,14 +142,46 @@ const OrderPage = () => {
   }
 
   const handleQuery = () => {
+    const params = getQueryValue()
+    setQueryCriteria(params)
     const timestamp = new Date().getTime()
     setChangeTimestamp(timestamp)
+  }
+
+  const handleDownload = () => {
+    const params = getQueryValue()
+    if(!params.startDate){
+      message.error(t('pleaseSelect') + t('startEndDate'))
+    }
+    let searchURL = `/api/admin/v1/orders/export?startDate=${queryCriteria.startDate}&endDate=${queryCriteria.endDate}`
+    if (params?.orderCode) {
+      searchURL += `&orderCode=${params.orderCode}`
+    }
+    if (params?.username) {
+      searchURL += `&username=${params.username}`
+    }
+    if (params?.state) {
+      searchURL += `&state=${params.state}`
+    }
+    window.open(searchURL)
+  }
+
+  const getQueryValue = () => {
     const queryValue = queryForm.getFieldsValue()
-    setQueryCriteria(queryValue)
+    const { orderCode, state, username, startEndDateArr } = queryValue;
+    const params = { orderCode, state, username }
+    if(startEndDateArr && startEndDateArr.length > 0){
+      params.startDate = startEndDateArr[0].format(dateFormat)
+      params.endDate = startEndDateArr[1].format(dateFormat)
+    }
+    return params
   }
 
   const handleReset = () => {
     queryForm.resetFields()
+    queryForm.setFieldsValue({
+      startEndDateArr: []
+    })
   }
 
   const handleShipAction = (id) => {
@@ -194,27 +239,29 @@ const OrderPage = () => {
     <>
       <Card title={t('title.label.orderManagement')}>
         <Form
-          labelCol={{ span: 10 }}
-          wrapperCol={{ span: 14 }}
           form={queryForm}
-          initialValues={{ category: '', status: '' }}
+          initialValues={{ 
+            category: '',
+            status: '',
+            startEndDateArr: defaultDateValue
+          }}
         >
           <Row>
             <Col span={6}>
               <Form.Item label={t('title.label.orderNumber')} name="orderCode">
-                <Input placeholder={t('message.placeholder.orderNumber')} />
+                <Input placeholder={t('message.placeholder.orderNumber')} style={{ width: '90%' }} />
               </Form.Item>
             </Col>
             <Col span={6}>
               <Form.Item label={t('title.label.userName')} name="username">
-                <Input placeholder={t('message.placeholder.enterUserName')} />
+                <Input placeholder={t('message.placeholder.enterUserName')} style={{ width: '90%' }} />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col span={4}>
               <Form.Item label={t('title.label.orderState')} name="state">
                 <Select
                   style={{
-                    width: '100%',
+                    width: '90%',
                   }}
                   loading={orderStateRes.loading}
                   options={orderStateRes.fetchedData
@@ -223,6 +270,11 @@ const OrderPage = () => {
                       return { label: t(item), value: item }
                     })}
                 />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={t('startEndDate')} name="startEndDateArr">
+                <RangePicker style={{ width: '100%' }} />
               </Form.Item>
             </Col>
           </Row>
@@ -247,6 +299,15 @@ const OrderPage = () => {
                   onClick={handleQuery}
                 >
                   {t('button.search')}
+                </Button>
+              </ConditionLeftItem>
+              <ConditionLeftItem>
+                <Button
+                  icon={<DownloadOutlined />}
+                  type="primary"
+                  onClick={handleDownload}
+                >
+                  {t('orderDownload')}
                 </Button>
               </ConditionLeftItem>
             </QueryBtnWrapper>
