@@ -174,6 +174,12 @@ const SkuListPage = () => {
             dataIndex: 'createdAt',
           },
           {
+            title: `${t('sortIndex')}`,
+            key: 'sortIndex',
+            dataIndex: 'sortIndex',
+            width: 80
+          },
+          {
             title: `${t('title.status')}`,
             key: 'status',
             dataIndex: 'status',
@@ -245,6 +251,7 @@ const SkuListPage = () => {
           { type:'input', key: 'skuName', label: 'name' },
           { type:'number', min: 0.01, max: null, prefix:'￥', key: 'originalPrice' },
           { type:'number', min: 0.01, max: null, prefix:'￥', key: 'price' },
+          { type:'number', min: 0, max: 99999, key: 'sortIndex'},
         ]}
         onCancel={() => setEdiVisible(false)}
         onSave={() => {

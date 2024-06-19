@@ -276,6 +276,12 @@ const ProductListPage = () => {
             },
           },
           {
+            title: `${t('sortIndex')}`,
+            key: 'sortIndex',
+            dataIndex: 'sortIndex',
+            width: 80
+          },
+          {
             title: `${t('title.status')}`,
             key: 'status',
             dataIndex: 'status',
@@ -370,7 +376,8 @@ const ProductListPage = () => {
             { value: '文创', label: '文创' },
             { value: '课程', label: '课程' },
             { value: '训练营', label: '训练营' },
-          ], format: value => value ? value.join(',') : null}
+          ], format: value => value ? value.join(',') : null},
+          { type:'number', min: 0, max: 99999, key: 'sortIndex'},
         ]}
         onCancel={() => setEdiVisible(false)}
         onSave={() => {
