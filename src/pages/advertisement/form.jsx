@@ -17,11 +17,20 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
   const [showUrlForm, setShowUrlForm] = useState(false);
   const [url, setUrl] = useState('');
   const [jumpType, setJumpType] = useState('local');
-  const [localType, setLocalType] = useState('series');
+  const [localType, setLocalType] = useState('product');
   const [localId, setLocalId] = useState(null);
-  const [initSeriesOptions, setInitSeriesOptions] = useState([])
-  const [initActivityOptions, setInitActivityOptions] = useState([])
-  const [initBookOptions, setInitBookOptions] = useState([])
+  const [initVirtualCatOptions, setInitVirtualCatOptions] = useState([])
+  const [initProductOptions, setInitProductOptions] = useState([])
+  const localMap = {
+    'product': { 
+      app: 'StepBook://local/product',
+      mini: '/pages/mall/product-detail/product-detail',
+    },
+    'virtualCategory': { 
+      app: 'StepBook://local/virtualCategory',
+      mini: '/packageAudio/book-detail/index',
+    },
+  }
 
   useEffect(() => {
     if (id) {
@@ -60,14 +69,11 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
       setLocalId(null)
     }
     if (visible) {
-      fetchAllSeries().then(res => {
-        setInitSeriesOptions(res)
+      fetchAllVirtualCategory().then(res => {
+        setInitVirtualCatOptions(res)
       })
-      fetchAllBooks().then(res => {
-        setInitBookOptions(res)
-      })
-      fetchAllActivities().then(res => {
-        setInitActivityOptions(res)
+      fetchAllProduct().then(res => {
+        setInitProductOptions(res)
       })
     }
   }, [id, form, visible])
@@ -126,13 +132,8 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
   }
 
   const buildLocalData = (type, id) => {
-    const localMap = {
-      'series': { app: 'StepBook://local/bookSeries', mini: '/packageAudio/book-detail/index' },
-      'book': { app: 'StepBook://local/book', mini: '/packageAudio/book-detail/book-page/book-page' },
-      'activity': { app: 'StepBook://local/pairedReadCollection', mini: '/packageAudio/audio-collection/index' }
-    }
     let selectedLabel = '';
-    const selectArr = type === 'series' ? initSeriesOptions : initActivityOptions
+    const selectArr = type === 'product' ? initProductOptions : initVirtualCatOptions
     selectArr.some(item => {
       if(item.value == id){
         selectedLabel = item.label
@@ -160,8 +161,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
         setShowUrlForm(false);
         setDisplayUrl(appUrl);
       }else{
-        const msg = localType === 'series' ? t('message.placeholder.selectSeries') : t('message.placeholder.selectActivity');
-        message.error(msg)
+        message.error(t('pleaseSelect') + t(localType))
       }
     }else{
       if(!url){
@@ -179,47 +179,10 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
     }
   }
 
-  const fetchAllSeries = async () => {
+  const fetchAllVirtualCategory = async () => {
     return new Promise((resolve, reject) => {
       axios
-        .get('/api/admin/v1/bookseries?currentPage=1&pageSize=5000&status=ONLINE')
-        .then((res) => {
-          if (res.status === HttpStatus.OK) {
-            resolve(res.data.map(item => ({
-              value: item.id,
-              label: item.seriesName
-            })))
-          }
-        })
-        .catch((e) => {
-          reject(e)
-        })
-    })
-  }
-
-  const fetchAllBooks = async () => {
-    return new Promise((resolve, reject) => {
-      axios
-        .get('/api/admin/v1/books?currentPage=1&pageSize=5000&status=ONLINE')
-        .then((res) => {
-          if (res.status === HttpStatus.OK) {
-            const results = res.data.records
-            resolve(results.map(item => ({
-              value: item.id,
-              label: item.bookName
-            })))
-          }
-        })
-        .catch((e) => {
-          reject(e)
-        })
-    })
-  }
-
-  const fetchAllActivities = async () => {
-    return new Promise((resolve, reject) => {
-      axios
-        .get('/api/admin/v1/paired-read-collection?currentPage=1&pageSize=5000&status=ONLINE')
+        .get('/api/admin/v1/virtual-category?currentPage=1&pageSize=5000&includeChildren=false')
         .then((res) => {
           if (res.status === HttpStatus.OK) {
             const results = res.data.records
@@ -235,27 +198,37 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
     })
   }
 
+  const fetchAllProduct = async () => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get('/api/admin/v1/products?currentPage=1&pageSize=5000&status=ON_SHELF')
+        .then((res) => {
+          if (res.status === HttpStatus.OK) {
+            const results = res.data.records
+            resolve(results.map(item => ({
+              value: item.id,
+              label: item.skuName
+            })))
+          }
+        })
+        .catch((e) => {
+          reject(e)
+        })
+    })
+  }
+
   const handleLocalTypeChange = type => {
     setLocalType(type);
     setLocalId(null);
   }
 
   const LocalIdSelector = () => {
-    let label, options;
-    if(localType === 'series'){
-      label = t('message.placeholder.selectSeries')
-      options = initSeriesOptions
-    }else if(localType === 'book'){
-      label = t('message.placeholder.selectBook')
-      options = initBookOptions
-    }else{
-      label = t('message.placeholder.selectActivity')
-      options = initActivityOptions
-    }
+    const label = t('pleaseSelect') + t(localType)
+    const options = localType === 'product' ? initProductOptions : initVirtualCatOptions
     return (
       <Select 
         placeholder={ label }
-        style={{ width: '65%' }}
+        style={{ width: '60%', marginLeft: '4%' }}
         value={localId}
         options={options}
         onChange={value => setLocalId(value)}
@@ -266,7 +239,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
   return (
     <Modal
       open={visible}
-      width={640}
+      width={720}
       style={{ maxHeight: 500 }}
       title={t('title.advertisingForm')}
       okText={t('button.save')}
@@ -312,9 +285,8 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
                     jumpType === 'local'
                     ? <div>
                         <Select style={{ width: '35%' }} value={localType} placeholder={t('title.label.localServiceType')} onChange={value => handleLocalTypeChange(value)}>
-                          <Option value="series">{t('title.label.jumpToBookSeries')}</Option>
-                          <Option value="book">{t('title.label.jumpToBook')}</Option>
-                          <Option value="activity">{t('title.label.jumpToActivity')}</Option>
+                          <Option value="product">{t('title.label.jumpToProduct')}</Option>
+                          <Option value="virtualCategory">{t('title.label.jumpToVirtualCat')}</Option>
                         </Select>
                         <LocalIdSelector />
                       </div>
