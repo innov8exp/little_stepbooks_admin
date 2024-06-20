@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next'
 import {
     SearchOutlined
 } from '@ant-design/icons'
-const { RangePicker } = DatePicker;
 
 
 const DailyAudioForm = ({ editData, visible, endCats, onSave, onCancel }) => {
@@ -27,7 +26,7 @@ const DailyAudioForm = ({ editData, visible, endCats, onSave, onCancel }) => {
         if (editData.id) {
             const newData = {
                 ...editData,
-                dateRange: [dayjs(editData.day, dateFormat), dayjs(editData.endDay, dateFormat)]
+                day: dayjs(editData.day, dateFormat)
             }
             setAudioOptions([{
                 id: editData.audioId,
@@ -78,20 +77,15 @@ const DailyAudioForm = ({ editData, visible, endCats, onSave, onCancel }) => {
 
   const okHandler = () => {
     form.validateFields().then((values) => {
-        const { categoryId, goodsId, audioId, dateRange } = values
+        const { categoryId, goodsId, audioId, day } = values
         const params = {
             categoryId, goodsId, audioId,
-            day: dateRange[0].format(dateFormat),
-            endDay: dateRange[1].format(dateFormat)
+            day: day.format(dateFormat)
         };
         if(editData.id){
             params.id = editData.id
         }
-        http.put('/daily-audio/set', {
-            categoryId, goodsId, audioId,
-            day: dateRange[0].format(dateFormat),
-            endDay: dateRange[1].format(dateFormat)
-        }).then(() => {
+        http.put('/daily-audio/set', params).then(() => {
             onSave()
         })
       }).catch(err => message.error(err))
@@ -149,11 +143,11 @@ const DailyAudioForm = ({ editData, visible, endCats, onSave, onCancel }) => {
                 }))}
             />
         </Form.Item>
-        <Form.Item name="dateRange" label={t('effectDate')} rules={[{
+        <Form.Item name="day" label={t('startDate')} rules={[{
             required: true,
-            message: t('pleaseSelect') + t('effectDate')
+            message: t('pleaseSelect') + t('startDate')
         }]}>
-            <RangePicker />
+            <DatePicker disabled={ !!editData.id } />
         </Form.Item>
       </Form>
     </Modal>

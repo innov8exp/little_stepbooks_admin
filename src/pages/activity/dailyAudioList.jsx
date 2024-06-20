@@ -137,7 +137,7 @@ const DailyAudioListPage = () => {
                     onClick={() => handleEditAction(record)}
                     type="link"
                   >
-                    {t('button.edit')}
+                    {t('cover')}
                   </Button>
                 </div>
               )
