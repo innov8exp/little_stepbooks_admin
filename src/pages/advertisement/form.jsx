@@ -24,7 +24,7 @@ const AdvertisementForm = ({ id, visible, onSave, onCancel }) => {
   const localMap = {
     'product': { 
       app: 'StepBook://local/product',
-      mini: '/pages/mall/product-detail/product-detail',
+      mini: '/pages/product/product-detail/product-detail',
     },
     'virtualCategory': { 
       app: 'StepBook://local/virtualCategory',
