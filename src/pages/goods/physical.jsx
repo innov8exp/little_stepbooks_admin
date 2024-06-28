@@ -168,6 +168,12 @@ const PhysicalListPage = () => {
             width: 80
           },
           {
+            title: `${t('wdtGoodsNo')}`,
+            key: 'wdtGoodsNo',
+            dataIndex: 'wdtGoodsNo',
+            width: 180
+          },
+          {
             title: `${t('title.creationTime')}`,
             key: 'createdAt',
             dataIndex: 'createdAt',
@@ -238,6 +244,7 @@ const PhysicalListPage = () => {
           { type:'textarea', key: 'description', required: false},
           { type:'photo', key: 'coverUrl', groupKeys:['coverId']},
           { type:'number', min: 0, max: 99999, key: 'sortIndex'},
+          { type:'input', key: 'wdtGoodsNo', width: 300},
         ]}
         onCancel={() => setEdiVisible(false)}
         onSave={() => {
