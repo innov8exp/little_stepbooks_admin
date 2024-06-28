@@ -393,6 +393,23 @@ const OrderPage = () => {
                 },
               },
               {
+                title: `${t('title.wdtSyncStatus')}`,
+                key: 'wdtSyncStatus',
+                dataIndex: 'wdtSyncStatus',
+                render: (text) => {
+                  if (text === 'DONE') {
+                    return <Tag color="green">{t('title.wdtSyncStatus.done')}</Tag>
+                  } else if (text === 'INIT') {
+                    return <Tag color="blue">{t('title.wdtSyncStatus.init')}</Tag>
+                  } else if (text === 'REJECTED') {
+                    return <Tag color="red">{t('title.wdtSyncStatus.rejected')}</Tag>
+                  } else {
+                    // NO_NEED
+                    return <Tag color="gold-inverse">{t('title.wdtSyncStatus.noNeed')}</Tag>
+                  }
+                },
+              },
+              {
                 title: `${t('title.operate')}`,
                 key: 'action',
                 render: (text, record) => {

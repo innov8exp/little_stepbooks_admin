@@ -244,7 +244,7 @@ const PhysicalListPage = () => {
           { type:'textarea', key: 'description', required: false},
           { type:'photo', key: 'coverUrl', groupKeys:['coverId']},
           { type:'number', min: 0, max: 99999, key: 'sortIndex'},
-          { type:'input', key: 'wdtGoodsNo', width: 300},
+          { type:'input', key: 'wdtGoodsNo'},
         ]}
         onCancel={() => setEdiVisible(false)}
         onSave={() => {
