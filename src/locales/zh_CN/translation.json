@@ -201,6 +201,7 @@
   "title.deliveryStatus": "配送状态",
   "title.deliveryCompany": "快递公司",
   "title.deliveryCode": "运单编号",
+  "title.recipient": "收件人",
   "title.recipientName": "收件人姓名",
   "title.recipientProvince": "收件人省",
   "title.recipientCity": "收件人市",

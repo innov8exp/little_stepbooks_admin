@@ -206,6 +206,7 @@
   "title.deliveryStatus": "Delivery Status",
   "title.deliveryCompany": "Delivery Company",
   "title.deliveryCode": "Delivery Code",
+  "title.recipient": "Recipient",
   "title.recipientName": "Recipient Name",
   "title.recipientProvince": "Recipient Province",
   "title.recipientCity": "Recipient City",
