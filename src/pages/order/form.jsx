@@ -24,6 +24,7 @@ import HttpStatus from 'http-status-codes'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import { deliveryCompanies } from '@/libs/deliveryCompanies'
 
 const OrderForm = () => {
   const { t } = useTranslation()
@@ -37,6 +38,8 @@ const OrderForm = () => {
   const [isDisplayForm, setIsDisplayForm] = useState(!queryId)
   const [productNature, setProductNature] = useState()
   const [orderData, setOrderData] = useState()
+
+  const companies = deliveryCompanies
 
   const deliveryCompanyResponse = useFetch(
     '/api/admin/v1/orders/ship-companies',
@@ -114,10 +117,13 @@ const OrderForm = () => {
     form
       .validateFields()
       .then((values) => {
-        console.log('数字：', values)
+        // console.log('数字：', values)
+        const logisticsName = companies.filter(item=>item.id === values.logisticsType)[0].name;
+        const val = { ...values, logisticsName };
+
         if (queryId) {
           updateData({
-            ...values,
+            ...val,
             classifications: Array.from(new Set(values.classifications)),
           })
         }
@@ -337,27 +343,21 @@ const OrderForm = () => {
                     <Row gutter={8}>
                       <Col span={12}>
                         <Form.Item
-                          name="deliveryCompany"
+                          name="logisticsType"
                           label={t('title.deliveryCompany')}
                         >
-                          <Select
-                            placeholder={t(
-                              'message.placeholder.selectDeliveryCompany',
-                            )}
-                          >
-                            {deliveryCompanyResponse?.fetchedData?.map(
-                              ({ code, name }) => (
-                                <Select.Option key={code} value={code}>
-                                  {name}
-                                </Select.Option>
-                              ),
-                            )}
+                          <Select placeholder={t('message.placeholder.selectDeliveryCompany')}>
+                            {deliveryCompanies?.map(({ id, name }) => (
+                              <Select.Option key={id} value={id}>
+                                {name}
+                              </Select.Option>
+                            ))}
                           </Select>
                         </Form.Item>
                       </Col>
                       <Col span={12}>
                         <Form.Item
-                          name="deliveryCode"
+                          name="logisticsNo"
                           label={t('title.deliveryCode')}
                         >
                           <Input />

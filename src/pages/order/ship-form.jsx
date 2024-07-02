@@ -4,16 +4,22 @@ import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
+import { deliveryCompanies } from '@/libs/deliveryCompanies'
 
 const ShipForm = ({ id, visible, onSave, onCancel }) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
 
-  const { fetchedData } = useFetch('/api/admin/v1/orders/ship-companies', [])
+  // const { fetchedData } = useFetch('/api/admin/v1/orders/ship-companies', [])
+  const companies = deliveryCompanies
 
   const createData = (values) => {
+    const logisticsType = values.deliveryCompany;
+    const logisticsNo = values.deliveryCode;
+    const logisticsName = companies.filter(item=>item.id === logisticsType)[0].name;
+    const val = { logisticsType, logisticsNo, logisticsName };
     axios
-      .put(`/api/admin/v1/orders/${id}/shipment`, { ...values })
+      .put(`/api/admin/v1/orders/${id}/shipment`, { ...val })
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           message.success(t('message.successInfo'))
@@ -61,8 +67,8 @@ const ShipForm = ({ id, visible, onSave, onCancel }) => {
           ]}
         >
           <Select placeholder={t('message.placeholder.selectDeliveryCompany')}>
-            {fetchedData?.map(({ code, name }) => (
-              <Select.Option key={code} value={code}>
+            {deliveryCompanies?.map(({ id, name }) => (
+              <Select.Option key={id} value={id}>
                 {name}
               </Select.Option>
             ))}
