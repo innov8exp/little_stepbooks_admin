@@ -153,7 +153,7 @@ const OrderPage = () => {
     if(!params.startDate){
       message.error(t('pleaseSelect') + t('startEndDate'))
     }
-    let searchURL = `/api/admin/v1/orders/export?startDate=${queryCriteria.startDate}&endDate=${queryCriteria.endDate}`
+    let searchURL = `/api/admin/v1/orders/export?startDate=${params.startDate}&endDate=${params.endDate}`
     if (params?.orderCode) {
       searchURL += `&orderCode=${params.orderCode}`
     }
