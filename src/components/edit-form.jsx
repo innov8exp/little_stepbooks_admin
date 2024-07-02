@@ -51,7 +51,7 @@ const EditForm = ({
   formData,
   title = 'FORM',
   width = 640,
-  labelSpan = 4,
+  labelSpan = 5,
   domain,
   permission,
   apiPath,

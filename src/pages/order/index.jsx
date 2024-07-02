@@ -324,6 +324,7 @@ const OrderPage = () => {
                 title: `${t('title.label.orderNumber')}`,
                 key: 'orderCode',
                 dataIndex: 'orderCode',
+                width: 240,
                 render: (text, record) => (
                   <>
                     <Button
@@ -343,19 +344,26 @@ const OrderPage = () => {
                 ),
               },
               {
-                title: `${t('title.label.userNickName')}`,
-                key: 'username',
-                dataIndex: 'username',
+                title: `${t('title.recipient')}`,
+                key: 'recipient',
+                render: (text, record) => (
+                  <>
+                    {record.recipientName}
+                    <br/>
+                    { record.recipientPhone }
+                  </>
+                )
               },
               {
-                title: `${t('title.userNickname')}`,
-                key: 'nickname',
-                dataIndex: 'nickname',
-              },
-              {
-                title: `${t('title.recipientPhone')}`,
-                key: 'recipientPhone',
-                dataIndex: 'recipientPhone',
+                title: `${t('title.recipientAddress')}`,
+                key: 'recipientAddress',
+                render: (text, record) => {
+                  console.log(record);
+                  return (
+                  <>
+                    {record.recipientProvince}{ record.recipientCity }{ record.recipientDistrict } - { record.recipientAddress }
+                  </>
+                )}
               },
               {
                 title: `${t('title.transactionAmount')}`,
@@ -389,6 +397,23 @@ const OrderPage = () => {
                     return <Tag color="gold-inverse">{t(text)}</Tag>
                   } else {
                     return <Tag color="blue">{t(text)}</Tag>
+                  }
+                },
+              },
+              {
+                title: `${t('title.wdtSyncStatus')}`,
+                key: 'wdtSyncStatus',
+                dataIndex: 'wdtSyncStatus',
+                render: (text) => {
+                  if (text === 'DONE') {
+                    return <Tag color="green">{t('title.wdtSyncStatus.done')}</Tag>
+                  } else if (text === 'INIT') {
+                    return <Tag color="blue">{t('title.wdtSyncStatus.init')}</Tag>
+                  } else if (text === 'REJECTED') {
+                    return <Tag color="red">{t('title.wdtSyncStatus.rejected')}</Tag>
+                  } else {
+                    // NO_NEED
+                    return <Tag color="gold-inverse">{t('title.wdtSyncStatus.noNeed')}</Tag>
                   }
                 },
               },
