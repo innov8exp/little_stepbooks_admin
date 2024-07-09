@@ -40,7 +40,7 @@ const DailyAudioListPage = () => {
   const loadListData = function (currentPage) {
     currentPage = currentPage || pageNumber
     setLoading(true)
-    const searchURL = `/${apiPath}?currentPage=${pageNumber}&pageSize=${pageSize}`
+    const searchURL = `/${apiPath}?currentPage=${currentPage}&pageSize=${pageSize}`
     http.get(searchURL).then((res) => {
       const { records, total } = res
       setListData(records)
@@ -60,12 +60,12 @@ const DailyAudioListPage = () => {
     })
   }
 
-  const handleEditAction = (item) => {
-    fetchAllCats().then(() => {
-      setEdiVisible(true)
-      setEditData(item)
-    })
-  }
+  // const handleEditAction = (item) => {
+  //   fetchAllCats().then(() => {
+  //     setEdiVisible(true)
+  //     setEditData(item)
+  //   })
+  // }
 
   const fetchAllCats = () => {
     if(endCats.length > 0){
@@ -96,7 +96,7 @@ const DailyAudioListPage = () => {
   return (
     <Card title={t('dailyAudioList')} extra={
       <Button type="primary" onClick={handleAddAction}>
-        {t('button.create')}
+        {t('set')}
       </Button>
     }>
       <Table
@@ -125,23 +125,6 @@ const DailyAudioListPage = () => {
             title: `${t('title.creationTime')}`,
             key: 'createdAt',
             dataIndex: 'createdAt',
-          },
-          {
-            title: `${t('title.operate')}`,
-            key: 'action',
-            width: 60,
-            render: (text, record) => {
-              return (
-                <div>
-                  <Button
-                    onClick={() => handleEditAction(record)}
-                    type="link"
-                  >
-                    {t('cover')}
-                  </Button>
-                </div>
-              )
-            },
           },
         ]}
         rowKey={(record) => record.id}
