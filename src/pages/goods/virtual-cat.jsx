@@ -1,4 +1,4 @@
-import { App, Button, Card, message, Table, Image, Switch } from 'antd'
+import { App, Button, Card, message, Table, Image, Switch,Typography } from 'antd'
 import http from '@/libs/http'
 import { useState, useEffect } from 'react'
 import EditForm from '@/components/edit-form'
@@ -9,6 +9,8 @@ import {
   PlusOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
+
+const { Paragraph } = Typography;
 
 const VirtualCatListPage = () => {
   const defaultKeys = [
@@ -309,7 +311,7 @@ const VirtualCatListPage = () => {
           {
             title: `${t('title.operate')}`,
             key: 'action',
-            width: 90,
+            width: 120,
             render: (text, record) => {
               return (
                 <div>
@@ -332,6 +334,9 @@ const VirtualCatListPage = () => {
                   >
                     {t('button.delete')}
                   </Button>
+                  <Paragraph copyable={{ text: `packageAudio/book-detail/index?id=${record.id}` }}>
+                    <span className='app_color'>{t('miniProgramPath')}</span>
+                  </Paragraph>
                 </div>
               )
             },

@@ -1,4 +1,4 @@
-import { App, Button, Card, message, Table, Image, Form, Row, Input, Select, Switch, Tag } from 'antd'
+import { App, Button, Card, message, Table, Image, Form, Row, Input, Select, Switch, Tag, Typography } from 'antd'
 import {
   ExclamationCircleOutlined,
   SearchOutlined,
@@ -11,6 +11,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import EditForm from '@/components/edit-form'
 import { useTranslation } from 'react-i18next'
+
+const { Paragraph } = Typography;
 
 const ProductListPage = () => {
   const { t } = useTranslation()
@@ -339,6 +341,9 @@ const ProductListPage = () => {
                   >
                     {t('skuAndPrice')}
                   </Button>
+                  <Paragraph copyable={{ text: `pages/product/product-detail/product-detail?id=${record.id}` }}>
+                    <span className='app_color'>{t('miniProgramPath')}</span>
+                  </Paragraph>
                 </div>
               )
             },
