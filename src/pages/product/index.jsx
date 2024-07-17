@@ -198,8 +198,12 @@ const ProductListPage = () => {
   }
 
   // 商品价格、上下线
-  const handleSkuClick = id => {
-    navigate('/product-sku-list/' + id)
+  const handleSkuClick = item => {
+    if(item.storeType === 'POINTS'){
+      navigate(`/product-sku-point-list/${item.id}`)
+    }else{
+      navigate(`/product-sku-price-list/${item.id}`)
+    }
   }
 
   return (
@@ -214,9 +218,15 @@ const ProductListPage = () => {
               <Input placeholder={t('message.placeholder.name')} />
             </Form.Item>
             <Form.Item label={t('title.status')} name="status" style={{ margin: '0 15px', width: 200 }}>
-              <Select placeholder={t('message.placeholder.pleaseSelect')} options={[
+              <Select placeholder={t('message.placeholder.pleaseSelect')} allowClear={true} options={[
                 { value: 'ON_SHELF', label: t('ON_SHELF') },
                 { value: 'OFF_SHELF', label: t('OFF_SHELF') }
+              ]} />
+            </Form.Item>
+            <Form.Item label={t('storeType')} name="storeType" style={{ margin: '0 15px', width: 200 }}>
+              <Select placeholder={t('message.placeholder.pleaseSelect')} allowClear={true} options={[
+                { value: 'REGULAR', label: t('normalGoods') },
+                { value: 'POINTS', label: t('pointGoods') }
               ]} />
             </Form.Item>
             <Button icon={<SearchOutlined />} type="primary" onClick={() => loadListData()} style={{ margin: '0 15px' }}>{t('button.search')} </Button>
@@ -278,6 +288,12 @@ const ProductListPage = () => {
             },
           },
           {
+            title: `${t('storeType')}`,
+            key: 'storeType',
+            dataIndex: 'storeType',
+            render: (text) => t(text === 'POINTS' ? 'pointGoods' : 'normalGoods'),
+          },
+          {
             title: `${t('sortIndex')}`,
             key: 'sortIndex',
             dataIndex: 'sortIndex',
@@ -336,10 +352,10 @@ const ProductListPage = () => {
                     {t('detailImage')}
                   </Button>
                   <Button
-                    onClick={() => handleSkuClick(record.id)}
+                    onClick={() => handleSkuClick(record)}
                     type="link"
                   >
-                    {t('skuAndPrice')}
+                    {t(record.storeType === 'POINTS' ? 'skuAndPoint' : 'skuAndPrice')}
                   </Button>
                   <Paragraph copyable={{ text: `pages/product/product-detail/product-detail?id=${record.id}` }}>
                     <span className='app_color'>{t('miniProgramPath')}</span>
@@ -382,6 +398,10 @@ const ProductListPage = () => {
             { value: '课程', label: '课程' },
             { value: '训练营', label: '训练营' },
           ], format: value => value ? value.join(',') : null},
+          { type:'radio.group', key: 'storeType', label: 'storeType', options: [
+            { value: 'REGULAR', label: t('normalGoods') },
+            { value: 'POINTS', label: t('pointGoods') },
+          ]},
           { type:'number', min: 0, max: 99999, key: 'sortIndex'},
         ]}
         onCancel={() => setEdiVisible(false)}

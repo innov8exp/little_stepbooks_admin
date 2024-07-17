@@ -1,4 +1,4 @@
-import { App, Button, Card, message, Table, Switch } from 'antd'
+import { App, Button, Card, message, Table, Switch, Form, Input, Row, } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
@@ -8,6 +8,8 @@ import { useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import {
   ExclamationCircleOutlined,
+  SearchOutlined,
+  UndoOutlined,
 } from '@ant-design/icons'
 
 const SkuListPage = () => {
@@ -15,6 +17,7 @@ const SkuListPage = () => {
   const spuId = params?.id;
   const { t } = useTranslation()
   const { modal } = App.useApp()
+  const [queryForm] = Form.useForm()
   const [listData, setListData] = useState([])
   const [ediVisible, setEdiVisible] = useState(false)
   const [editData, setEditData] = useState({})
@@ -51,7 +54,14 @@ const SkuListPage = () => {
   const loadListData = function (currentPage) {
     setLoading(true)
     currentPage = currentPage || pageNumber
-    const searchURL = `/api/admin/v1/sku?currentPage=${currentPage}&pageSize=${pageSize}&spuId=${spuId}`
+    let queryStr = ''
+    const queryData = queryForm.getFieldsValue()
+    for (const key in queryData) {
+      if(queryData[key]){
+        queryStr += `&${key}=${encodeURIComponent(queryData[key])}`
+      }
+    }
+    const searchURL = `/api/admin/v1/sku?currentPage=${currentPage}&pageSize=${pageSize}&spuId=${spuId}` + queryStr
     axios
       .get(searchURL)
       .then((res) => {
@@ -70,6 +80,10 @@ const SkuListPage = () => {
       .finally(() => {
         setLoading(false)
       })
+  }
+
+  const handleReset = () => {
+    queryForm.resetFields()
   }
 
   const handleAddAction = () => {
@@ -146,6 +160,21 @@ const SkuListPage = () => {
           {t('button.create')}
       </Button>
     }>
+      <Form form={queryForm}>
+        <Row>
+            <Form.Item label={t('name')} name="name">
+              <Input placeholder={t('message.placeholder.name')} allowClear={true} />
+            </Form.Item>
+            {/* <Form.Item label={t('storeType')} name="storeType" style={{ margin: '0 15px', width: 200 }}>
+              <Select placeholder={t('message.placeholder.pleaseSelect')} allowClear={true} options={[
+                { value: 'REGULAR', label: t('normalGoods') },
+                { value: 'POINTS', label: t('pointGoods') }
+              ]} />
+            </Form.Item> */}
+            <Button icon={<SearchOutlined />} type="primary" onClick={() => loadListData()} style={{ margin: '0 15px' }}>{t('button.search')} </Button>
+            <Button icon={<UndoOutlined />} onClick={handleReset}>{t('button.reset')} </Button>
+        </Row>
+      </Form>
       <Table
         columns={[
           {
