@@ -29,6 +29,9 @@ const placeholderMap = {
 }
 
 const itemPropTypes = {
+  addOnly: PropTypes.bool, // 只有新增时才允许配置该字段
+  editOnly: PropTypes.bool, // 只有编辑时才允许配置该字段
+  disabled: PropTypes.bool, // 可展示，不允许编辑
   type: PropTypes.string,
   placeholder: PropTypes.string,
   checkedLabel: PropTypes.string,
@@ -66,8 +69,18 @@ const EditForm = ({
   const url = `/api/admin/v1/${apiPath}` + (isAdd ? '' : `/${formData.id}`)
   const method = isAdd ? 'post' : 'put'
   const showTitle = t(title) + t('CONNECT_MARK1') + t(disabled ? 'view' : (isAdd ? 'button.create' : 'button.edit'))
-  // 如果是新增行为，忽略排序字段的传参以及配置
-  const realFormKeys = isAdd ? formKeys.filter(item => item.key != 'sortIndex') : formKeys
+  const realFormKeys = formKeys.filter(item => {
+    if(item.key === 'sortIndex' && isAdd){ // 如果是新增行为，忽略排序字段的传参以及配置
+      return false
+    }
+    if(item.addOnly && !isAdd){
+      return false
+    }
+    if(item.editOnly && isAdd){
+      return false
+    }
+    return true
+  });
 
   // 存在一些冗余的字段需要独立维护，通过 hiddenData 对象进行维护
   // 视频、音频、图片资源需要追加对应的 id 字段， 视频、音频保持追加 duration 字段
@@ -133,17 +146,18 @@ const EditForm = ({
     prefix,
     checkedLabel,
     unCheckedLabel,
+    disabled,
     // ...props
   }) => {
     placeholder =  t(placeholder || placeholderMap[key] || key)
     if(type === 'input' || type === 'hidden'){
-      return (<Input type="text" placeholder={placeholder} />)
+      return (<Input type="text" placeholder={placeholder} disabled={ disabled } />)
     }
     if(type === 'textarea'){
-      return (<TextArea placeholder={placeholder} />)
+      return (<TextArea placeholder={placeholder} disabled={ disabled } />)
     }
     if(type === 'number'){
-      return (<InputNumber style={{ width: 200 }} min={min} max={max} prefix={prefix} />)
+      return (<InputNumber style={{ width: 200 }} min={min} max={max} prefix={prefix} disabled={ disabled } />)
     }
     if(type === 'boolean'){
       return (
@@ -151,11 +165,12 @@ const EditForm = ({
           checkedChildren={t(checkedLabel)}
           unCheckedChildren={t(unCheckedLabel)}
           style={{ width: 100 }}
+          disabled={ disabled }
         />
       )
     }
     if(type === 'photo'){
-      return (<ImageUpload domain={domain} permission={permission} value={formData[key]} onChange={res => {
+      return (<ImageUpload domain={domain} permission={permission} value={formData[key]} disabled={ disabled } onChange={res => {
         form.setFieldValue(key, res.url)
         if(groupKeys) {
           Object.assign(hiddenFormData, {
@@ -165,21 +180,21 @@ const EditForm = ({
       }} />)
     }
     if(type === 'photo-list'){
-      return (<ImagesUpload domain={domain} permission={permission} value={formData[key]} maxCount={maxCount} onChange={res => {
+      return (<ImagesUpload domain={domain} permission={permission} value={formData[key]} maxCount={maxCount} disabled={ disabled } onChange={res => {
         form.setFieldValue(key, res)
       }} />)
     }
     if(type === 'select'){
-      return (<Select placeholder={placeholder} mode={mode} options={options} />)
+      return (<Select placeholder={placeholder} mode={mode} options={options} disabled={ disabled } />)
     }
     if(type === 'checkbox'){
       return (
-        <Checkbox></Checkbox>
+        <Checkbox disabled={ disabled }></Checkbox>
       )
     }
     if(type === 'checkbox.group'){
       return (
-        <Checkbox.Group options={options} onChange={valueArr => {
+        <Checkbox.Group options={options} disabled={ disabled } onChange={valueArr => {
           form.setFieldValue(key, valueArr)
           if(groupKeys) {
             const arr = [];
@@ -199,7 +214,7 @@ const EditForm = ({
     }
     if(type === 'radio.group'){
       return (
-        <Radio.Group options={options.map(item => ({
+        <Radio.Group disabled={ disabled } options={options.map(item => ({
           ...item,
           label: t(item.label)
         }))} />
@@ -207,7 +222,7 @@ const EditForm = ({
     }
     if(type === 'audio' || type === 'video'){
       const accept = type === 'audio' ? '.mp3,.m4a' : '.mp4'
-      return (<FileUpload domain={domain} permission={permission} fileUrl={formData[key]} accept={accept} isMedia={true} onChange={res => {
+      return (<FileUpload domain={domain} permission={permission} fileUrl={formData[key]} accept={accept} isMedia={true} disabled={ disabled } onChange={res => {
         form.setFieldValue(key, res.url)
         if(groupKeys){
           const newData = {}
@@ -219,7 +234,7 @@ const EditForm = ({
       }} />)
     }
     if(type === 'file'){
-      return (<FileUpload domain={domain} permission={permission} fileUrl={formData[key]} onChange={res => {
+      return (<FileUpload domain={domain} permission={permission} fileUrl={formData[key]} disabled={ disabled } onChange={res => {
         form.setFieldValue(key, res.url)
         if(groupKeys){
           Object.assign(hiddenFormData, {

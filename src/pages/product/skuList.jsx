@@ -4,8 +4,7 @@ import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
 import EditForm from '@/components/edit-form'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import {
   ExclamationCircleOutlined,
   SearchOutlined,
@@ -13,8 +12,23 @@ import {
 } from '@ant-design/icons'
 
 const SkuListPage = () => {
+  const priceFormKeys = [
+    { type:'input', key: 'skuName', label: 'name' },
+    { type:'number', min: 0.01, max: null, prefix:'￥', key: 'originalPrice' },
+    { type:'number', min: 0.01, max: null, prefix:'￥', key: 'price' },
+    { type:'number', min: 0, max: 99999, key: 'sortIndex'},
+  ]
+  const pointFormKeys = [
+    { type:'input', key: 'skuName', label: 'name' },
+    { type:'number', min: 1, max: 1000000, key: 'originalPrice', label: 'originalPoint' },
+    { type:'number', min: 1, max: 1000000, key: 'price', label: 'point' },
+    { type:'number', min: 0, max: 99999, key: 'sortIndex'},
+  ]
   const params = useParams()
+  const location = useLocation()
   const spuId = params?.id;
+  const isPoint = location.pathname.includes('point');
+  const formKeys = isPoint ? pointFormKeys : priceFormKeys;
   const { t } = useTranslation()
   const { modal } = App.useApp()
   const [queryForm] = Form.useForm()
@@ -97,7 +111,7 @@ const SkuListPage = () => {
   }
 
   const handleGoodsAction = ({ id, spuId }) => {
-    navigate(`/sku-goods-list/${id}/${spuId}`)
+    navigate(`/${isPoint ? 'sku-point-goods-list' : 'sku-goods-list'}/${id}/${spuId}`)
   }
 
   const handleUpdateStatusAction = (id, status) => {
@@ -155,7 +169,7 @@ const SkuListPage = () => {
   }
 
   return (
-    <Card title={t('productPrice')} extra={
+    <Card title={t(isPoint ? 'productPoint' : 'productPrice')} extra={
       <Button style={{ marginLeft: '20px' }} type="primary" onClick={handleAddAction}>
           {t('button.create')}
       </Button>
@@ -165,12 +179,6 @@ const SkuListPage = () => {
             <Form.Item label={t('name')} name="name">
               <Input placeholder={t('message.placeholder.name')} allowClear={true} />
             </Form.Item>
-            {/* <Form.Item label={t('storeType')} name="storeType" style={{ margin: '0 15px', width: 200 }}>
-              <Select placeholder={t('message.placeholder.pleaseSelect')} allowClear={true} options={[
-                { value: 'REGULAR', label: t('normalGoods') },
-                { value: 'POINTS', label: t('pointGoods') }
-              ]} />
-            </Form.Item> */}
             <Button icon={<SearchOutlined />} type="primary" onClick={() => loadListData()} style={{ margin: '0 15px' }}>{t('button.search')} </Button>
             <Button icon={<UndoOutlined />} onClick={handleReset}>{t('button.reset')} </Button>
         </Row>
@@ -188,12 +196,12 @@ const SkuListPage = () => {
             dataIndex: 'skuName',
           },
           {
-            title: `${t('originalPrice')}`,
+            title: `${t(isPoint ? 'originalPoint' : 'originalPrice')}`,
             key: 'originalPrice',
             dataIndex: 'originalPrice',
           },
           {
-            title: `${t('price')}`,
+            title: `${t(isPoint ? 'point' : 'price')}`,
             key: 'price',
             dataIndex: 'price',
           },
@@ -273,15 +281,10 @@ const SkuListPage = () => {
         visible={ediVisible}
         apiPath='sku'
         domain='PRODUCT'
-        title='productPrice'
+        title={isPoint ? 'productPoint' : 'productPrice'}
         formData={editData}
         appendData={{ spuId }}
-        formKeys={[
-          { type:'input', key: 'skuName', label: 'name' },
-          { type:'number', min: 0.01, max: null, prefix:'￥', key: 'originalPrice' },
-          { type:'number', min: 0.01, max: null, prefix:'￥', key: 'price' },
-          { type:'number', min: 0, max: 99999, key: 'sortIndex'},
-        ]}
+        formKeys={formKeys}
         onCancel={() => setEdiVisible(false)}
         onSave={() => {
           setEdiVisible(false)

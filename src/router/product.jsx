@@ -33,6 +33,7 @@ const routes = [
     { path: '/product-sku-price-list/:id', element: <ProductSkuList />, label: 'productPrice', parentPath: '/product-list' },
     { path: '/product-sku-point-list/:id', element: <ProductSkuList />, label: 'productPoint', parentPath: '/product-list' },
     { path: '/sku-goods-list/:skuId/:spuId', element: <SkuGoodsList />, label: 'skuRelationWidthGoods', parentPath: '/product-list' },
+    { path: '/sku-point-goods-list/:skuId/:spuId', element: <SkuGoodsList />, label: 'skuRelationWidthGoods', parentPath: '/product-list' },
     { path: '/goods/:id/audio-list', element: <GoodsAudioList />, label: 'menu.virtualAudioList', parentPath: '/goods/virtual-list' },
     { path: '/goods/:id/video-list', element: <GoodsVideoList />, label: 'menu.virtualVideoList', parentPath: '/goods/virtual-list' },
     { 

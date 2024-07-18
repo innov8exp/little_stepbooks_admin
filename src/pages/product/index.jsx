@@ -398,7 +398,7 @@ const ProductListPage = () => {
             { value: '课程', label: '课程' },
             { value: '训练营', label: '训练营' },
           ], format: value => value ? value.join(',') : null},
-          { type:'radio.group', key: 'storeType', label: 'storeType', options: [
+          { type:'radio.group', key: 'storeType', label: 'storeType', disabled: (editData && !!editData.id), options: [
             { value: 'REGULAR', label: t('normalGoods') },
             { value: 'POINTS', label: t('pointGoods') },
           ]},

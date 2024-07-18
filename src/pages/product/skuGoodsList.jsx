@@ -1,4 +1,4 @@
-import { App, Button, Card, message, Table } from 'antd'
+import { App, Button, Card, Table } from 'antd'
 import {
   querySkuPhysicalGoods,
   querySkuVirtualGoods,
@@ -9,7 +9,7 @@ import {
 } from '@/api'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import GoodsSelector from './goodsSelector'
 import {
   ExclamationCircleOutlined,
@@ -17,6 +17,8 @@ import {
 
 const SkuGoodsPage = () => {
   const params = useParams()
+  const location = useLocation()
+  const isPoint = location.pathname.includes('point');
   const skuId = params?.skuId;
   const spuId = params?.spuId;
   const { t } = useTranslation()
@@ -54,6 +56,10 @@ const SkuGoodsPage = () => {
   }
 
   const loadVirData = () => {
+    if(isPoint){
+      setVirGoodsArr([])
+      return
+    }
     setLoading(true)
     querySkuVirtualGoods(spuId, skuId).then(data => {
       setVirGoodsArr(data.records)
@@ -111,6 +117,11 @@ const SkuGoodsPage = () => {
 
   return (
     <Card title={t('skuRelationWidthGoods')} extra={
+      isPoint ? 
+      <Button type="primary" onClick={() => handleAddAction(true)}>
+          {t('bindPhysicalGoods')}
+      </Button>
+      :
       <div>
           <Button type="primary" onClick={() => handleAddAction(true)}>
               {t('bindPhysicalGoods')}
