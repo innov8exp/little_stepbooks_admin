@@ -118,12 +118,12 @@ const SkuGoodsPage = () => {
   return (
     <Card title={t('skuRelationWidthGoods')} extra={
       isPoint ? 
-      <Button type="primary" onClick={() => handleAddAction(true)}>
+      <Button type="primary" onClick={() => handleAddAction(true, true)}>
           {t('bindPhysicalGoods')}
       </Button>
       :
       <div>
-          <Button type="primary" onClick={() => handleAddAction(true)}>
+          <Button type="primary" onClick={() => handleAddAction(true, false)}>
               {t('bindPhysicalGoods')}
           </Button>
           <Button style={{ marginLeft: '20px' }} type="primary" onClick={() => handleAddAction(false)}>
@@ -148,7 +148,9 @@ const SkuGoodsPage = () => {
             title: `${t('goodsType')}`,
             key: 'type',
             dataIndex: 'type',
-            render: (text, record) => t(record.categoryId ? 'virtualGoods' : 'physicalGoods')
+            render: (text, record) => {
+              return t(isPoint ? 'pointGoods' : (record.categoryId ? 'virtualGoods' : 'physicalGoods'))
+            }
           },
           {
             title: `${t('redeemAt')}`,
@@ -185,6 +187,7 @@ const SkuGoodsPage = () => {
         loading={loading}
       />
       <GoodsSelector
+        isPoint={isPoint}
         visible={addVisible}
         isPhysical={isPhysical}
         onPhySelect={onPhySelect}

@@ -32,6 +32,7 @@ const OrderForm = () => {
   const queryId = query.get('id')
   const navigate = useNavigate()
   const [form] = Form.useForm()
+  const [isPoint, setIsPoint] = useState(false)
   const [initFormData, setInitFormData] = useState({})
   const [loading, setLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
@@ -78,6 +79,7 @@ const OrderForm = () => {
       .then((res) => {
         if (res.status === HttpStatus.OK) {
           const resultData = res.data
+          setIsPoint(resultData.storeType === 'POINTS')
           setInitFormData({
             ...resultData,
           })
@@ -193,8 +195,8 @@ const OrderForm = () => {
                     </Col>
                     <Col span={12}>
                       <ViewItem
-                        label={t('title.totalAmount')}
-                        value={formatMoney(orderData?.totalAmount)}
+                        label={t(isPoint ? 'point' : 'title.totalAmount')}
+                        value={isPoint ? (orderData?.totalAmount) : formatMoney(orderData?.totalAmount)}
                       />
                     </Col>
                   </Row>
@@ -234,10 +236,10 @@ const OrderForm = () => {
                         dataIndex: 'spuName',
                       },
                       {
-                        title: `${t('title.price')}`,
+                        title: t(isPoint ? 'point' : 'title.price'),
                         key: 'skuPrice',
                         dataIndex: 'skuPrice',
-                        render: (text) => formatMoney(text),
+                        render: (text) => isPoint ? text : formatMoney(text),
                       },
                       {
                         title: `${t('title.label.skuName')}`,

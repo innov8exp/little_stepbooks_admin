@@ -12,15 +12,10 @@ import {
 const GoodsSelector = ({
     visible = false,
     isPhysical = true,
-    onPhySelect = () => {
-
-    },
-    onVirSelect = () => {
-
-    },
-    onCancel = () => {
-
-    }
+    isPoint = false,
+    onPhySelect = () => { },
+    onVirSelect = () => { },
+    onCancel = () => { }
 }) => {
   const { t } = useTranslation()
   const [listData, setListData] = useState([])
@@ -28,6 +23,7 @@ const GoodsSelector = ({
   const [pageNumber, setPageNumber] = useState(1)
   const [loading, setLoading] = useState(true)
   const [total, setTotal] = useState(0)
+  // const [storeType, setStoreType] = useState('REGULAR')
   const pageSize = 10;
   const paginationProps = {
     pageSize,
@@ -57,7 +53,8 @@ const GoodsSelector = ({
   const loadListData = function (currentPage, ignoreName) {
     currentPage = currentPage || pageNumber
     setLoading(true)
-    let searchURL = `/api/admin/v1/${isPhysical ? 'physical-goods?' : 'virtual-category?includeChildren=true&'}currentPage=${pageNumber}&pageSize=${pageSize}`
+    const path = isPhysical ? `physical-goods?storeType=${isPoint ? 'POINTS' : 'REGULAR'}` : 'virtual-category?includeChildren=true'
+    let searchURL = `/api/admin/v1/${path}&currentPage=${pageNumber}&pageSize=${pageSize}`
     if(!ignoreName && name){
       searchURL += `&name=${encodeURIComponent(name)}`
     }
@@ -107,6 +104,12 @@ const GoodsSelector = ({
       key: 'coverUrl',
       dataIndex: 'coverUrl',
       render: (text) => <Image height={50} src={text} />,
+    },
+    {
+      title: `${t('storeType')}`,
+      key: 'storeType',
+      dataIndex: 'storeType',
+      render: (text) => t(text === 'POINTS' ? 'pointGoods' : 'normalGoods'),
     },
     {
       title: `${t('title.operate')}`,
@@ -216,6 +219,7 @@ const GoodsSelector = ({
 GoodsSelector.propTypes = {
     visible: PropTypes.bool,
     isPhysical: PropTypes.bool,
+    isPoint: PropTypes.bool,
     onVirSelect: PropTypes.func,
     onPhySelect: PropTypes.func,
     onCancel: PropTypes.func,

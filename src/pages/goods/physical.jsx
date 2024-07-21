@@ -1,4 +1,4 @@
-import { App, Button, Card, message, Table, Image, Switch } from 'antd'
+import { App, Button, Card, message, Table, Image, Switch, Select, Row } from 'antd'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
@@ -6,6 +6,7 @@ import EditForm from '@/components/edit-form'
 import { useTranslation } from 'react-i18next'
 import {
   ExclamationCircleOutlined,
+  SearchOutlined,
 } from '@ant-design/icons'
 
 const PhysicalListPage = () => {
@@ -18,6 +19,7 @@ const PhysicalListPage = () => {
   const [pageNumber, setPageNumber] = useState(1)
   const [loading, setLoading] = useState(true)
   const [switchLoading, setSwitchLoading] = useState({})
+  const [storeType, setStoreType] = useState('REGULAR')
   const [total, setTotal] = useState(0)
   const pageSize = 10;
   const paginationProps = {
@@ -47,7 +49,7 @@ const PhysicalListPage = () => {
   const loadListData = function (currentPage) {
     currentPage = currentPage || pageNumber
     setLoading(true)
-    const searchURL = `/api/admin/v1/${apiPath}?currentPage=${pageNumber}&pageSize=${pageSize}`
+    const searchURL = `/api/admin/v1/${apiPath}?currentPage=${pageNumber}&pageSize=${pageSize}&storeType=${storeType}`
     axios
       .get(searchURL)
       .then((res) => {
@@ -138,6 +140,13 @@ const PhysicalListPage = () => {
         {t('button.create')}
       </Button>
     }>
+      <div style={{marginBottom: '15px'}}>
+          <Select placeholder={t('message.placeholder.pleaseSelect')} value={storeType} onChange={value => setStoreType(value)} options={[
+            { value: 'REGULAR', label: t('normalGoods') },
+            { value: 'POINTS', label: t('pointGoods') }
+          ]} style={{ width: 150, marginRight: 25 }}/>
+          <Button icon={<SearchOutlined />} type="primary" onClick={() => loadListData()}>{t('button.search')} </Button>
+      </div>
       <Table
         columns={[
           {
@@ -162,16 +171,22 @@ const PhysicalListPage = () => {
             render: (text) => <Image height={50} src={text} />,
           },
           {
-            title: `${t('sortIndex')}`,
-            key: 'sortIndex',
-            dataIndex: 'sortIndex',
-            width: 80
+            title: `${t('storeType')}`,
+            key: 'storeType',
+            dataIndex: 'storeType',
+            render: (text) => t(text === 'POINTS' ? 'pointGoods' : 'normalGoods'),
           },
           {
             title: `${t('wdtGoodsNo')}`,
             key: 'wdtGoodsNo',
             dataIndex: 'wdtGoodsNo',
             width: 180
+          },
+          {
+            title: `${t('sortIndex')}`,
+            key: 'sortIndex',
+            dataIndex: 'sortIndex',
+            width: 80
           },
           {
             title: `${t('title.creationTime')}`,
@@ -243,8 +258,12 @@ const PhysicalListPage = () => {
           { type:'input', key: 'name'},
           { type:'textarea', key: 'description', required: false},
           { type:'photo', key: 'coverUrl', groupKeys:['coverId']},
+          { type:'input', key: 'wdtGoodsNo', required: false},
+          { type:'radio.group', key: 'storeType', label: 'storeType', disabled: (editData && !!editData.id), options: [
+            { value: 'REGULAR', label: t('normalGoods') },
+            { value: 'POINTS', label: t('pointGoods') },
+          ]},
           { type:'number', min: 0, max: 99999, key: 'sortIndex'},
-          { type:'input', key: 'wdtGoodsNo'},
         ]}
         onCancel={() => setEdiVisible(false)}
         onSave={() => {

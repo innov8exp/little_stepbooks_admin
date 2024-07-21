@@ -55,7 +55,7 @@ const OrderPage = () => {
   const [pageSize] = useState(10)
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [queryCriteria, setQueryCriteria] = useState()
+  const [queryCriteria, setQueryCriteria] = useState({})
   const [formVisible, setFormVisible] = useState(false)
   const [refundApproveFormVisible, setRefundApproveFormVisible] = useState(false)
   const [selectedId, setSelectedId] = useState()
@@ -78,8 +78,8 @@ const OrderPage = () => {
     if (queryCriteria?.orderCode) {
       searchURL += `&orderCode=${queryCriteria.orderCode}`
     }
-    if (queryCriteria?.username) {
-      searchURL += `&username=${queryCriteria.username}`
+    if (queryCriteria?.storeType) {
+      searchURL += `&storeType=${queryCriteria.storeType}`
     }
     if (queryCriteria?.state) {
       searchURL += `&state=${queryCriteria.state}`
@@ -103,15 +103,15 @@ const OrderPage = () => {
       )
       .finally(() => setLoading(false))
   }, [
-    pageNumber,
-    pageSize,
-    queryCriteria?.orderCode,
-    queryCriteria?.state,
-    queryCriteria?.username,
-    queryCriteria?.startDate,
-    queryCriteria?.endDate,
-    t,
-  ])
+      pageNumber,
+      pageSize,
+      queryCriteria.orderCode,
+      queryCriteria.storeType,
+      queryCriteria.state,
+      queryCriteria.startDate,
+      queryCriteria.endDate,
+      t
+    ])
 
   const handleCloseAction = (id) => {
     modal.confirm({
@@ -168,8 +168,8 @@ const OrderPage = () => {
 
   const getQueryValue = () => {
     const queryValue = queryForm.getFieldsValue()
-    const { orderCode, state, username, startEndDateArr } = queryValue;
-    const params = { orderCode, state, username }
+    const { orderCode, state, storeType, startEndDateArr } = queryValue;
+    const params = { orderCode, state, storeType }
     if(startEndDateArr && startEndDateArr.length > 0){
       params.startDate = startEndDateArr[0].format(dateFormat)
       params.endDate = startEndDateArr[1].format(dateFormat)
@@ -243,6 +243,7 @@ const OrderPage = () => {
           initialValues={{ 
             category: '',
             status: '',
+            storeType: 'REGULAR',
             startEndDateArr: defaultDateValue
           }}
         >
@@ -253,16 +254,17 @@ const OrderPage = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={t('title.label.userName')} name="username">
-                <Input placeholder={t('message.placeholder.enterUserName')} style={{ width: '90%' }} />
+              <Form.Item label={t('storeType')} name="storeType" style={{ width: '90%' }}>
+                <Select placeholder={t('message.placeholder.pleaseSelect')} allowClear={true} options={[
+                  { value: 'REGULAR', label: t('normalGoods') },
+                  { value: 'POINTS', label: t('pointGoods') }
+                ]} />
               </Form.Item>
             </Col>
             <Col span={4}>
-              <Form.Item label={t('title.label.orderState')} name="state">
+              <Form.Item label={t('title.label.orderState')} name="state" style={{ width: '90%' }}>
                 <Select
-                  style={{
-                    width: '90%',
-                  }}
+                  placeholder={t('message.placeholder.pleaseSelect')}
                   loading={orderStateRes.loading}
                   options={orderStateRes.fetchedData
                     ?.filter((item) => item !== 'INIT')
@@ -358,7 +360,6 @@ const OrderPage = () => {
                 title: `${t('title.recipientAddress')}`,
                 key: 'recipientAddress',
                 render: (text, record) => {
-                  console.log(record);
                   return (
                   <>
                     {record.recipientProvince}{ record.recipientCity }{ record.recipientDistrict } - { record.recipientAddress }
@@ -366,10 +367,16 @@ const OrderPage = () => {
                 )}
               },
               {
-                title: `${t('title.transactionAmount')}`,
+                title: `${t('price/point')}`,
                 key: 'totalAmount',
                 dataIndex: 'totalAmount',
-                render: (text) => formatMoney(text),
+                render: (text, record) => {
+                  if(record.storeType === 'POINTS'){
+                    return text
+                  }else{
+                    return formatMoney(text)
+                  }
+                },
               },
               {
                 title: `${t('title.createTime')}`,
