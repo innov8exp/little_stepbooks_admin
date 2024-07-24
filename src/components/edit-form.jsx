@@ -1,4 +1,6 @@
-import { Form, Input, Modal, message, Select, InputNumber, Checkbox, Switch, Radio } from 'antd'
+
+import { useState, useEffect } from 'react'
+import { Form, Input, Modal, message, Select, InputNumber, Checkbox, Switch, Radio, DatePicker } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
@@ -7,6 +9,8 @@ import { useTranslation } from 'react-i18next'
 import ImageUpload from './image-upload'
 import ImagesUpload from './images-upload'
 import FileUpload from './file-upload'
+
+const { RangePicker } = DatePicker;
 
 const labelMap = {
   title: 'title',
@@ -32,6 +36,7 @@ const itemPropTypes = {
   addOnly: PropTypes.bool, // 只有新增时才允许配置该字段
   editOnly: PropTypes.bool, // 只有编辑时才允许配置该字段
   disabled: PropTypes.bool, // 可展示，不允许编辑
+  hidden: PropTypes.bool, // 是否隐藏
   type: PropTypes.string,
   placeholder: PropTypes.string,
   checkedLabel: PropTypes.string,
@@ -60,6 +65,7 @@ const EditForm = ({
   apiPath,
   formKeys = [],
   appendData = null,
+  saveDataFormat = null,
   onSave,
   onCancel
 }) => {
@@ -69,6 +75,27 @@ const EditForm = ({
   const url = `/api/admin/v1/${apiPath}` + (isAdd ? '' : `/${formData.id}`)
   const method = isAdd ? 'post' : 'put'
   const showTitle = t(title) + t('CONNECT_MARK1') + t(disabled ? 'view' : (isAdd ? 'button.create' : 'button.edit'))
+  const hiddenInit = {};
+  formKeys.forEach(item => {
+    if(item.hiddenControl){
+      hiddenInit[item.key] = item.hiddenControl.handler(formData[item.hiddenControl.key])
+    }else{
+      hiddenInit[item.key] = false;
+    }
+  })
+  const [hiddenMap, setHiddenMap] = useState(hiddenInit)
+
+  const onItemChange = (key, value) => {
+    formKeys.forEach(item => {
+      if(item.hiddenControl && item.hiddenControl.key === key){
+        console.log(key, value)
+        setHiddenMap({
+          ...hiddenMap,
+          [item.key]: item.hiddenControl.handler(value)
+        })
+      }
+    })
+  }
   const realFormKeys = formKeys.filter(item => {
     if(item.key === 'sortIndex' && isAdd){ // 如果是新增行为，忽略排序字段的传参以及配置
       return false
@@ -81,6 +108,7 @@ const EditForm = ({
     }
     return true
   });
+  
 
   // 存在一些冗余的字段需要独立维护，通过 hiddenData 对象进行维护
   // 视频、音频、图片资源需要追加对应的 id 字段， 视频、音频保持追加 duration 字段
@@ -92,14 +120,16 @@ const EditForm = ({
     })
   })
 
-  // 编辑显示的模式下，在下一个 event loop 对表单进行重置 
-  if(visible){
-    setTimeout(() => {
+  // 显示隐藏过程中对表单进行重置
+  useEffect(() => {
+    if(visible){
       form.setFieldsValue({
         ...formData
       })
-    }, 0)
-  }
+    }else{
+      form.resetFields()
+    }
+  }, [visible])
 
   const handleCancel = () => {
     form.resetFields()
@@ -113,7 +143,10 @@ const EditForm = ({
           values[item.key] = item.format(values[item.key])
         }
       })
-      const data = Object.assign(values, hiddenFormData, appendData)
+      let data = Object.assign(values, hiddenFormData, appendData)
+      if(saveDataFormat){
+        data = saveDataFormat(data)
+      }
       axios.request({
         url,
         method,
@@ -133,7 +166,7 @@ const EditForm = ({
     })
   }
 
-  const BuildFormItem = ({
+  const BuildFormItemInput = ({
     type,
     placeholder,
     min,
@@ -159,6 +192,9 @@ const EditForm = ({
     if(type === 'number'){
       return (<InputNumber style={{ width: 200 }} min={min} max={max} prefix={prefix} disabled={ disabled } />)
     }
+    if(type === 'dateRangePicker'){
+      return <RangePicker disabled={ disabled } />
+    }
     if(type === 'boolean'){
       return (
         <Switch
@@ -166,6 +202,7 @@ const EditForm = ({
           unCheckedChildren={t(unCheckedLabel)}
           style={{ width: 100 }}
           disabled={ disabled }
+          onChange={ value => onItemChange(key, value) }
         />
       )
     }
@@ -209,6 +246,7 @@ const EditForm = ({
               [groupKeys[0]]: arr
             })
           }
+          onItemChange(key, valueArr)
         }} />
       )
     }
@@ -217,7 +255,7 @@ const EditForm = ({
         <Radio.Group disabled={ disabled } options={options.map(item => ({
           ...item,
           label: t(item.label)
-        }))} />
+        }))} onChange={ e => onItemChange(key, e.target.value) } />
       )
     }
     if(type === 'audio' || type === 'video'){
@@ -246,7 +284,18 @@ const EditForm = ({
     return null
   }
 
-  BuildFormItem.propTypes = itemPropTypes;
+  BuildFormItemInput.propTypes = itemPropTypes;
+
+  const BuildFormItem = (item, label, rules) => {
+    if(hiddenMap[item.key]){
+      return null
+    }
+    return (
+      <Form.Item key={item.key} name={item.key} label={label} rules={rules}>
+        { BuildFormItemInput(item) }
+      </Form.Item>
+    )
+  }
 
   const  BuildFormList = () => {
     return realFormKeys.map(item => {
@@ -267,11 +316,10 @@ const EditForm = ({
         required: item.required === false ? false : true,
         message: t(preMsgMap[item.type] || 'pleaseAdd') + label
       }]
-      return (
-        <Form.Item key={item.key} name={item.key} label={label} rules={rules}>
-          { BuildFormItem(item) }
-        </Form.Item>
-      )
+      if(hiddenMap[item.key]){ // 某一表单字段是显示隐藏受控
+        return null
+      }
+      return BuildFormItem(item, label, rules)
     })
   }
 
@@ -312,6 +360,7 @@ EditForm.propTypes = {
   maxCount: PropTypes.number,
   formKeys: PropTypes.arrayOf(PropTypes.shape(itemPropTypes)),
   appendData: PropTypes.object,
+  saveDataFormat: PropTypes.func, // 在发送请求给到后端前对表单数据进行转换
   onSave: PropTypes.func,
   onCancel: PropTypes.func,
 }

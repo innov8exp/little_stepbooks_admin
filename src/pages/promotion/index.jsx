@@ -97,7 +97,7 @@ const PromotionPage = () => {
             dataIndex: 'limitFrom',
           },
           {
-            title: `${t('title.endtTime')}`,
+            title: `${t('title.endTime')}`,
             key: 'limitTo',
             dataIndex: 'limitTo',
           },
