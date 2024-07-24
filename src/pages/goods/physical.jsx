@@ -46,10 +46,10 @@ const PhysicalListPage = () => {
     })
   }, [])
 
-  const loadListData = function (currentPage) {
+  const loadListData = function (currentPage, type) {
     currentPage = currentPage || pageNumber
     setLoading(true)
-    const searchURL = `/api/admin/v1/${apiPath}?currentPage=${pageNumber}&pageSize=${pageSize}&storeType=${storeType}`
+    const searchURL = `/api/admin/v1/${apiPath}?currentPage=${pageNumber}&pageSize=${pageSize}&storeType=${type || storeType}`
     axios
       .get(searchURL)
       .then((res) => {
@@ -266,9 +266,10 @@ const PhysicalListPage = () => {
           { type:'number', min: 0, max: 99999, key: 'sortIndex'},
         ]}
         onCancel={() => setEdiVisible(false)}
-        onSave={() => {
+        onSave={(saveData) => {
           setEdiVisible(false)
-          loadListData()
+          setStoreType(saveData.storeType)
+          loadListData(1, saveData.storeType)
         }}
       />
     </Card>

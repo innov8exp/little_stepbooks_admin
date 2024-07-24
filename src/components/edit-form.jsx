@@ -153,7 +153,7 @@ const EditForm = ({
         data
       }).then((res) => {
         if (res.status === HttpStatus.OK) {
-          onSave()
+          onSave(data)
         }else{
           message.error(`save data failed, reason:${res.message}`)
         }

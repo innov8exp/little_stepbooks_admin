@@ -212,7 +212,9 @@ const ProductListPage = () => {
         {t('button.create')}
       </Button>
     }>
-      <Form form={queryForm}>
+      <Form form={queryForm} initialValues={{
+        storeType: 'REGULAR'
+      }}>
         <Row>
             <Form.Item label={t('name')} name="skuName">
               <Input placeholder={t('message.placeholder.name')} />
@@ -224,7 +226,7 @@ const ProductListPage = () => {
               ]} />
             </Form.Item>
             <Form.Item label={t('storeType')} name="storeType" style={{ margin: '0 15px', width: 200 }}>
-              <Select placeholder={t('message.placeholder.pleaseSelect')} allowClear={true} options={[
+              <Select placeholder={t('message.placeholder.pleaseSelect')} options={[
                 { value: 'REGULAR', label: t('normalGoods') },
                 { value: 'POINTS', label: t('pointGoods') }
               ]} />
@@ -405,8 +407,9 @@ const ProductListPage = () => {
           { type:'number', min: 0, max: 99999, key: 'sortIndex'},
         ]}
         onCancel={() => setEdiVisible(false)}
-        onSave={() => {
+        onSave={(saveData) => {
           setEdiVisible(false)
+          queryForm.setFieldValue('storeType', saveData.storeType)
           loadListData()
         }}
       />
