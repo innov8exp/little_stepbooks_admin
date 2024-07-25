@@ -156,7 +156,7 @@ const PointTaskListPage = () => {
   }
 
   return (
-    <Card title={t('menu.physicalGoodsList')} extra={
+    <Card title={t('pointTask')} extra={
       <Button type="primary" onClick={handleAddAction}>
         {t('button.create')}
       </Button>
