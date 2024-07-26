@@ -1,5 +1,6 @@
 import { App, Button, Card, message, Table, Switch, Input } from 'antd'
 import dayjs from 'dayjs'
+import http from '@/libs/http'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
@@ -9,6 +10,7 @@ import {
   ExclamationCircleOutlined,
   SearchOutlined,
 } from '@ant-design/icons'
+
 
 const PointTaskListPage = () => {
   const dateFormat = 'YYYY-MM-DD'
@@ -20,6 +22,7 @@ const PointTaskListPage = () => {
   const [ediVisible, setEdiVisible] = useState(false)
   const [editData, setEditData] = useState({})
   const [pageNumber, setPageNumber] = useState(1)
+  const [productOptions, setProductOptions] = useState([])
   const [switchLoading, setSwitchLoading] = useState({})
   const [loading, setLoading] = useState(true)
   const [total, setTotal] = useState(0)
@@ -155,6 +158,19 @@ const PointTaskListPage = () => {
     })
   }
 
+  const onProductSearch = (value) => {
+    http.get(`products?currentPage=1&pageSize=10&skuName=${value}`).then(data => {
+      const arr = data.records.map(item => ({
+        value: item.id,
+        label: item.skuName
+      }))
+      console.log(arr)
+      setProductOptions(arr)
+    })
+    // console.log(value)
+    // setProductOptions([])
+  }
+
   return (
     <Card title={t('menu.physicalGoodsList')} extra={
       <Button type="primary" onClick={handleAddAction}>
@@ -287,7 +303,15 @@ const PointTaskListPage = () => {
             key: 'type',
             handler: (value) => value !== 'SPECIAL'
           }},
-          { type:'input', key: 'actionUrl', label: 'taskUrl', placeholder: 'taskUrl' },
+          { type:'radio.group', key: 'jumpType', label: 'taskJumpType', options: [
+            { value: 1, label: t('listenDailyAudio') },
+            { value: 2, label: t('viewVirtualGoods') },
+            { value: 3, label: t('viewProduct') },
+          ] },
+          { type:'select', key: 'jumpId', label: 'product', placeholder: 'message.check.selectProduct', hiddenControl: {
+            key: 'jumpType',
+            handler: value => value < 2
+          }, showSearch: true, onSearch: onProductSearch, options: productOptions },
           { type:'number', min: 1, max: 999999, key: 'points', label: 'point' },
           { type:'textarea', key: 'successHint', required: false },
         ]}

@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import ImageUpload from './image-upload'
 import ImagesUpload from './images-upload'
 import FileUpload from './file-upload'
+import debounce from 'lodash/debounce';
 
 const { RangePicker } = DatePicker;
 
@@ -37,6 +38,8 @@ const itemPropTypes = {
   editOnly: PropTypes.bool, // 只有编辑时才允许配置该字段
   disabled: PropTypes.bool, // 可展示，不允许编辑
   hidden: PropTypes.bool, // 是否隐藏
+  showSearch: PropTypes.bool, // 对于选择框是否显示搜索
+  onSearch: PropTypes.func, // 对于选择框的搜索方法
   type: PropTypes.string,
   placeholder: PropTypes.string,
   checkedLabel: PropTypes.string,
@@ -180,9 +183,13 @@ const EditForm = ({
     checkedLabel,
     unCheckedLabel,
     disabled,
+    showSearch = false,
+    onSearch
     // ...props
   }) => {
     placeholder =  t(placeholder || placeholderMap[key] || key)
+    // debounce(loadOptions, debounceTimeout);
+    const onDebounceSearch = onSearch ? debounce(onSearch, 800) : function () {}
     if(type === 'input' || type === 'hidden'){
       return (<Input type="text" placeholder={placeholder} disabled={ disabled } />)
     }
@@ -222,7 +229,7 @@ const EditForm = ({
       }} />)
     }
     if(type === 'select'){
-      return (<Select placeholder={placeholder} mode={mode} options={options} disabled={ disabled } />)
+      return (<Select key={key} placeholder={placeholder} mode={mode} options={options} disabled={ disabled } showSearch={ showSearch } onSearch={ onDebounceSearch } />)
     }
     if(type === 'checkbox'){
       return (
