@@ -81,6 +81,8 @@
   "productPoint": "商品积分",
   "physicalGoods": "实物产品",
   "virtualGoods": "虚拟产品",
+  "pleaseSelectVirtualType": "请选择虚拟产品分类",
+  "pleaseSelectProduct": "请选择产品",
   "displayTime": "展示时机",
   "displayAtNotPay": "未购买时提醒",
   "displayAlways": "常驻提醒",

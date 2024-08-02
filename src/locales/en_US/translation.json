@@ -35,6 +35,8 @@
   "skuAndPoint": "Sku And Point",
   "product": "Product",
   "virtualCategory": "Virtual Category",
+  "pleaseSelectVirtualType": "Please Select Virtual Type",
+  "pleaseSelectProduct": "Please Select Product",
   "relativeProduct": "Relative Product",
   "platform": "Platform",
   "tags": "Tags",

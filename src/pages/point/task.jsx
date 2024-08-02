@@ -1,6 +1,5 @@
 import { App, Button, Card, message, Table, Switch, Input } from 'antd'
 import dayjs from 'dayjs'
-import http from '@/libs/http'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
 import { useState, useEffect } from 'react'
@@ -22,7 +21,6 @@ const PointTaskListPage = () => {
   const [ediVisible, setEdiVisible] = useState(false)
   const [editData, setEditData] = useState({})
   const [pageNumber, setPageNumber] = useState(1)
-  const [productOptions, setProductOptions] = useState([])
   const [switchLoading, setSwitchLoading] = useState({})
   const [loading, setLoading] = useState(true)
   const [total, setTotal] = useState(0)
@@ -84,24 +82,54 @@ const PointTaskListPage = () => {
   }
 
   const handleEditAction = (item) => {
+    let dateRange = null;
+    let jumpType = 1;
+    let catId, productId;
+    if(item.actionUrl.includes('virtualCategory')){
+      jumpType = 2
+      catId = item.actionUrl.split('id=')[1]
+    }else if(item.actionUrl.includes('product')){
+      jumpType = 3
+      productId = item.actionUrl.split('id=')[1]
+    }
+    if(item.type === 'SPECIAL'){
+      dateRange = [dayjs(item.startDate), dayjs(item.endDate)]
+    }
     setEdiVisible(true)
     setEditData({
       ...item,
-      dateRange: item.type === 'SPECIAL' ? [dayjs(item.startDate), dayjs(item.endDate)] : null
+      dateRange,
+      jumpType,
+      catId,
+      productId
     })
   }
 
   const saveDataFormat = data => {
+    console.log(data)
     const [startDate, endDate] = data.type === 'SPECIAL' ? [
       data.dateRange[0].format(dateFormat),
       data.dateRange[1].format(dateFormat),
     ] : ['', '']
-    return {
-      ...data,
-      startDate,
-      endDate,
-      dateRange: null
+    let actionUrl = null;
+    if(data.jumpType === 1){
+      actionUrl = 'StepBook://local/dailyAudio'
+    }else if(data.jumpType === 2){
+      actionUrl = `StepBook://local/virtualCategory?id=${data.catId}`
+    }else {
+      actionUrl = `StepBook://local/product?id=${data.productId}`
     }
+    const params = {
+      ...data,
+      actionUrl,
+      startDate,
+      endDate
+    }
+    delete params.catId
+    delete params.productId
+    delete params.jumpType
+    delete params.dateRange
+    return params
   }
 
   const handleDeleteAction = (id) => {
@@ -158,18 +186,6 @@ const PointTaskListPage = () => {
     })
   }
 
-  const onProductSearch = (value) => {
-    http.get(`products?currentPage=1&pageSize=10&skuName=${value}`).then(data => {
-      const arr = data.records.map(item => ({
-        value: item.id,
-        label: item.skuName
-      }))
-      console.log(arr)
-      setProductOptions(arr)
-    })
-    // console.log(value)
-    // setProductOptions([])
-  }
 
   return (
     <Card title={t('pointTask')} extra={
@@ -307,11 +323,15 @@ const PointTaskListPage = () => {
             { value: 1, label: t('listenDailyAudio') },
             { value: 2, label: t('viewVirtualGoods') },
             { value: 3, label: t('viewProduct') },
-          ] },
-          { type:'select', key: 'jumpId', label: 'product', placeholder: 'message.check.selectProduct', hiddenControl: {
+          ]},
+          { type:'select', selectorType: 'virtualCategory', key: 'catId', label: 'product', hiddenControl: {
             key: 'jumpType',
-            handler: value => value < 2
-          }, showSearch: true, onSearch: onProductSearch, options: productOptions },
+            handler: value => value !== 2
+          }},
+          { type:'select', selectorType: 'product', key: 'productId', label: 'product', hiddenControl: {
+            key: 'jumpType',
+            handler: value => value !== 3
+          }},
           { type:'number', min: 1, max: 999999, key: 'points', label: 'point' },
           { type:'textarea', key: 'successHint', required: false },
         ]}

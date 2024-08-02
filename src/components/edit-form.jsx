@@ -4,12 +4,13 @@ import { Form, Input, Modal, message, Select, InputNumber, Checkbox, Switch, Rad
 import TextArea from 'antd/lib/input/TextArea'
 import axios from 'axios'
 import HttpStatus from 'http-status-codes'
+import http from '@/libs/http'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import ImageUpload from './image-upload'
 import ImagesUpload from './images-upload'
 import FileUpload from './file-upload'
-import debounce from 'lodash/debounce';
+// import debounce from 'lodash/debounce';
 
 const { RangePicker } = DatePicker;
 
@@ -38,9 +39,8 @@ const itemPropTypes = {
   editOnly: PropTypes.bool, // 只有编辑时才允许配置该字段
   disabled: PropTypes.bool, // 可展示，不允许编辑
   hidden: PropTypes.bool, // 是否隐藏
-  showSearch: PropTypes.bool, // 对于选择框是否显示搜索
-  onSearch: PropTypes.func, // 对于选择框的搜索方法
   type: PropTypes.string,
+  selectorType: PropTypes.string, // 选择系统的产品类别，Product | virtualType
   placeholder: PropTypes.string,
   checkedLabel: PropTypes.string,
   unCheckedLabel: PropTypes.string,
@@ -74,31 +74,47 @@ const EditForm = ({
 }) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
+  const [productOptions, setProductOptions] = useState([])
+  const [virtualTypeOptions, setVirtualTypeOptions] = useState([])
   const isAdd = formData && formData.id ? false : true
   const url = `/api/admin/v1/${apiPath}` + (isAdd ? '' : `/${formData.id}`)
   const method = isAdd ? 'post' : 'put'
   const showTitle = t(title) + t('CONNECT_MARK1') + t(disabled ? 'view' : (isAdd ? 'button.create' : 'button.edit'))
-  const hiddenInit = {};
-  formKeys.forEach(item => {
-    if(item.hiddenControl){
-      hiddenInit[item.key] = item.hiddenControl.handler(formData[item.hiddenControl.key])
-    }else{
-      hiddenInit[item.key] = false;
-    }
-  })
-  const [hiddenMap, setHiddenMap] = useState(hiddenInit)
-
-  const onItemChange = (key, value) => {
+  const getHiddenMap = function(){
+    const hideMap = {};
     formKeys.forEach(item => {
-      if(item.hiddenControl && item.hiddenControl.key === key){
-        console.log(key, value)
-        setHiddenMap({
-          ...hiddenMap,
-          [item.key]: item.hiddenControl.handler(value)
-        })
+      if(item.hiddenControl){
+        hideMap[item.key] = item.hiddenControl.handler(formData[item.hiddenControl.key])
+      }else{
+        hideMap[item.key] = false;
       }
     })
+    return hideMap
   }
+  const [hiddenMap, setHiddenMap] = useState(getHiddenMap())
+
+  const onItemChange = (key, value) => {
+    let newMap = { ...hiddenMap }
+    formKeys.forEach(item => {
+      if(item.hiddenControl && item.hiddenControl.key === key){
+        newMap[item.key] = item.hiddenControl.handler(value)
+      }
+    })
+    setHiddenMap(newMap)
+  }
+
+  // const doProductSearch = (value) => {
+  //   http.get(`products?currentPage=1&pageSize=10&skuName=${value}`).then(data => {
+  //     const arr = data.records.map(item => ({
+  //       value: item.id,
+  //       label: item.skuName
+  //     }))
+  //     setProductOptions(arr)
+  //   })
+  // }
+
+  // const onDebounceProductSearch = debounce(doProductSearch, 800)
+
   const realFormKeys = formKeys.filter(item => {
     if(item.key === 'sortIndex' && isAdd){ // 如果是新增行为，忽略排序字段的传参以及配置
       return false
@@ -129,8 +145,30 @@ const EditForm = ({
       form.setFieldsValue({
         ...formData
       })
+      setHiddenMap(getHiddenMap())
     }else{
       form.resetFields()
+    }
+    if(visible){
+      formKeys.forEach(item => {
+        if(item.selectorType === 'virtualCategory'){
+          const url = `virtual-category/all-endpoints`
+          http.get(url).then(data => {
+              setVirtualTypeOptions(data.map(item => ({ 
+                value: item.id,
+                label: item.parent ? `${item.parent.name} - ${item.name}` : item.name
+              })))
+          })
+        }else if(item.selectorType === 'product'){
+          const url = `products?currentPage=1&pageSize=500`
+          http.get(url).then(data => {
+            setProductOptions(data.records.map(item => ({ 
+              value: item.id,
+              label: item.skuName
+            })))
+          })
+        }
+      })
     }
   }, [visible])
 
@@ -183,13 +221,11 @@ const EditForm = ({
     checkedLabel,
     unCheckedLabel,
     disabled,
-    showSearch = false,
-    onSearch
-    // ...props
+    selectorType
   }) => {
     placeholder =  t(placeholder || placeholderMap[key] || key)
     // debounce(loadOptions, debounceTimeout);
-    const onDebounceSearch = onSearch ? debounce(onSearch, 800) : function () {}
+    // const onDebounceSearch = onSearch ? debounce(onSearch, 800) : function () {}
     if(type === 'input' || type === 'hidden'){
       return (<Input type="text" placeholder={placeholder} disabled={ disabled } />)
     }
@@ -229,7 +265,13 @@ const EditForm = ({
       }} />)
     }
     if(type === 'select'){
-      return (<Select key={key} placeholder={placeholder} mode={mode} options={options} disabled={ disabled } showSearch={ showSearch } onSearch={ onDebounceSearch } />)
+      if(selectorType === 'product'){
+        return <Select key={key} placeholder={t('pleaseSelectProduct')} mode={mode} options={productOptions} disabled={ disabled } />
+      }else if(selectorType === 'virtualCategory'){
+        return <Select key={key} placeholder={t('pleaseSelectVirtualType')} mode={mode} options={virtualTypeOptions} disabled={ disabled } />
+      }else{
+        return <Select key={key} placeholder={placeholder} mode={mode} options={options} disabled={ disabled } />
+      }
     }
     if(type === 'checkbox'){
       return (
