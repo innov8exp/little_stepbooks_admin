@@ -95,12 +95,21 @@ const EditForm = ({
 
   const onItemChange = (key, value) => {
     let newMap = { ...hiddenMap }
+    let valueChanged = false
     formKeys.forEach(item => {
       if(item.hiddenControl && item.hiddenControl.key === key){
         newMap[item.key] = item.hiddenControl.handler(value)
+        if(newMap[item.key] != hiddenMap[item.key]){ // 显示隐藏存在变化
+          valueChanged = true
+        }
       }
     })
-    setHiddenMap(newMap)
+    if(valueChanged){
+      console.log(111)
+      setHiddenMap(newMap)
+    }else{
+      console.log(222)
+    }
   }
 
   // const doProductSearch = (value) => {
