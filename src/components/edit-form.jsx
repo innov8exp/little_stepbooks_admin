@@ -75,7 +75,8 @@ const EditForm = ({
   const { t } = useTranslation()
   const [form] = Form.useForm()
   const [productOptions, setProductOptions] = useState([])
-  const [virtualTypeOptions, setVirtualTypeOptions] = useState([])
+  const [virtualEndCatOptions, setVirtualEndCatOptions] = useState([])
+  const [virtualParentCatOptions, setVirtualParentCatOptions] = useState([])
   const isAdd = formData && formData.id ? false : true
   const url = `/api/admin/v1/${apiPath}` + (isAdd ? '' : `/${formData.id}`)
   const method = isAdd ? 'post' : 'put'
@@ -105,10 +106,7 @@ const EditForm = ({
       }
     })
     if(valueChanged){
-      console.log(111)
       setHiddenMap(newMap)
-    }else{
-      console.log(222)
     }
   }
 
@@ -160,22 +158,37 @@ const EditForm = ({
     }
     if(visible){
       formKeys.forEach(item => {
-        if(item.selectorType === 'virtualCategory'){
-          const url = `virtual-category/all-endpoints`
-          http.get(url).then(data => {
-              setVirtualTypeOptions(data.map(item => ({ 
+        if(item.selectorType){
+          // 编辑状态下，不处理仅适配新增选择器的数据拉取
+          // 新增状态下，不处理仅适配编辑选择器的数据拉取
+          if((item.addOnly && !isAdd) || (item.editOnly && isAdd)){
+            return
+          }
+          if(item.selectorType === 'virtualCategory'){
+            const url = `virtual-category/all-endpoints`
+            http.get(url).then(data => {
+              setVirtualEndCatOptions(data.map(item => ({ 
                 value: item.id,
                 label: item.parent ? `${item.parent.name} - ${item.name}` : item.name
               })))
-          })
-        }else if(item.selectorType === 'product'){
-          const url = `products?currentPage=1&pageSize=500`
-          http.get(url).then(data => {
-            setProductOptions(data.records.map(item => ({ 
-              value: item.id,
-              label: item.skuName
-            })))
-          })
+            })
+          }else if(item.selectorType === 'product'){
+            const url = `products?currentPage=1&pageSize=500`
+            http.get(url).then(data => {
+              setProductOptions(data.records.map(item => ({ 
+                value: item.id,
+                label: item.skuName
+              })))
+            })
+          }else if(item.selectorType === 'virtualParentCategory'){
+            const url = `virtual-category?currentPage=1&pageSize=500&includeChildren=false`
+            http.get(url).then(data => {
+              setVirtualParentCatOptions(data.records.map(item => ({ 
+                value: item.id,
+                label: item.name
+              })))
+            })
+          }
         }
       })
     }
@@ -277,7 +290,9 @@ const EditForm = ({
       if(selectorType === 'product'){
         return <Select key={key} placeholder={t('pleaseSelectProduct')} mode={mode} options={productOptions} disabled={ disabled } />
       }else if(selectorType === 'virtualCategory'){
-        return <Select key={key} placeholder={t('pleaseSelectVirtualType')} mode={mode} options={virtualTypeOptions} disabled={ disabled } />
+        return <Select key={key} placeholder={t('pleaseSelectVirtualType')} mode={mode} options={virtualEndCatOptions} disabled={ disabled } />
+      }else if(selectorType === 'virtualParentCategory'){
+        return <Select key={key} placeholder={t('pleaseSelectVirtualType')} mode={mode} options={virtualParentCatOptions} disabled={ disabled } />
       }else{
         return <Select key={key} placeholder={placeholder} mode={mode} options={options} disabled={ disabled } />
       }

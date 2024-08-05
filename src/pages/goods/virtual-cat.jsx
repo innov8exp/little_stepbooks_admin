@@ -13,15 +13,16 @@ import {
 const { Paragraph } = Typography;
 
 const VirtualCatListPage = () => {
-  const defaultKeys = [
+  const editFormKeys = [
     { type:'input', key: 'name'},
     { type:'textarea', key: 'description', required: false},
     { type:'photo', key: 'coverUrl', groupKeys:['coverId'], required: false},
+    { type:'select', key: 'parentId', selectorType: 'virtualParentCategory', required: false, addOnly: true },
     { type:'number', min: 0, max: 99999, key: 'sortIndex'},
     { type:'radio.group', key: 'status', label: 'title.status', options: [
       { value: 'ONLINE', label: 'ON_SHELF' },
       { value: 'OFFLINE', label: 'OFF_SHELF' },
-    ]},
+    ], editOnly: true },
     { type:'boolean', checkedLabel: 'free', unCheckedLabel: 'notFree', key: 'free', label: 'freeOrNot'},
   ]
   const apiPath = 'virtual-category'
@@ -37,7 +38,6 @@ const VirtualCatListPage = () => {
   const [includeChildren, setIncludeChildren] = useState(true)
   const [detailImageEditVisible, setDetailImageEditVisible] = useState(false)
   const [editDetailImgForm, setEditDetailImgForm] = useState({})
-  const [editFormKeys, setEditFormKeys] = useState(defaultKeys)
   const [switchLoading, setSwitchLoading] = useState({})
   const [total, setTotal] = useState(0)
   const pageSize = 10;
@@ -90,20 +90,13 @@ const VirtualCatListPage = () => {
   }
 
   const handleAddAction = () => {
-    http.get(`${apiPath}?currentPage=1&pageSize=100&includeChildren=false`).then(data => {
-        const parentItem = { type:'select', key: 'parentId', placeholder: 'pleaseSelect', required: false, options: data.records.map(item => ({ value: item.id, label: item.name }))}
-        const newKeys = defaultKeys.slice()
-        newKeys.splice(3, 0, parentItem)
-        setEditFormKeys(newKeys)
-        setEdiVisible(true)
-        setEditData({
-            free: false
-        })
+    setEditData({
+        free: false
     })
+    setEdiVisible(true)
   }
 
   const handleEditAction = (item) => {
-    setEditFormKeys(defaultKeys)
     setEdiVisible(true)
     setEditData(item)
   }
