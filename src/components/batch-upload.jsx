@@ -113,17 +113,6 @@ const BatchUploadList = ({
         }
     }, [mediaType, modal, t, visible])
 
-    // 检查上传任务
-    const checkJobResult = () => {
-        setLoading(false)
-        const allSuccess = fileList.every(item => item.status === 'success')
-        if(allSuccess){
-            onOk()
-        }else{
-            onErr()
-        }
-    }
-
     // 开始执行批量上传任务
     const startUploadJob = () => {
         let emptyArr = [];
@@ -161,6 +150,14 @@ const BatchUploadList = ({
                 return false
             }
         })
+    }
+
+    const saveData = async () => {
+        for (const item of fileList) {
+            item.params && await onAdd(item.params)
+        }
+        setLoading(false)
+        onOk()
     }
 
     const fileUpload = (file) => {
@@ -206,38 +203,35 @@ const BatchUploadList = ({
         fileItem.status = 'uploading'
         uploadingCount++
         setFileList(fileList.map(item => item))
-        const resMap = {
+        const params = {
             name: fileItem.name,
-            // sortIndex: fileItem.sortIndex, // 批量添加视频音频有数据库自动追加排序值
             duration: await getMediaDuration(fileItem.audio || fileItem.video)
         };
         if(fileItem.photo){
             const res = await fileUpload(fileItem.photo)
-            resMap.photoId = res.id
-            resMap.photoUrl = res.objectUrl
+            params.photoId = res.id
+            params.photoUrl = res.objectUrl
         }
         if(fileItem.audio){
             const res = await fileUpload(fileItem.audio)
-            resMap.audioId = res.id
-            resMap.audioUrl = res.objectUrl
+            params.audioId = res.id
+            params.audioUrl = res.objectUrl
         }
         if(fileItem.video){
             const res = await fileUpload(fileItem.video)
-            resMap.videoId = res.id
-            resMap.videoUrl = res.objectUrl
+            params.videoId = res.id
+            params.videoUrl = res.objectUrl
         }
-        onAdd(resMap).then(() => {
-            fileItem.status = 'success'
-        }).catch(() => {
-            fileItem.status = 'error'
-        }).then(() => {
-            setFileList(fileList.map(item => item))
-            uploadingCount--
+        fileItem.status = 'uploaded'
+        fileItem.params = params
+        setFileList(fileList.map(item => item))
+        uploadingCount--
+        const isAllFinish = fileList.every(item => item.status === 'uploaded')
+        if(isAllFinish){ // 全部资源上传完毕，进入下一步，执行数据的添加到数据库中
+            saveData()
+        }else{
             addUploadJob()
-            if(uploadingCount === 0){
-                checkJobResult()
-            }
-        })
+        }
     }
 
     const handleAddAction = (e) => {
